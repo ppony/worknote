@@ -1,0 +1,25 @@
+
+system_TC8234.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <SystemCoreClockUpdate>:
+   0:	b580      	push	{r7, lr}
+   2:	af00      	add	r7, sp, #0
+   4:	46c0      	nop			; (mov r8, r8)
+   6:	46bd      	mov	sp, r7
+   8:	bd80      	pop	{r7, pc}
+   a:	46c0      	nop			; (mov r8, r8)
+
+0000000c <SystemInit>:
+   c:	b580      	push	{r7, lr}
+   e:	af00      	add	r7, sp, #0
+  10:	4b02      	ldr	r3, [pc, #8]	; (1c <SystemInit+0x10>)
+  12:	4a03      	ldr	r2, [pc, #12]	; (20 <SystemInit+0x14>)
+  14:	609a      	str	r2, [r3, #8]
+  16:	46c0      	nop			; (mov r8, r8)
+  18:	46bd      	mov	sp, r7
+  1a:	bd80      	pop	{r7, pc}
+  1c:	e000ed00 	.word	0xe000ed00
+  20:	00000000 	.word	0x00000000
