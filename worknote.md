@@ -130,6 +130,10 @@ google keep
 
 eclipse
     install jre /usr/java/jre1.8.0_121
+    sudo ./openocd -f ../scripts/interface/nulink.cfg -f ../scripts/target/numicroM4.cfg
+    gdb server
+        load_image filename address ['bin'|'ihex'|'elf'|'s19'] [min_address] [max_length]
+
 
 teamviewer
     sudo apt-get install libjpeg62
