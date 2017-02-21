@@ -130,10 +130,6 @@ google keep
 
 eclipse
     install jre /usr/java/jre1.8.0_121
-    sudo ./openocd -f ../scripts/interface/nulink.cfg -f ../scripts/target/numicroM4.cfg
-    gdb server
-        load_image filename address ['bin'|'ihex'|'elf'|'s19'] [min_address] [max_length]
-
 
 teamviewer
     sudo apt-get install libjpeg62
@@ -210,33 +206,7 @@ teamviewer
    sudo apt install indent
    
    install sublime, install jvm, install eclipse CDT
-
-   wireless
-    ifconfig -- 用來開啟/關閉介面卡
-    iwconfig -- 用設定無線的 SSID, key
-    iwlist -- 用來搜尋周圍 AP
-    dhcpcd -- 經由 dhcp 得到 ip
-
-    首先，先找出你的無線網卡是哪個名字
-    ifconfig -a
-
-    找到介面的名字後，若是沒有打開，就把它打開
-    ifconfig wlan0 up
-
-    接著，設定無線網卡的 SSID (在 linux 世界都叫它 ESSID)
-    iwconfig wlan0 essid <essid>
-
-    還有設定無線網卡的金鑰
-    iwconfig wlan0 key <key>
-
-    最後，設定 ip，若是使用 dhcp，使用指令如下
-    dhcpcd wlan0
-
-    指定 ip 則是使用下例指令
-    ifconfig wlan0 192.168.1.2
-    網路匣道設定
-    route add default 192.168.1.1
-
+   
 >>google chrome
     在網頁上水平捲動	按住 Shift 鍵並滾動滑鼠滾輪
     在目前的分頁中開啟首頁	Alt + Home 鍵
@@ -276,15 +246,6 @@ office
 
     outlook archive
     C:\Users\CCMA\Documents\Outlook Files
-
-    windows file explorer
-    Alt + Up – Switches to the parent folder in the hierarchy
-    Alt P – Toggles the Preview pane
-    Alt+Enter – Opens Properties for the selected object
-
-    windows command line
-    devmgmt.msc
-    appwiz.cpl
 
 git:
     git reflog push to remote 時, 是否會跟著走?
@@ -395,7 +356,7 @@ FW release note
     紙飛機能飛多遠?
     靜坐
 
-    ㄈ方
+    ㄈ飛
     ㄉ刀
     ㄊ討
     ㄎ可
@@ -419,28 +380,24 @@ FW release note
     
     M2351 shuttle version PDID
 
-#Thur會議       
+>>Thur會議       
     * make tz printf work, test functions , incorporate with Zale next week
     * Confirm need 2nd? Can mbed compiler support? <- chris will follow up, no clear answer, develop 1st first, but second seems can't avoid
     6596 to 6600 fw upgrade will hang up?
 
-    ##ccli    
-    - special part 
-        - NUC123SD4SN5 (hank)
-        - nuc121 special part number (hank)
+    (ccli)    
     * ycc m2351 which ib should be generate, CCLI M480??
     kprom lock, hw bp of M480 will be disable??
+    special part handling
     chlin55 NUCMD TOOL
     TODO
         TC8226 offline download SRAM, sram is 16KB, page size 4KB, current stack use 11.x KB, mbed 3.5KB, if to write serial number need one page buffer and not enough space
         need uninstall while install different version ICPTool
         checkpointer of excel will see in every excel file not only psio
     
-    ##ycc
-    burn code mode of m2351, solid?
     * 6600a2 how about IAR?
     * composite device IAD
-    iar 2nd develop    
+    (ycc) iar 2nd develop    
     (ycc) mbed 閃退, walter question, outlook <- 之前測是 win10 64bits (self test ok). wright said "VM 簡中企業版 win10 64bits" may has problem
     (ycc) TC8234 driver for MP version 
     (ycc) user manual m2351 
@@ -455,14 +412,12 @@ FW release note
     (cyyu) clock excel 
     (cyyu) Zale 發現問題點是使用win10 內建的 unzip 軟體去解壓 7-zip 壓縮出來的 .zip file 會有問題, 換成 7-zip 軟體解壓就 ok.    
 
-    ##cctu
-    * when is nuc505/nuc472 upload?      
-    * all in one
-    * secure boot isp m480 need to go with nulink certain version? if we have v2.02?
+    *(cctu) secure boot isp m480 need to go with nulink certain version? if we have v2.02?
     * ispbridge of JCLiu
     (cctu) code排版
     (cctu) ICP tool 起始畫面 auto select
-    (cctu) upload nubridge by jcs2
+    (cctu) upload nubridge and isptool by jcs2
+    (cctu) when is nuc505/nuc472 upload?      
                      
         
     ** >> code review: 6603
@@ -491,20 +446,15 @@ FW release note
     	Test DAPLink script
 
     
->> CCMa     
+CCMa     
     pyOCD as isp/icp tool on linux
     FPGA occupy location
     C:\Users\CCMA\Documents\Outlook Files
-    >> 幼兒園, 學區, 防盜監控, dna preserve, 清冷氣, NAS, 防網路霸凌 reverse search engine, 效能促進公司, 買體重機
+    >> 幼兒園, 學區, 防盜監控, dna preserve, 清冷氣, NAS, 防網路霸凌 reverse search engine, 效能促進公司
     >> 二進制比對工具, not only implement tool but find fit tool (like project management) 
     >> 電腦工作環境整理, clean disk, 如何切出自己工作, 電腦報廢
-
-其中 Two-wire ICP / Writer目前傳輸過程就沒有加密, 所以本來就是曝險的. (但未來twICP也可能加入通道保密機制, 那這個功能對Two-wire ICP 也是需要的)
-SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所以加這個 function 會更為安全
-
    
-    ##git 
-        [p4merge](https://git-scm.com/book/zh-tw/v1/Git-%E5%AE%A2%E8%A3%BD%E5%8C%96-Git-%E9%85%8D%E7%BD%AE#格式化與空格)
+    >>git 
         ssh - push remote with keyin username and password
             ssh-keygen
                 have to key in password for id_rsa key
@@ -526,14 +476,8 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
                 list tree file
                 
     >>efficient        
-        note7 recover webpage
-        markdown insert http link but can't display on website default, need to delete all the indent 
-        sublime 讀檔二進位轉換 edit config0 is possible?
-        sublime how to collapse & unfold yaml format
-        sublime search but can jump to result directly, need to mouse click
-        command windows paste & copy, file browswer that can keep previous setting
         01937 use AndroidAP, PC also use, PCANY WHERE , delete wormhole
-        如何快速reget windows 工作快取
+        如何快速重? windows 工作快取
         linux server as NAS and github server
         TruethCrypt like tool for photo, 檔案徹底格式化, image temp icon delete
         use sublime to read code
@@ -560,8 +504,6 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
         system programming   
         制作路徑變數方便切路徑, cd $libnano
         solved
-            Use Ctrl + Left and Ctrl + Right to move between the various parts of line
-
             clip < c:/Users/CCMA/.ssh/id_rsa.pub
             cd – 	cd 減號；切換目錄到前一個目錄
             ls -F 	附加檔案類型，目錄附加/，執行檔附加`*
@@ -938,20 +880,20 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
     >> (minor) offline fail 的閃燈無法 identify error
     >> (minor) 增加測項  簡体和日文檔名, nulink vcom
 
-##YCC
+YCC
     >> ICP Lib release
     >> NUC505 sector erase, backup or sector align
     >> SPIN button DFBA 問題: Mini51DE/58DE, NUC029AE, NUC200. ICP tool更改Bass address後Config1不會跟著變動
 
-##cctu
+cctu
+    >> migrate vs2008 to vs2010
     >> isp link
     >> [FAE Case - NuMicro Family 0006345]: 需要用SPI介面的ISP sample code
     >> [FAE Case - NuMicro Family 0006281]: CAN ISP sample code
     >> NUC122 I2C ISP MF10 JLIU 
     >> Nu-Bridge WinUsbLib API說明文件
-    >> migrate vs2008 to vs2010
     
-##ccli 
+ccli 
     NuCommand tool run on linux??    
     >> ALOCK M451 連動 security lock    
     >> ICPTool customize issue
@@ -1070,7 +1012,7 @@ eng
 
 
 wise    
-    11. 禪修，不必到廟裡，能夠心平氣和地oooo，就是最好的修行。
+    11. 禪修，不必到廟裡，能夠心平氣和地照顧小孩，就是最好的修行。
     we believe that “empty vessels make the most sound”; this, however, could not be further from the truth
     規則就在那裡, 只是輸的人不干心罷了
     目標明確, 就不會打忙
@@ -1083,35 +1025,6 @@ wise
 </transfer>
 
 >>c++ notes
-    ctraps note
-        ‘‘If the input stream has been parsed into tokens up to a given character, the next token is taken to include the longest string of characters which could possibly constitute a
-token.’’
-        y = x/*p
-        except: a + /* strange */ = 1 means the same as a += 1. These operators are the only cases in which things that look like single tokens are really multiple tokens
-        p - > a is illegal
-
-        printf ("Hello world\n");
-        char hello[] = {’H’, ’e’, ’l’, ’l’, ’o’, ’ ’,
-        ’w’, ’o’, ’r’, ’l’, ’d’, ’\n’, 0};
-        printf (hello);
-
-        writing ’yes’ instead of "yes" may well go undetected. The latter means ‘‘the address of the first of four consecutive memory locations containing y,
-        e, s, and a null character, respectively.’’ The former means ‘‘an integer that is composed of the values of
-        the characters y, e, and s in some implementation-defined manner.’’
-
-        (*(void(*)())0)();
-
-        c precedence
-        1. The operators that bind the most tightly are the ones that aren’t really operators: subscripting, function calls, and structure selection. These all associate to the left
-        2. Unary operators are right-associative, so *p++ is interpreted as *(p++) 
-        3. Next come the true binary operators, . The arithmetic operators have the highest precedence, then the
-            shift operators, the relational operators, the logical operators, conditional operator, assignment operators. The two most important things to keep in mind are:
-            One small surprise is that the six relational operators do not all have the same precedence: == and != bind less tightly than the other relational operators.
-            a < b == c < d 
-            z = a < b && b < c ? d : e
-        a = b = c        the same as        b = c; a = b;
-
-
     //keil
     -c -mthumb -gdwarf-2 -MD -w -O -mapcs-frame -mthumb-interwork -I ../../../../Library/CMSIS/Include -I ../../../../Library/Device/Nuvoton/TC8234/Include 
     -I ../../../../Library/StdDriver/inc -I ../Secure -IC:/temp/v8m/TC8234_BSP/SampleCode/TrustZoneGCC/Template/Secure/RTE -IC:/keil/520s/ARM/PACK/ARM/CMSIS/5.0.0-Beta4/Device/ARM/ARMv8MBL/Include 
