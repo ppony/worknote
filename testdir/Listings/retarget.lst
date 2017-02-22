@@ -1,0 +1,4711 @@
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.arch armv8-m.base
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"retarget.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.comm	__stdout,104,4
+  20              		.comm	__stdin,104,4
+  21              		.section	.rodata
+  22              		.align	2
+  23              	.LC0:
+  24 0000 72302020 		.ascii	"r0  = 0x%x\012\000"
+  24      3D203078 
+  24      25780A00 
+  25              		.align	2
+  26              	.LC2:
+  27 000c 72312020 		.ascii	"r1  = 0x%x\012\000"
+  27      3D203078 
+  27      25780A00 
+  28              		.align	2
+  29              	.LC4:
+  30 0018 72322020 		.ascii	"r2  = 0x%x\012\000"
+  30      3D203078 
+  30      25780A00 
+  31              		.align	2
+  32              	.LC6:
+  33 0024 72332020 		.ascii	"r3  = 0x%x\012\000"
+  33      3D203078 
+  33      25780A00 
+  34              		.align	2
+  35              	.LC8:
+  36 0030 72313220 		.ascii	"r12 = 0x%x\012\000"
+  36      3D203078 
+  36      25780A00 
+  37              		.align	2
+  38              	.LC10:
+  39 003c 6C722020 		.ascii	"lr  = 0x%x\012\000"
+  39      3D203078 
+  39      25780A00 
+  40              		.align	2
+  41              	.LC12:
+  42 0048 70632020 		.ascii	"pc  = 0x%x\012\000"
+  42      3D203078 
+  42      25780A00 
+  43              		.align	2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 2
+
+
+  44              	.LC14:
+  45 0054 70737220 		.ascii	"psr = 0x%x\012\000"
+  45      3D203078 
+  45      25780A00 
+  46              		.text
+  47              		.align	2
+  48              		.code	16
+  49              		.thumb_func
+  50              		.type	stackDump, %function
+  51              	stackDump:
+  52              	.LFB61:
+  53              		.file 1 "src/retarget.c"
+   1:src/retarget.c **** /**************************************************************************//**
+   2:src/retarget.c ****  * @file     retarget.c
+   3:src/retarget.c ****  * @version  V3.00
+   4:src/retarget.c ****  * $Revision: 1 $
+   5:src/retarget.c ****  * $Date: 16/07/07 7:50p $
+   6:src/retarget.c ****  * @brief    Debug Port and Semihost Setting Source File
+   7:src/retarget.c ****  *
+   8:src/retarget.c ****  * @note
+   9:src/retarget.c ****  * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
+  10:src/retarget.c ****  *
+  11:src/retarget.c ****  ******************************************************************************/
+  12:src/retarget.c **** 
+  13:src/retarget.c **** 
+  14:src/retarget.c **** #include <stdio.h>
+  15:src/retarget.c **** #include "TC8234.h"
+  16:src/retarget.c **** 
+  17:src/retarget.c **** #if defined ( __CC_ARM   )
+  18:src/retarget.c **** #if (__ARMCC_VERSION < 400000)
+  19:src/retarget.c **** #else
+  20:src/retarget.c **** /* Insist on keeping widthprec, to avoid X propagation by benign code in C-lib */
+  21:src/retarget.c **** #pragma import _printf_widthprec
+  22:src/retarget.c **** #endif
+  23:src/retarget.c **** #endif
+  24:src/retarget.c **** 
+  25:src/retarget.c **** /*-------------------------------------------------------------------------------------------------
+  26:src/retarget.c **** /* Global variables                                                                                
+  27:src/retarget.c **** /*-------------------------------------------------------------------------------------------------
+  28:src/retarget.c **** #if !(defined(__ICCARM__) && (__VER__ >= 6010000))
+  29:src/retarget.c **** # if (__ARMCC_VERSION < 6040000)
+  30:src/retarget.c **** struct __FILE
+  31:src/retarget.c **** {
+  32:src/retarget.c ****     int handle; /* Add whatever you need here */
+  33:src/retarget.c **** };
+  34:src/retarget.c **** # endif
+  35:src/retarget.c **** #endif
+  36:src/retarget.c **** FILE __stdout;
+  37:src/retarget.c **** FILE __stdin;
+  38:src/retarget.c **** 
+  39:src/retarget.c **** enum { r0, r1, r2, r3, r12, lr, pc, psr};
+  40:src/retarget.c **** 
+  41:src/retarget.c **** /**
+  42:src/retarget.c ****  * @brief       Helper function to dump register while hard fault occurred
+  43:src/retarget.c ****  * @param[in]   stack pointer points to the dumped registers in SRAM
+  44:src/retarget.c ****  * @return      None
+  45:src/retarget.c ****  * @details     This function is implement to print r0, r1, r2, r3, r12, lr, pc, psr
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 3
+
+
+  46:src/retarget.c ****  */
+  47:src/retarget.c **** static void stackDump(uint32_t stack[])
+  48:src/retarget.c **** {   
+  54              		.loc 1 48 0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 8
+  57              		@ frame_needed = 1, uses_anonymous_args = 0
+  58 0000 80B5     		push	{r7, lr}
+  59              	.LCFI0:
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 7, -8
+  62              		.cfi_offset 14, -4
+  63 0002 82B0     		sub	sp, sp, #8
+  64              	.LCFI1:
+  65              		.cfi_def_cfa_offset 16
+  66 0004 00AF     		add	r7, sp, #0
+  67              	.LCFI2:
+  68              		.cfi_def_cfa_register 7
+  69 0006 7860     		str	r0, [r7, #4]
+  49:src/retarget.c ****     printf("r0  = 0x%x\n", stack[r0]);
+  70              		.loc 1 49 0
+  71 0008 7B68     		ldr	r3, [r7, #4]
+  72 000a 1A68     		ldr	r2, [r3]
+  73 000c 204B     		ldr	r3, .L2
+  74 000e 1100     		movs	r1, r2
+  75 0010 1800     		movs	r0, r3
+  76 0012 FFF7FEFF 		bl	printf
+  50:src/retarget.c ****     printf("r1  = 0x%x\n", stack[r1]);
+  77              		.loc 1 50 0
+  78 0016 7B68     		ldr	r3, [r7, #4]
+  79 0018 0433     		adds	r3, r3, #4
+  80 001a 1A68     		ldr	r2, [r3]
+  81 001c 1D4B     		ldr	r3, .L2+4
+  82 001e 1100     		movs	r1, r2
+  83 0020 1800     		movs	r0, r3
+  84 0022 FFF7FEFF 		bl	printf
+  51:src/retarget.c ****     printf("r2  = 0x%x\n", stack[r2]);
+  85              		.loc 1 51 0
+  86 0026 7B68     		ldr	r3, [r7, #4]
+  87 0028 0833     		adds	r3, r3, #8
+  88 002a 1A68     		ldr	r2, [r3]
+  89 002c 1A4B     		ldr	r3, .L2+8
+  90 002e 1100     		movs	r1, r2
+  91 0030 1800     		movs	r0, r3
+  92 0032 FFF7FEFF 		bl	printf
+  52:src/retarget.c ****     printf("r3  = 0x%x\n", stack[r3]);
+  93              		.loc 1 52 0
+  94 0036 7B68     		ldr	r3, [r7, #4]
+  95 0038 0C33     		adds	r3, r3, #12
+  96 003a 1A68     		ldr	r2, [r3]
+  97 003c 174B     		ldr	r3, .L2+12
+  98 003e 1100     		movs	r1, r2
+  99 0040 1800     		movs	r0, r3
+ 100 0042 FFF7FEFF 		bl	printf
+  53:src/retarget.c ****     printf("r12 = 0x%x\n", stack[r12]);
+ 101              		.loc 1 53 0
+ 102 0046 7B68     		ldr	r3, [r7, #4]
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 4
+
+
+ 103 0048 1033     		adds	r3, r3, #16
+ 104 004a 1A68     		ldr	r2, [r3]
+ 105 004c 144B     		ldr	r3, .L2+16
+ 106 004e 1100     		movs	r1, r2
+ 107 0050 1800     		movs	r0, r3
+ 108 0052 FFF7FEFF 		bl	printf
+  54:src/retarget.c ****     printf("lr  = 0x%x\n", stack[lr]);
+ 109              		.loc 1 54 0
+ 110 0056 7B68     		ldr	r3, [r7, #4]
+ 111 0058 1433     		adds	r3, r3, #20
+ 112 005a 1A68     		ldr	r2, [r3]
+ 113 005c 114B     		ldr	r3, .L2+20
+ 114 005e 1100     		movs	r1, r2
+ 115 0060 1800     		movs	r0, r3
+ 116 0062 FFF7FEFF 		bl	printf
+  55:src/retarget.c ****     printf("pc  = 0x%x\n", stack[pc]);
+ 117              		.loc 1 55 0
+ 118 0066 7B68     		ldr	r3, [r7, #4]
+ 119 0068 1833     		adds	r3, r3, #24
+ 120 006a 1A68     		ldr	r2, [r3]
+ 121 006c 0E4B     		ldr	r3, .L2+24
+ 122 006e 1100     		movs	r1, r2
+ 123 0070 1800     		movs	r0, r3
+ 124 0072 FFF7FEFF 		bl	printf
+  56:src/retarget.c ****     printf("psr = 0x%x\n", stack[psr]);
+ 125              		.loc 1 56 0
+ 126 0076 7B68     		ldr	r3, [r7, #4]
+ 127 0078 1C33     		adds	r3, r3, #28
+ 128 007a 1A68     		ldr	r2, [r3]
+ 129 007c 0B4B     		ldr	r3, .L2+28
+ 130 007e 1100     		movs	r1, r2
+ 131 0080 1800     		movs	r0, r3
+ 132 0082 FFF7FEFF 		bl	printf
+  57:src/retarget.c **** }
+ 133              		.loc 1 57 0
+ 134 0086 C046     		nop
+ 135 0088 BD46     		mov	sp, r7
+ 136 008a 02B0     		add	sp, sp, #8
+ 137              		@ sp needed
+ 138 008c 80BD     		pop	{r7, pc}
+ 139              	.L3:
+ 140 008e C046     		.align	2
+ 141              	.L2:
+ 142 0090 00000000 		.word	.LC0
+ 143 0094 0C000000 		.word	.LC2
+ 144 0098 18000000 		.word	.LC4
+ 145 009c 24000000 		.word	.LC6
+ 146 00a0 30000000 		.word	.LC8
+ 147 00a4 3C000000 		.word	.LC10
+ 148 00a8 48000000 		.word	.LC12
+ 149 00ac 54000000 		.word	.LC14
+ 150              		.cfi_endproc
+ 151              	.LFE61:
+ 152              		.size	stackDump, .-stackDump
+ 153              		.section	.rodata
+ 154              		.align	2
+ 155              	.LC16:
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 5
+
+
+ 156 0060 496E2048 		.ascii	"In Hard Fault Handler\000"
+ 156      61726420 
+ 156      4661756C 
+ 156      74204861 
+ 156      6E646C65 
+ 157              		.text
+ 158              		.align	2
+ 159              		.global	Hard_Fault_Handler
+ 160              		.code	16
+ 161              		.thumb_func
+ 162              		.type	Hard_Fault_Handler, %function
+ 163              	Hard_Fault_Handler:
+ 164              	.LFB62:
+  58:src/retarget.c **** 
+  59:src/retarget.c **** /**
+  60:src/retarget.c ****  * @brief       Hard fault handler
+  61:src/retarget.c ****  * @param[in]   stack pointer points to the dumped registers in SRAM
+  62:src/retarget.c ****  * @return      None
+  63:src/retarget.c ****  * @details     Replace while(1) at the end of this function with chip reset if WDT is not enabled 
+  64:src/retarget.c ****  */
+  65:src/retarget.c **** void Hard_Fault_Handler(uint32_t stack[])
+  66:src/retarget.c **** {
+ 165              		.loc 1 66 0
+ 166              		.cfi_startproc
+ 167              		@ args = 0, pretend = 0, frame = 8
+ 168              		@ frame_needed = 1, uses_anonymous_args = 0
+ 169 00b0 80B5     		push	{r7, lr}
+ 170              	.LCFI3:
+ 171              		.cfi_def_cfa_offset 8
+ 172              		.cfi_offset 7, -8
+ 173              		.cfi_offset 14, -4
+ 174 00b2 82B0     		sub	sp, sp, #8
+ 175              	.LCFI4:
+ 176              		.cfi_def_cfa_offset 16
+ 177 00b4 00AF     		add	r7, sp, #0
+ 178              	.LCFI5:
+ 179              		.cfi_def_cfa_register 7
+ 180 00b6 7860     		str	r0, [r7, #4]
+  67:src/retarget.c ****     printf("In Hard Fault Handler\n");
+ 181              		.loc 1 67 0
+ 182 00b8 044B     		ldr	r3, .L6
+ 183 00ba 1800     		movs	r0, r3
+ 184 00bc FFF7FEFF 		bl	puts
+  68:src/retarget.c **** 
+  69:src/retarget.c ****     stackDump(stack);
+ 185              		.loc 1 69 0
+ 186 00c0 7B68     		ldr	r3, [r7, #4]
+ 187 00c2 1800     		movs	r0, r3
+ 188 00c4 FFF79CFF 		bl	stackDump
+ 189              	.L5:
+  70:src/retarget.c **** 
+  71:src/retarget.c ****     // Replace while(1) with chip reset if WDT is not enabled for end product
+  72:src/retarget.c ****     while(1);
+ 190              		.loc 1 72 0 discriminator 1
+ 191 00c8 FEE7     		b	.L5
+ 192              	.L7:
+ 193 00ca C046     		.align	2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 6
+
+
+ 194              	.L6:
+ 195 00cc 60000000 		.word	.LC16
+ 196              		.cfi_endproc
+ 197              	.LFE62:
+ 198              		.size	Hard_Fault_Handler, .-Hard_Fault_Handler
+ 199              		.align	2
+ 200              		.global	SendChar_ToUART
+ 201              		.code	16
+ 202              		.thumb_func
+ 203              		.type	SendChar_ToUART, %function
+ 204              	SendChar_ToUART:
+ 205              	.LFB63:
+  73:src/retarget.c ****     //SYS->IPRSTC1 = SYS_IPRSTC1_CHIP_RST_Msk;
+  74:src/retarget.c **** }
+  75:src/retarget.c **** 
+  76:src/retarget.c **** /*-------------------------------------------------------------------------------------------------
+  77:src/retarget.c **** /* Routine to write a char                                                                         
+  78:src/retarget.c **** /*-------------------------------------------------------------------------------------------------
+  79:src/retarget.c **** 
+  80:src/retarget.c **** #if defined(DEBUG_ENABLE_SEMIHOST)
+  81:src/retarget.c **** /* The static buffer is used to speed up the semihost */
+  82:src/retarget.c **** static char g_buf[16];
+  83:src/retarget.c **** static char g_buf_len = 0;
+  84:src/retarget.c **** 
+  85:src/retarget.c **** # if defined(__ICCARM__)
+  86:src/retarget.c **** 
+  87:src/retarget.c **** 
+  88:src/retarget.c **** void SH_End(void)
+  89:src/retarget.c **** {
+  90:src/retarget.c ****     asm("MOVS   R0,#1 \n"        //; Set return value to 1
+  91:src/retarget.c ****         "BX     lr    \n"            //; Return
+  92:src/retarget.c ****        );
+  93:src/retarget.c **** }
+  94:src/retarget.c **** 
+  95:src/retarget.c **** void SH_ICE(void)
+  96:src/retarget.c **** {
+  97:src/retarget.c ****   asm("CMP   R2,#0   \n"
+  98:src/retarget.c ****       "BEQ   SH_End  \n"
+  99:src/retarget.c ****       "STR   R0,[R2] \n"       //; Save the return value to *pn32Out_R0
+ 100:src/retarget.c ****      );
+ 101:src/retarget.c **** }
+ 102:src/retarget.c **** 
+ 103:src/retarget.c **** /**
+ 104:src/retarget.c ****  *
+ 105:src/retarget.c ****  * @brief      The function to process semihosted command
+ 106:src/retarget.c ****  * @param[in]  n32In_R0  : semihost register 0
+ 107:src/retarget.c ****  * @param[in]  n32In_R1  : semihost register 1
+ 108:src/retarget.c ****  * @param[out] pn32Out_R0: semihost register 0
+ 109:src/retarget.c ****  * @retval     0: No ICE debug
+ 110:src/retarget.c ****  * @retval     1: ICE debug
+ 111:src/retarget.c ****  *
+ 112:src/retarget.c ****  */
+ 113:src/retarget.c **** int32_t SH_DoCommand(int32_t n32In_R0, int32_t n32In_R1, int32_t *pn32Out_R0)
+ 114:src/retarget.c **** {
+ 115:src/retarget.c ****     asm("BKPT   0xAB   \n"       //; This instruction will cause ICE trap or system HardFault
+ 116:src/retarget.c ****         "B      SH_ICE \n"
+ 117:src/retarget.c ****         "SH_HardFault: \n"       //; Captured by HardFault
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 7
+
+
+ 118:src/retarget.c ****         "MOVS   R0,#0  \n"       //; Set return value to 0
+ 119:src/retarget.c ****         "BX     lr     \n"       //; Return
+ 120:src/retarget.c ****         );
+ 121:src/retarget.c **** 
+ 122:src/retarget.c ****     return 1;                    //; Return 1 when it is trap by ICE
+ 123:src/retarget.c **** }
+ 124:src/retarget.c **** 
+ 125:src/retarget.c **** /**
+ 126:src/retarget.c ****  * @brief       Get LR value and branch to Hard_Fault_Handler function
+ 127:src/retarget.c ****  * @param       None
+ 128:src/retarget.c ****  * @return      None
+ 129:src/retarget.c ****  * @details     This function is use to get LR value and branch to Hard_Fault_Handler function.
+ 130:src/retarget.c ****  */
+ 131:src/retarget.c **** void Get_LR_and_Branch(void)
+ 132:src/retarget.c **** {
+ 133:src/retarget.c ****     asm("MOV     R1, LR               \n" //; LR current value
+ 134:src/retarget.c ****         "B       Hard_Fault_Handler   \n"
+ 135:src/retarget.c ****        );
+ 136:src/retarget.c **** }
+ 137:src/retarget.c **** 
+ 138:src/retarget.c **** /**
+ 139:src/retarget.c ****  * @brief       Get MSP value and branch to Get_LR_and_Branch function
+ 140:src/retarget.c ****  * @param       None
+ 141:src/retarget.c ****  * @return      None
+ 142:src/retarget.c ****  * @details     This function is use to get stack pointer value and branch to Get_LR_and_Branch fun
+ 143:src/retarget.c ****  */
+ 144:src/retarget.c **** void Stack_Use_MSP(void)
+ 145:src/retarget.c **** {
+ 146:src/retarget.c ****     asm("MRS     R0, MSP           \n" //; read MSP
+ 147:src/retarget.c ****         "B       Get_LR_and_Branch \n"
+ 148:src/retarget.c ****        );
+ 149:src/retarget.c **** }
+ 150:src/retarget.c **** 
+ 151:src/retarget.c **** /**
+ 152:src/retarget.c ****  * @brief       Get stack pointer value and branch to Get_LR_and_Branch function
+ 153:src/retarget.c ****  * @param       None
+ 154:src/retarget.c ****  * @return      None
+ 155:src/retarget.c ****  * @details     This function is use to get stack pointer value and branch to Get_LR_and_Branch fun
+ 156:src/retarget.c ****  */
+ 157:src/retarget.c **** void HardFault_Handler_Ret(void)
+ 158:src/retarget.c **** {
+ 159:src/retarget.c ****     asm("MOVS    r0, #4                        \n"
+ 160:src/retarget.c ****         "MOV     r1, LR                        \n"
+ 161:src/retarget.c ****         "TST     r0, r1                        \n" //; check LR bit 2
+ 162:src/retarget.c ****         "BEQ     Stack_Use_MSP                 \n" //; stack use MSP
+ 163:src/retarget.c ****         "MRS     R0, PSP                       \n" //; stack use PSP, read PSP
+ 164:src/retarget.c ****         "B       Get_LR_and_Branch             \n"
+ 165:src/retarget.c ****        );
+ 166:src/retarget.c **** }
+ 167:src/retarget.c **** 
+ 168:src/retarget.c **** /**
+ 169:src/retarget.c ****  * @brief    This function is implemented to support semihost
+ 170:src/retarget.c ****  * @param    None
+ 171:src/retarget.c ****  * @returns  None
+ 172:src/retarget.c ****  * @details  This function is implement to support semihost message print.
+ 173:src/retarget.c ****  *
+ 174:src/retarget.c ****  */
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 8
+
+
+ 175:src/retarget.c **** void SP_Read_Ready(void)
+ 176:src/retarget.c **** {
+ 177:src/retarget.c ****     asm("LDR     R1, [R0, #24] \n"        //; Get previous PC
+ 178:src/retarget.c ****         "LDRH    R3, [R1]      \n"        //; Get instruction
+ 179:src/retarget.c ****         "LDR     R2, [pc, #8]  \n"        //; The special BKPT instruction
+ 180:src/retarget.c ****         "CMP     R3, R2        \n"        //; Test if the instruction at previous PC is BKPT
+ 181:src/retarget.c ****         "BNE     HardFault_Handler_Ret \n" //; Not BKPT
+ 182:src/retarget.c ****         "ADDS    R1, #4        \n"        //; Skip BKPT and next line
+ 183:src/retarget.c ****         "STR     R1, [R0, #24] \n"        //; Save previous PC
+ 184:src/retarget.c ****         "BX      lr            \n"        //; Return
+ 185:src/retarget.c ****         "DCD     0xBEAB        \n"        //; BKPT instruction code
+ 186:src/retarget.c ****         "B       HardFault_Handler_Ret \n"
+ 187:src/retarget.c ****        );
+ 188:src/retarget.c **** }
+ 189:src/retarget.c **** 
+ 190:src/retarget.c **** /**
+ 191:src/retarget.c ****  * @brief       Get stack pointer value and branch to Get_LR_and_Branch function
+ 192:src/retarget.c ****  * @param       None
+ 193:src/retarget.c ****  * @return      None
+ 194:src/retarget.c ****  * @details     This function is use to get stack pointer value and branch to Get_LR_and_Branch fun
+ 195:src/retarget.c ****  */
+ 196:src/retarget.c **** void SP_is_PSP(void)
+ 197:src/retarget.c **** {
+ 198:src/retarget.c ****     asm(
+ 199:src/retarget.c ****         "MRS     R0, PSP       \n"      //; stack use PSP, read PSP
+ 200:src/retarget.c ****         "B       Get_LR_and_Branch    \n"
+ 201:src/retarget.c ****     
+ 202:src/retarget.c ****        );
+ 203:src/retarget.c **** }
+ 204:src/retarget.c **** 
+ 205:src/retarget.c **** /**
+ 206:src/retarget.c ****  * @brief    This HardFault handler is implemented to support semihost
+ 207:src/retarget.c ****  *
+ 208:src/retarget.c ****  * @param    None
+ 209:src/retarget.c ****  *
+ 210:src/retarget.c ****  * @returns  None
+ 211:src/retarget.c ****  *
+ 212:src/retarget.c ****  * @details  This function is implement to support semihost message print.
+ 213:src/retarget.c ****  *
+ 214:src/retarget.c ****  */
+ 215:src/retarget.c **** void HardFault_Handler (void)
+ 216:src/retarget.c **** {
+ 217:src/retarget.c ****     asm("MOV     R0, lr        \n"
+ 218:src/retarget.c ****         "LSLS    R0, #29       \n"        //; Check bit 2
+ 219:src/retarget.c ****         "BMI     SP_is_PSP     \n"        //; previous stack is PSP
+ 220:src/retarget.c ****         "MRS     R0, MSP       \n"        //; previous stack is MSP, read MSP
+ 221:src/retarget.c ****         "B       SP_Read_Ready \n"
+ 222:src/retarget.c ****        );
+ 223:src/retarget.c **** 
+ 224:src/retarget.c ****     while(1);
+ 225:src/retarget.c **** }
+ 226:src/retarget.c **** 
+ 227:src/retarget.c **** 
+ 228:src/retarget.c **** # else // defined(__ICCARM__)
+ 229:src/retarget.c **** 
+ 230:src/retarget.c **** 
+ 231:src/retarget.c **** /**
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 9
+
+
+ 232:src/retarget.c ****  * @brief    This HardFault handler is implemented to support semihost
+ 233:src/retarget.c ****  * @param    None
+ 234:src/retarget.c ****  * @returns  None
+ 235:src/retarget.c ****  * @details  This function is implement to support semihost message print.
+ 236:src/retarget.c ****  *
+ 237:src/retarget.c ****  */
+ 238:src/retarget.c **** __asm int32_t HardFault_Handler(void)
+ 239:src/retarget.c **** {
+ 240:src/retarget.c ****     MOV     R0, LR
+ 241:src/retarget.c ****     LSLS    R0, #29               //; Check bit 2
+ 242:src/retarget.c ****     BMI     SP_is_PSP             //; previous stack is PSP
+ 243:src/retarget.c ****     MRS     R0, MSP               //; previous stack is MSP, read MSP
+ 244:src/retarget.c ****     B       SP_Read_Ready
+ 245:src/retarget.c **** SP_is_PSP
+ 246:src/retarget.c ****     MRS     R0, PSP               //; Read PSP
+ 247:src/retarget.c **** 
+ 248:src/retarget.c **** SP_Read_Ready
+ 249:src/retarget.c ****     LDR     R1, [R0, #24]         //; Get previous PC
+ 250:src/retarget.c ****     LDRH    R3, [R1]              //; Get instruction
+ 251:src/retarget.c ****     LDR     R2, =0xBEAB           //; The special BKPT instruction
+ 252:src/retarget.c ****     CMP     R3, R2                //; Test if the instruction at previous PC is BKPT
+ 253:src/retarget.c ****     BNE     HardFault_Handler_Ret //; Not BKPT
+ 254:src/retarget.c **** 
+ 255:src/retarget.c ****     ADDS    R1, #4                //; Skip BKPT and next line
+ 256:src/retarget.c ****     STR     R1, [R0, #24]         //; Save previous PC
+ 257:src/retarget.c **** 
+ 258:src/retarget.c ****     BX      LR                    //; Return
+ 259:src/retarget.c **** HardFault_Handler_Ret
+ 260:src/retarget.c **** 
+ 261:src/retarget.c ****     /* TODO: Implement your own hard fault handler here. */
+ 262:src/retarget.c ****     MOVS    r0, #4
+ 263:src/retarget.c ****     MOV     r1, LR
+ 264:src/retarget.c ****     TST     r0, r1                          //; check LR bit 2  
+ 265:src/retarget.c ****     BEQ     Stack_Use_MSP                   //; stack use MSP
+ 266:src/retarget.c ****     MRS     R0, PSP ;stack use PSP          //; stack use PSP, read PSP
+ 267:src/retarget.c ****     B       Get_LR_and_Branch
+ 268:src/retarget.c **** Stack_Use_MSP
+ 269:src/retarget.c ****     MRS     R0, MSP ; stack use MSP         //; read MSP
+ 270:src/retarget.c **** Get_LR_and_Branch
+ 271:src/retarget.c ****     MOV     R1, LR ; LR current value       //; LR current value       
+ 272:src/retarget.c ****     LDR     R2,=__cpp(Hard_Fault_Handler)   //; branch to Hard_Fault_Handler 
+ 273:src/retarget.c ****     BX      R2
+ 274:src/retarget.c **** 
+ 275:src/retarget.c ****     B       .
+ 276:src/retarget.c **** 
+ 277:src/retarget.c ****                  ALIGN
+ 278:src/retarget.c **** }
+ 279:src/retarget.c **** 
+ 280:src/retarget.c **** /**
+ 281:src/retarget.c ****  *
+ 282:src/retarget.c ****  * @brief      The function to process semihosted command
+ 283:src/retarget.c ****  * @param[in]  n32In_R0  : semihost register 0
+ 284:src/retarget.c ****  * @param[in]  n32In_R1  : semihost register 1
+ 285:src/retarget.c ****  * @param[out] pn32Out_R0: semihost register 0
+ 286:src/retarget.c ****  * @retval     0: No ICE debug
+ 287:src/retarget.c ****  * @retval     1: ICE debug
+ 288:src/retarget.c ****  *
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 10
+
+
+ 289:src/retarget.c ****  */
+ 290:src/retarget.c **** __asm int32_t SH_DoCommand(int32_t n32In_R0, int32_t n32In_R1, int32_t *pn32Out_R0)
+ 291:src/retarget.c **** {
+ 292:src/retarget.c ****     BKPT   0xAB          //; Wait ICE or HardFault
+ 293:src/retarget.c ****     //; ICE will step over BKPT directly
+ 294:src/retarget.c ****     //; HardFault will step BKPT and the next line
+ 295:src/retarget.c ****     B      SH_ICE
+ 296:src/retarget.c **** 
+ 297:src/retarget.c **** SH_HardFault             //; Captured by HardFault
+ 298:src/retarget.c ****     MOVS   R0, #0        //; Set return value to 0
+ 299:src/retarget.c ****     BX     lr            //; Return
+ 300:src/retarget.c **** 
+ 301:src/retarget.c **** SH_ICE                   //; Captured by ICE
+ 302:src/retarget.c ****     //; Save return value
+ 303:src/retarget.c ****     CMP    R2, #0
+ 304:src/retarget.c ****     BEQ    SH_End
+ 305:src/retarget.c ****     STR    R0, [R2]      //; Save the return value to *pn32Out_R0
+ 306:src/retarget.c **** 
+ 307:src/retarget.c **** SH_End
+ 308:src/retarget.c ****     MOVS   R0, #1        //; Set return value to 1
+ 309:src/retarget.c ****     BX     lr            //; Return
+ 310:src/retarget.c **** }
+ 311:src/retarget.c **** 
+ 312:src/retarget.c **** # endif 
+ 313:src/retarget.c ****  
+ 314:src/retarget.c **** 
+ 315:src/retarget.c **** #else // defined(DEBUG_ENABLE_SEMIHOST)
+ 316:src/retarget.c **** 
+ 317:src/retarget.c **** # if defined(__ICCARM__)
+ 318:src/retarget.c **** 
+ 319:src/retarget.c **** void Get_LR_and_Branch(void)
+ 320:src/retarget.c **** {
+ 321:src/retarget.c ****     asm("MOV     R1, LR                  \n" //; LR current value
+ 322:src/retarget.c ****         "B       Hard_Fault_Handler      \n"
+ 323:src/retarget.c ****        );
+ 324:src/retarget.c **** }
+ 325:src/retarget.c **** 
+ 326:src/retarget.c **** void Stack_Use_MSP(void)
+ 327:src/retarget.c **** {
+ 328:src/retarget.c ****     asm("MRS     R0, MSP           \n" //; read MSP
+ 329:src/retarget.c ****         "B       Get_LR_and_Branch \n"
+ 330:src/retarget.c ****        );
+ 331:src/retarget.c **** }
+ 332:src/retarget.c **** 
+ 333:src/retarget.c **** /**
+ 334:src/retarget.c ****  * @brief    This HardFault handler is implemented to show r0, r1, r2, r3, r12, lr, pc, psr
+ 335:src/retarget.c ****  *
+ 336:src/retarget.c ****  * @param    None
+ 337:src/retarget.c ****  *
+ 338:src/retarget.c ****  * @returns  None
+ 339:src/retarget.c ****  *
+ 340:src/retarget.c ****  * @details  This function is implement to print r0, r1, r2, r3, r12, lr, pc, psr.
+ 341:src/retarget.c ****  *
+ 342:src/retarget.c ****  */
+ 343:src/retarget.c **** void HardFault_Handler(void)
+ 344:src/retarget.c **** {
+ 345:src/retarget.c ****     asm("MOVS    r0, #4                        \n"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 11
+
+
+ 346:src/retarget.c ****         "MOV     r1, LR                        \n"
+ 347:src/retarget.c ****         "TST     r0, r1                        \n" //; check LR bit 2
+ 348:src/retarget.c ****         "BEQ     Stack_Use_MSP                 \n" //; stack use MSP
+ 349:src/retarget.c ****         "MRS     R0, PSP                       \n" //; stack use PSP, read PSP
+ 350:src/retarget.c ****         "B       Get_LR_and_Branch             \n"
+ 351:src/retarget.c ****        );
+ 352:src/retarget.c **** 
+ 353:src/retarget.c ****     while(1);
+ 354:src/retarget.c **** }
+ 355:src/retarget.c **** 
+ 356:src/retarget.c **** # else // defined(__ICCARM__)
+ 357:src/retarget.c **** 
+ 358:src/retarget.c **** # if 0 //(__ARMCC_VERSION < 6040000)
+ 359:src/retarget.c **** 
+ 360:src/retarget.c **** /**
+ 361:src/retarget.c ****  * @brief    This HardFault handler is implemented to show r0, r1, r2, r3, r12, lr, pc, psr
+ 362:src/retarget.c ****  *
+ 363:src/retarget.c ****  * @param    None
+ 364:src/retarget.c ****  *
+ 365:src/retarget.c ****  * @return   None
+ 366:src/retarget.c ****  *
+ 367:src/retarget.c ****  * @details  The function extracts the location of stack frame and passes it to Hard_Fault_Handler 
+ 368:src/retarget.c ****  *
+ 369:src/retarget.c ****  */
+ 370:src/retarget.c **** __asm int32_t HardFault_Handler(void)
+ 371:src/retarget.c **** {
+ 372:src/retarget.c ****     MOVS    r0, #4  
+ 373:src/retarget.c ****     MOV     r1, LR
+ 374:src/retarget.c ****     TST     r0, r1          //; check LR bit 2                 
+ 375:src/retarget.c ****     BEQ     Stack_Use_MSP   //; stack use MSP
+ 376:src/retarget.c ****     MRS     R0, PSP         //; stack use PSP, read PSP
+ 377:src/retarget.c ****     B       Get_LR_and_Branch
+ 378:src/retarget.c **** Stack_Use_MSP
+ 379:src/retarget.c ****     MRS     R0, MSP         //; read MSP
+ 380:src/retarget.c **** Get_LR_and_Branch
+ 381:src/retarget.c ****     MOV     R1, LR          //; LR current value
+ 382:src/retarget.c ****     LDR     R2,=__cpp(Hard_Fault_Handler) //; branch to Hard_Fault_Handler 
+ 383:src/retarget.c ****     BX      R2
+ 384:src/retarget.c **** }
+ 385:src/retarget.c **** # endif 
+ 386:src/retarget.c **** # endif // defined(__ICCARM__)
+ 387:src/retarget.c **** 
+ 388:src/retarget.c **** #endif // defined(DEBUG_ENABLE_SEMIHOST)
+ 389:src/retarget.c **** 
+ 390:src/retarget.c **** 
+ 391:src/retarget.c **** /**
+ 392:src/retarget.c ****  * @brief    Routine to send a char
+ 393:src/retarget.c ****  *
+ 394:src/retarget.c ****  * @param[in] ch  A character data writes to debug port
+ 395:src/retarget.c ****  *
+ 396:src/retarget.c ****  * @returns  Send value from UART debug port
+ 397:src/retarget.c ****  *
+ 398:src/retarget.c ****  * @details  Send a target char to UART debug port .
+ 399:src/retarget.c ****  */
+ 400:src/retarget.c **** #ifndef NONBLOCK_PRINTF
+ 401:src/retarget.c **** void SendChar_ToUART(int ch)
+ 402:src/retarget.c **** {
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 12
+
+
+ 206              		.loc 1 402 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 8
+ 209              		@ frame_needed = 1, uses_anonymous_args = 0
+ 210 00d0 80B5     		push	{r7, lr}
+ 211              	.LCFI6:
+ 212              		.cfi_def_cfa_offset 8
+ 213              		.cfi_offset 7, -8
+ 214              		.cfi_offset 14, -4
+ 215 00d2 82B0     		sub	sp, sp, #8
+ 216              	.LCFI7:
+ 217              		.cfi_def_cfa_offset 16
+ 218 00d4 00AF     		add	r7, sp, #0
+ 219              	.LCFI8:
+ 220              		.cfi_def_cfa_register 7
+ 221 00d6 7860     		str	r0, [r7, #4]
+ 403:src/retarget.c **** 
+ 404:src/retarget.c ****     while(DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
+ 222              		.loc 1 404 0
+ 223 00d8 C046     		nop
+ 224              	.L9:
+ 225              		.loc 1 404 0 is_stmt 0 discriminator 1
+ 226 00da 0E4B     		ldr	r3, .L13
+ 227 00dc 9A69     		ldr	r2, [r3, #24]
+ 228 00de 8023     		movs	r3, #128
+ 229 00e0 1B04     		lsls	r3, r3, #16
+ 230 00e2 1340     		ands	r3, r2
+ 231 00e4 002B     		cmp	r3, #0
+ 232 00e6 F8D1     		bne	.L9
+ 405:src/retarget.c ****     DEBUG_PORT->DAT = ch;
+ 233              		.loc 1 405 0 is_stmt 1
+ 234 00e8 0A4B     		ldr	r3, .L13
+ 235 00ea 7A68     		ldr	r2, [r7, #4]
+ 236 00ec 1A60     		str	r2, [r3]
+ 406:src/retarget.c ****     if(ch == '\n')
+ 237              		.loc 1 406 0
+ 238 00ee 7B68     		ldr	r3, [r7, #4]
+ 239 00f0 0A2B     		cmp	r3, #10
+ 240 00f2 0AD1     		bne	.L12
+ 407:src/retarget.c ****     {
+ 408:src/retarget.c ****         while(DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
+ 241              		.loc 1 408 0
+ 242 00f4 C046     		nop
+ 243              	.L11:
+ 244              		.loc 1 408 0 is_stmt 0 discriminator 1
+ 245 00f6 074B     		ldr	r3, .L13
+ 246 00f8 9A69     		ldr	r2, [r3, #24]
+ 247 00fa 8023     		movs	r3, #128
+ 248 00fc 1B04     		lsls	r3, r3, #16
+ 249 00fe 1340     		ands	r3, r2
+ 250 0100 002B     		cmp	r3, #0
+ 251 0102 F8D1     		bne	.L11
+ 409:src/retarget.c ****         DEBUG_PORT->DAT = '\r';
+ 252              		.loc 1 409 0 is_stmt 1
+ 253 0104 034B     		ldr	r3, .L13
+ 254 0106 0D22     		movs	r2, #13
+ 255 0108 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 13
+
+
+ 256              	.L12:
+ 410:src/retarget.c ****     }
+ 411:src/retarget.c **** }
+ 257              		.loc 1 411 0
+ 258 010a C046     		nop
+ 259 010c BD46     		mov	sp, r7
+ 260 010e 02B0     		add	sp, sp, #8
+ 261              		@ sp needed
+ 262 0110 80BD     		pop	{r7, pc}
+ 263              	.L14:
+ 264 0112 C046     		.align	2
+ 265              	.L13:
+ 266 0114 00000750 		.word	1342636032
+ 267              		.cfi_endproc
+ 268              	.LFE63:
+ 269              		.size	SendChar_ToUART, .-SendChar_ToUART
+ 270              		.align	2
+ 271              		.global	_write
+ 272              		.code	16
+ 273              		.thumb_func
+ 274              		.type	_write, %function
+ 275              	_write:
+ 276              	.LFB64:
+ 412:src/retarget.c **** 
+ 413:src/retarget.c **** #else
+ 414:src/retarget.c **** /* Non-block implement of send char */
+ 415:src/retarget.c **** # define BUF_SIZE    512
+ 416:src/retarget.c **** void SendChar_ToUART(int ch)
+ 417:src/retarget.c **** {
+ 418:src/retarget.c ****     static uint8_t u8Buf[BUF_SIZE] = {0};
+ 419:src/retarget.c ****     static int32_t i32Head = 0;
+ 420:src/retarget.c ****     static int32_t i32Tail = 0;
+ 421:src/retarget.c ****     int32_t i32Tmp;
+ 422:src/retarget.c ****     
+ 423:src/retarget.c ****     /* Only flush the data in buffer to UART when ch == 0 */
+ 424:src/retarget.c ****     if(ch)
+ 425:src/retarget.c ****     {
+ 426:src/retarget.c ****         // Push char
+ 427:src/retarget.c ****         i32Tmp = i32Head+1;
+ 428:src/retarget.c ****         if(i32Tmp > BUF_SIZE) i32Tmp = 0;
+ 429:src/retarget.c ****         if(i32Tmp != i32Tail)
+ 430:src/retarget.c ****         {
+ 431:src/retarget.c ****             u8Buf[i32Head] = ch;
+ 432:src/retarget.c ****             i32Head = i32Tmp;
+ 433:src/retarget.c ****         }
+ 434:src/retarget.c ****         
+ 435:src/retarget.c ****         if(ch == '\n')
+ 436:src/retarget.c ****         {
+ 437:src/retarget.c ****             i32Tmp = i32Head+1;
+ 438:src/retarget.c ****             if(i32Tmp > BUF_SIZE) i32Tmp = 0;
+ 439:src/retarget.c ****             if(i32Tmp != i32Tail)
+ 440:src/retarget.c ****             {
+ 441:src/retarget.c ****                 u8Buf[i32Head] = '\r';
+ 442:src/retarget.c ****                 i32Head = i32Tmp;
+ 443:src/retarget.c ****             }
+ 444:src/retarget.c ****         }
+ 445:src/retarget.c ****     }
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 14
+
+
+ 446:src/retarget.c ****     else
+ 447:src/retarget.c ****     {
+ 448:src/retarget.c ****         if(i32Tail == i32Head)
+ 449:src/retarget.c ****             return;
+ 450:src/retarget.c ****     }
+ 451:src/retarget.c ****     
+ 452:src/retarget.c ****     // pop char
+ 453:src/retarget.c ****     do
+ 454:src/retarget.c ****     {
+ 455:src/retarget.c ****         i32Tmp = i32Tail + 1;
+ 456:src/retarget.c ****         if(i32Tmp > BUF_SIZE) i32Tmp = 0;
+ 457:src/retarget.c ****         
+ 458:src/retarget.c ****         if((DEBUG_PORT->FSR & UART_FSR_TX_FULL_Msk) == 0)
+ 459:src/retarget.c ****         {
+ 460:src/retarget.c ****             DEBUG_PORT->DATA = u8Buf[i32Tail];
+ 461:src/retarget.c ****             i32Tail = i32Tmp;
+ 462:src/retarget.c ****         }
+ 463:src/retarget.c ****         else
+ 464:src/retarget.c ****             break; // FIFO full
+ 465:src/retarget.c ****     }while(i32Tail != i32Head);
+ 466:src/retarget.c **** }
+ 467:src/retarget.c **** #endif
+ 468:src/retarget.c **** 
+ 469:src/retarget.c **** #if 1   //terry
+ 470:src/retarget.c **** int _write(int file, char *ptr, int len)
+ 471:src/retarget.c **** {
+ 277              		.loc 1 471 0
+ 278              		.cfi_startproc
+ 279              		@ args = 0, pretend = 0, frame = 24
+ 280              		@ frame_needed = 1, uses_anonymous_args = 0
+ 281 0118 80B5     		push	{r7, lr}
+ 282              	.LCFI9:
+ 283              		.cfi_def_cfa_offset 8
+ 284              		.cfi_offset 7, -8
+ 285              		.cfi_offset 14, -4
+ 286 011a 86B0     		sub	sp, sp, #24
+ 287              	.LCFI10:
+ 288              		.cfi_def_cfa_offset 32
+ 289 011c 00AF     		add	r7, sp, #0
+ 290              	.LCFI11:
+ 291              		.cfi_def_cfa_register 7
+ 292 011e F860     		str	r0, [r7, #12]
+ 293 0120 B960     		str	r1, [r7, #8]
+ 294 0122 7A60     		str	r2, [r7, #4]
+ 472:src/retarget.c ****     int i;
+ 473:src/retarget.c ****     file = file;
+ 474:src/retarget.c ****     for (i = 0; i < len; i++)
+ 295              		.loc 1 474 0
+ 296 0124 0023     		movs	r3, #0
+ 297 0126 7B61     		str	r3, [r7, #20]
+ 298 0128 09E0     		b	.L16
+ 299              	.L17:
+ 475:src/retarget.c ****     {
+ 476:src/retarget.c ****         SendChar_ToUART(*ptr++);
+ 300              		.loc 1 476 0 discriminator 3
+ 301 012a BB68     		ldr	r3, [r7, #8]
+ 302 012c 5A1C     		adds	r2, r3, #1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 15
+
+
+ 303 012e BA60     		str	r2, [r7, #8]
+ 304 0130 1B78     		ldrb	r3, [r3]
+ 305 0132 1800     		movs	r0, r3
+ 306 0134 FFF7FEFF 		bl	SendChar_ToUART
+ 474:src/retarget.c ****     {
+ 307              		.loc 1 474 0 discriminator 3
+ 308 0138 7B69     		ldr	r3, [r7, #20]
+ 309 013a 0133     		adds	r3, r3, #1
+ 310 013c 7B61     		str	r3, [r7, #20]
+ 311              	.L16:
+ 474:src/retarget.c ****     {
+ 312              		.loc 1 474 0 is_stmt 0 discriminator 1
+ 313 013e 7A69     		ldr	r2, [r7, #20]
+ 314 0140 7B68     		ldr	r3, [r7, #4]
+ 315 0142 9A42     		cmp	r2, r3
+ 316 0144 F1DB     		blt	.L17
+ 477:src/retarget.c ****     }
+ 478:src/retarget.c ****     return len;
+ 317              		.loc 1 478 0 is_stmt 1
+ 318 0146 7B68     		ldr	r3, [r7, #4]
+ 479:src/retarget.c **** }
+ 319              		.loc 1 479 0
+ 320 0148 1800     		movs	r0, r3
+ 321 014a BD46     		mov	sp, r7
+ 322 014c 06B0     		add	sp, sp, #24
+ 323              		@ sp needed
+ 324 014e 80BD     		pop	{r7, pc}
+ 325              		.cfi_endproc
+ 326              	.LFE64:
+ 327              		.size	_write, .-_write
+ 328              		.align	2
+ 329              		.global	_read
+ 330              		.code	16
+ 331              		.thumb_func
+ 332              		.type	_read, %function
+ 333              	_read:
+ 334              	.LFB65:
+ 480:src/retarget.c **** 
+ 481:src/retarget.c **** int _read(int file, char *ptr, int len) 
+ 482:src/retarget.c **** {
+ 335              		.loc 1 482 0
+ 336              		.cfi_startproc
+ 337              		@ args = 0, pretend = 0, frame = 24
+ 338              		@ frame_needed = 1, uses_anonymous_args = 0
+ 339 0150 80B5     		push	{r7, lr}
+ 340              	.LCFI12:
+ 341              		.cfi_def_cfa_offset 8
+ 342              		.cfi_offset 7, -8
+ 343              		.cfi_offset 14, -4
+ 344 0152 86B0     		sub	sp, sp, #24
+ 345              	.LCFI13:
+ 346              		.cfi_def_cfa_offset 32
+ 347 0154 00AF     		add	r7, sp, #0
+ 348              	.LCFI14:
+ 349              		.cfi_def_cfa_register 7
+ 350 0156 F860     		str	r0, [r7, #12]
+ 351 0158 B960     		str	r1, [r7, #8]
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 16
+
+
+ 352 015a 7A60     		str	r2, [r7, #4]
+ 483:src/retarget.c ****     int i;
+ 484:src/retarget.c **** 
+ 485:src/retarget.c ****     if(len == 0)
+ 353              		.loc 1 485 0
+ 354 015c 7B68     		ldr	r3, [r7, #4]
+ 355 015e 0BB9     		cbnz	r3, .L28
+ 486:src/retarget.c ****         return 0;
+ 356              		.loc 1 486 0
+ 357 0160 0023     		movs	r3, #0
+ 358 0162 28E0     		b	.L21
+ 359              	.L28:
+ 487:src/retarget.c **** 
+ 488:src/retarget.c ****     while((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) != 0);
+ 360              		.loc 1 488 0
+ 361 0164 C046     		nop
+ 362              	.L22:
+ 363              		.loc 1 488 0 is_stmt 0 discriminator 1
+ 364 0166 164B     		ldr	r3, .L29
+ 365 0168 9B69     		ldr	r3, [r3, #24]
+ 366 016a 44F20002 		movw	r2, #16384
+ 367 016e 1340     		ands	r3, r2
+ 368 0170 002B     		cmp	r3, #0
+ 369 0172 F8D1     		bne	.L22
+ 489:src/retarget.c ****     *ptr++ = (DEBUG_PORT->DAT);
+ 370              		.loc 1 489 0 is_stmt 1
+ 371 0174 BB68     		ldr	r3, [r7, #8]
+ 372 0176 5A1C     		adds	r2, r3, #1
+ 373 0178 BA60     		str	r2, [r7, #8]
+ 374 017a 114A     		ldr	r2, .L29
+ 375 017c 1268     		ldr	r2, [r2]
+ 376 017e D2B2     		uxtb	r2, r2
+ 377 0180 1A70     		strb	r2, [r3]
+ 490:src/retarget.c **** 
+ 491:src/retarget.c ****     for(i = 1; i < len; i++) 
+ 378              		.loc 1 491 0
+ 379 0182 0123     		movs	r3, #1
+ 380 0184 7B61     		str	r3, [r7, #20]
+ 381 0186 0FE0     		b	.L23
+ 382              	.L26:
+ 492:src/retarget.c ****     {
+ 493:src/retarget.c ****         if((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) != 0) {
+ 383              		.loc 1 493 0
+ 384 0188 0D4B     		ldr	r3, .L29
+ 385 018a 9B69     		ldr	r3, [r3, #24]
+ 386 018c 44F20002 		movw	r2, #16384
+ 387 0190 1340     		ands	r3, r2
+ 388 0192 73B9     		cbnz	r3, .L27
+ 494:src/retarget.c ****             break;
+ 495:src/retarget.c ****         }
+ 496:src/retarget.c ****         *ptr++ = (DEBUG_PORT->DAT);
+ 389              		.loc 1 496 0 discriminator 2
+ 390 0194 BB68     		ldr	r3, [r7, #8]
+ 391 0196 5A1C     		adds	r2, r3, #1
+ 392 0198 BA60     		str	r2, [r7, #8]
+ 393 019a 094A     		ldr	r2, .L29
+ 394 019c 1268     		ldr	r2, [r2]
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 17
+
+
+ 395 019e D2B2     		uxtb	r2, r2
+ 396 01a0 1A70     		strb	r2, [r3]
+ 491:src/retarget.c ****     {
+ 397              		.loc 1 491 0 discriminator 2
+ 398 01a2 7B69     		ldr	r3, [r7, #20]
+ 399 01a4 0133     		adds	r3, r3, #1
+ 400 01a6 7B61     		str	r3, [r7, #20]
+ 401              	.L23:
+ 491:src/retarget.c ****     {
+ 402              		.loc 1 491 0 is_stmt 0 discriminator 1
+ 403 01a8 7A69     		ldr	r2, [r7, #20]
+ 404 01aa 7B68     		ldr	r3, [r7, #4]
+ 405 01ac 9A42     		cmp	r2, r3
+ 406 01ae EBDB     		blt	.L26
+ 407 01b0 00E0     		b	.L25
+ 408              	.L27:
+ 494:src/retarget.c ****             break;
+ 409              		.loc 1 494 0 is_stmt 1
+ 410 01b2 C046     		nop
+ 411              	.L25:
+ 497:src/retarget.c ****     }
+ 498:src/retarget.c ****     return i;
+ 412              		.loc 1 498 0
+ 413 01b4 7B69     		ldr	r3, [r7, #20]
+ 414              	.L21:
+ 499:src/retarget.c **** 
+ 500:src/retarget.c ****  /*    while(1)
+ 501:src/retarget.c ****     {
+ 502:src/retarget.c ****         if((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) == 0)
+ 503:src/retarget.c ****         {
+ 504:src/retarget.c ****             return (DEBUG_PORT->DAT);
+ 505:src/retarget.c ****         }
+ 506:src/retarget.c ****     }     */
+ 507:src/retarget.c **** }
+ 415              		.loc 1 507 0
+ 416 01b6 1800     		movs	r0, r3
+ 417 01b8 BD46     		mov	sp, r7
+ 418 01ba 06B0     		add	sp, sp, #24
+ 419              		@ sp needed
+ 420 01bc 80BD     		pop	{r7, pc}
+ 421              	.L30:
+ 422 01be C046     		.align	2
+ 423              	.L29:
+ 424 01c0 00000750 		.word	1342636032
+ 425              		.cfi_endproc
+ 426              	.LFE65:
+ 427              		.size	_read, .-_read
+ 428              		.align	2
+ 429              		.global	SendChar
+ 430              		.code	16
+ 431              		.thumb_func
+ 432              		.type	SendChar, %function
+ 433              	SendChar:
+ 434              	.LFB66:
+ 508:src/retarget.c **** #endif
+ 509:src/retarget.c **** 
+ 510:src/retarget.c **** /**
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 18
+
+
+ 511:src/retarget.c ****  * @brief    Routine to send a char
+ 512:src/retarget.c ****  *
+ 513:src/retarget.c ****  * @param[in] ch A character data writes to debug port
+ 514:src/retarget.c ****  *
+ 515:src/retarget.c ****  * @returns  Send value from UART debug port or semihost
+ 516:src/retarget.c ****  *
+ 517:src/retarget.c ****  * @details  Send a target char to UART debug port or semihost.
+ 518:src/retarget.c ****  */
+ 519:src/retarget.c **** void SendChar(int ch)
+ 520:src/retarget.c **** {
+ 435              		.loc 1 520 0
+ 436              		.cfi_startproc
+ 437              		@ args = 0, pretend = 0, frame = 8
+ 438              		@ frame_needed = 1, uses_anonymous_args = 0
+ 439 01c4 80B5     		push	{r7, lr}
+ 440              	.LCFI15:
+ 441              		.cfi_def_cfa_offset 8
+ 442              		.cfi_offset 7, -8
+ 443              		.cfi_offset 14, -4
+ 444 01c6 82B0     		sub	sp, sp, #8
+ 445              	.LCFI16:
+ 446              		.cfi_def_cfa_offset 16
+ 447 01c8 00AF     		add	r7, sp, #0
+ 448              	.LCFI17:
+ 449              		.cfi_def_cfa_register 7
+ 450 01ca 7860     		str	r0, [r7, #4]
+ 521:src/retarget.c **** #if defined(DEBUG_ENABLE_SEMIHOST)
+ 522:src/retarget.c ****     g_buf[g_buf_len++] = ch;
+ 523:src/retarget.c ****     g_buf[g_buf_len] = '\0';
+ 524:src/retarget.c ****     if(g_buf_len + 1 >= sizeof(g_buf) || ch == '\n' || ch == '\0')
+ 525:src/retarget.c ****     {
+ 526:src/retarget.c ****         /* Send the char */
+ 527:src/retarget.c ****         if(SH_DoCommand(0x04, (int)g_buf, NULL) != 0)
+ 528:src/retarget.c ****         {
+ 529:src/retarget.c ****             g_buf_len = 0;
+ 530:src/retarget.c ****             return;
+ 531:src/retarget.c ****         }
+ 532:src/retarget.c ****         else
+ 533:src/retarget.c ****         {
+ 534:src/retarget.c ****             int i;
+ 535:src/retarget.c **** 
+ 536:src/retarget.c ****             for(i = 0; i < g_buf_len; i++)
+ 537:src/retarget.c ****                 SendChar_ToUART(g_buf[i]);
+ 538:src/retarget.c ****             g_buf_len = 0;
+ 539:src/retarget.c ****         }
+ 540:src/retarget.c ****     }
+ 541:src/retarget.c **** #else
+ 542:src/retarget.c ****     SendChar_ToUART(ch);
+ 451              		.loc 1 542 0
+ 452 01cc 7B68     		ldr	r3, [r7, #4]
+ 453 01ce 1800     		movs	r0, r3
+ 454 01d0 FFF7FEFF 		bl	SendChar_ToUART
+ 543:src/retarget.c **** #endif
+ 544:src/retarget.c **** }
+ 455              		.loc 1 544 0
+ 456 01d4 C046     		nop
+ 457 01d6 BD46     		mov	sp, r7
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 19
+
+
+ 458 01d8 02B0     		add	sp, sp, #8
+ 459              		@ sp needed
+ 460 01da 80BD     		pop	{r7, pc}
+ 461              		.cfi_endproc
+ 462              	.LFE66:
+ 463              		.size	SendChar, .-SendChar
+ 464              		.align	2
+ 465              		.global	GetChar
+ 466              		.code	16
+ 467              		.thumb_func
+ 468              		.type	GetChar, %function
+ 469              	GetChar:
+ 470              	.LFB67:
+ 545:src/retarget.c **** 
+ 546:src/retarget.c **** /**
+ 547:src/retarget.c ****  * @brief    Routine to get a char
+ 548:src/retarget.c ****  *
+ 549:src/retarget.c ****  * @param    None
+ 550:src/retarget.c ****  *
+ 551:src/retarget.c ****  * @returns  Get value from UART debug port or semihost
+ 552:src/retarget.c ****  *
+ 553:src/retarget.c ****  * @details  Wait UART debug port or semihost to input a char.
+ 554:src/retarget.c ****  */
+ 555:src/retarget.c **** char GetChar(void)
+ 556:src/retarget.c **** {
+ 471              		.loc 1 556 0
+ 472              		.cfi_startproc
+ 473              		@ args = 0, pretend = 0, frame = 0
+ 474              		@ frame_needed = 1, uses_anonymous_args = 0
+ 475 01dc 80B5     		push	{r7, lr}
+ 476              	.LCFI18:
+ 477              		.cfi_def_cfa_offset 8
+ 478              		.cfi_offset 7, -8
+ 479              		.cfi_offset 14, -4
+ 480 01de 00AF     		add	r7, sp, #0
+ 481              	.LCFI19:
+ 482              		.cfi_def_cfa_register 7
+ 483              	.L35:
+ 557:src/retarget.c **** #ifdef DEBUG_ENABLE_SEMIHOST
+ 558:src/retarget.c **** # if defined (__CC_ARM)
+ 559:src/retarget.c ****     int nRet;
+ 560:src/retarget.c ****     while(SH_DoCommand(0x101, 0, &nRet) != 0)
+ 561:src/retarget.c ****     {
+ 562:src/retarget.c ****         if(nRet != 0)
+ 563:src/retarget.c ****         {
+ 564:src/retarget.c ****             SH_DoCommand(0x07, 0, &nRet);
+ 565:src/retarget.c ****             return (char)nRet;
+ 566:src/retarget.c ****         }
+ 567:src/retarget.c ****     }
+ 568:src/retarget.c **** # else
+ 569:src/retarget.c ****     int nRet;
+ 570:src/retarget.c ****     while(SH_DoCommand(0x7, 0, &nRet) != 0)
+ 571:src/retarget.c ****     {
+ 572:src/retarget.c ****         if(nRet != 0)
+ 573:src/retarget.c ****             return (char)nRet;
+ 574:src/retarget.c ****     }
+ 575:src/retarget.c **** # endif
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 20
+
+
+ 576:src/retarget.c ****     return (0);
+ 577:src/retarget.c **** #else
+ 578:src/retarget.c **** 
+ 579:src/retarget.c ****     while(1)
+ 580:src/retarget.c ****     {
+ 581:src/retarget.c ****         if((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) == 0)
+ 484              		.loc 1 581 0
+ 485 01e0 064B     		ldr	r3, .L37
+ 486 01e2 9B69     		ldr	r3, [r3, #24]
+ 487 01e4 44F20002 		movw	r2, #16384
+ 488 01e8 1340     		ands	r3, r2
+ 489 01ea 002B     		cmp	r3, #0
+ 490 01ec F8D1     		bne	.L35
+ 582:src/retarget.c ****         {
+ 583:src/retarget.c ****             return (DEBUG_PORT->DAT);
+ 491              		.loc 1 583 0
+ 492 01ee 034B     		ldr	r3, .L37
+ 493 01f0 1B68     		ldr	r3, [r3]
+ 494 01f2 DBB2     		uxtb	r3, r3
+ 584:src/retarget.c ****         }
+ 585:src/retarget.c ****     }
+ 586:src/retarget.c **** 
+ 587:src/retarget.c **** #endif
+ 588:src/retarget.c **** }
+ 495              		.loc 1 588 0
+ 496 01f4 1800     		movs	r0, r3
+ 497 01f6 BD46     		mov	sp, r7
+ 498              		@ sp needed
+ 499 01f8 80BD     		pop	{r7, pc}
+ 500              	.L38:
+ 501 01fa C046     		.align	2
+ 502              	.L37:
+ 503 01fc 00000750 		.word	1342636032
+ 504              		.cfi_endproc
+ 505              	.LFE67:
+ 506              		.size	GetChar, .-GetChar
+ 507              		.align	2
+ 508              		.global	kbhit
+ 509              		.code	16
+ 510              		.thumb_func
+ 511              		.type	kbhit, %function
+ 512              	kbhit:
+ 513              	.LFB68:
+ 589:src/retarget.c **** 
+ 590:src/retarget.c **** /**
+ 591:src/retarget.c ****  * @brief    Check any char input from UART
+ 592:src/retarget.c ****  *
+ 593:src/retarget.c ****  * @param    None
+ 594:src/retarget.c ****  *
+ 595:src/retarget.c ****  * @retval   1: No any char input
+ 596:src/retarget.c ****  * @retval   0: Have some char input
+ 597:src/retarget.c ****  *
+ 598:src/retarget.c ****  * @details  Check UART RSR RX EMPTY or not to determine if any char input from UART
+ 599:src/retarget.c ****  */
+ 600:src/retarget.c **** 
+ 601:src/retarget.c **** int kbhit(void)
+ 602:src/retarget.c **** {
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 21
+
+
+ 514              		.loc 1 602 0
+ 515              		.cfi_startproc
+ 516              		@ args = 0, pretend = 0, frame = 0
+ 517              		@ frame_needed = 1, uses_anonymous_args = 0
+ 518 0200 80B5     		push	{r7, lr}
+ 519              	.LCFI20:
+ 520              		.cfi_def_cfa_offset 8
+ 521              		.cfi_offset 7, -8
+ 522              		.cfi_offset 14, -4
+ 523 0202 00AF     		add	r7, sp, #0
+ 524              	.LCFI21:
+ 525              		.cfi_def_cfa_register 7
+ 603:src/retarget.c ****     return !((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk) == 0);
+ 526              		.loc 1 603 0
+ 527 0204 054B     		ldr	r3, .L41
+ 528 0206 9B69     		ldr	r3, [r3, #24]
+ 529 0208 44F20002 		movw	r2, #16384
+ 530 020c 1340     		ands	r3, r2
+ 531 020e 5A1E     		subs	r2, r3, #1
+ 532 0210 9341     		sbcs	r3, r3, r2
+ 533 0212 DBB2     		uxtb	r3, r3
+ 604:src/retarget.c **** }
+ 534              		.loc 1 604 0
+ 535 0214 1800     		movs	r0, r3
+ 536 0216 BD46     		mov	sp, r7
+ 537              		@ sp needed
+ 538 0218 80BD     		pop	{r7, pc}
+ 539              	.L42:
+ 540 021a C046     		.align	2
+ 541              	.L41:
+ 542 021c 00000750 		.word	1342636032
+ 543              		.cfi_endproc
+ 544              	.LFE68:
+ 545              		.size	kbhit, .-kbhit
+ 546              		.align	2
+ 547              		.global	IsDebugFifoEmpty
+ 548              		.code	16
+ 549              		.thumb_func
+ 550              		.type	IsDebugFifoEmpty, %function
+ 551              	IsDebugFifoEmpty:
+ 552              	.LFB69:
+ 605:src/retarget.c **** /**
+ 606:src/retarget.c ****  * @brief    Check if debug message finished
+ 607:src/retarget.c ****  *
+ 608:src/retarget.c ****  * @param    None
+ 609:src/retarget.c ****  *
+ 610:src/retarget.c ****  * @retval   1: Message is finished
+ 611:src/retarget.c ****  * @retval   0: Message is transmitting.
+ 612:src/retarget.c ****  *
+ 613:src/retarget.c ****  * @details  Check if message finished (FIFO empty of debug port)
+ 614:src/retarget.c ****  */
+ 615:src/retarget.c **** 
+ 616:src/retarget.c **** int IsDebugFifoEmpty(void)
+ 617:src/retarget.c **** {
+ 553              		.loc 1 617 0
+ 554              		.cfi_startproc
+ 555              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 22
+
+
+ 556              		@ frame_needed = 1, uses_anonymous_args = 0
+ 557 0220 80B5     		push	{r7, lr}
+ 558              	.LCFI22:
+ 559              		.cfi_def_cfa_offset 8
+ 560              		.cfi_offset 7, -8
+ 561              		.cfi_offset 14, -4
+ 562 0222 00AF     		add	r7, sp, #0
+ 563              	.LCFI23:
+ 564              		.cfi_def_cfa_register 7
+ 618:src/retarget.c ****     return ((DEBUG_PORT->FIFOSTS & UART_FIFOSTS_TXEMPTYF_Msk) != 0);
+ 565              		.loc 1 618 0
+ 566 0224 054B     		ldr	r3, .L45
+ 567 0226 9A69     		ldr	r2, [r3, #24]
+ 568 0228 8023     		movs	r3, #128
+ 569 022a 5B05     		lsls	r3, r3, #21
+ 570 022c 1340     		ands	r3, r2
+ 571 022e 5A1E     		subs	r2, r3, #1
+ 572 0230 9341     		sbcs	r3, r3, r2
+ 573 0232 DBB2     		uxtb	r3, r3
+ 619:src/retarget.c **** }
+ 574              		.loc 1 619 0
+ 575 0234 1800     		movs	r0, r3
+ 576 0236 BD46     		mov	sp, r7
+ 577              		@ sp needed
+ 578 0238 80BD     		pop	{r7, pc}
+ 579              	.L46:
+ 580 023a C046     		.align	2
+ 581              	.L45:
+ 582 023c 00000750 		.word	1342636032
+ 583              		.cfi_endproc
+ 584              	.LFE69:
+ 585              		.size	IsDebugFifoEmpty, .-IsDebugFifoEmpty
+ 586              		.align	2
+ 587              		.global	_ttywrch
+ 588              		.code	16
+ 589              		.thumb_func
+ 590              		.type	_ttywrch, %function
+ 591              	_ttywrch:
+ 592              	.LFB70:
+ 620:src/retarget.c **** 
+ 621:src/retarget.c **** /**
+ 622:src/retarget.c ****  * @brief    C library retargetting
+ 623:src/retarget.c ****  *
+ 624:src/retarget.c ****  * @param[in]  ch  Write a character data
+ 625:src/retarget.c ****  *
+ 626:src/retarget.c ****  * @returns  None
+ 627:src/retarget.c ****  *
+ 628:src/retarget.c ****  * @details  Check if message finished (FIFO empty of debug port)
+ 629:src/retarget.c ****  */
+ 630:src/retarget.c **** 
+ 631:src/retarget.c **** void _ttywrch(int ch)
+ 632:src/retarget.c **** {
+ 593              		.loc 1 632 0
+ 594              		.cfi_startproc
+ 595              		@ args = 0, pretend = 0, frame = 8
+ 596              		@ frame_needed = 1, uses_anonymous_args = 0
+ 597 0240 80B5     		push	{r7, lr}
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 23
+
+
+ 598              	.LCFI24:
+ 599              		.cfi_def_cfa_offset 8
+ 600              		.cfi_offset 7, -8
+ 601              		.cfi_offset 14, -4
+ 602 0242 82B0     		sub	sp, sp, #8
+ 603              	.LCFI25:
+ 604              		.cfi_def_cfa_offset 16
+ 605 0244 00AF     		add	r7, sp, #0
+ 606              	.LCFI26:
+ 607              		.cfi_def_cfa_register 7
+ 608 0246 7860     		str	r0, [r7, #4]
+ 633:src/retarget.c ****     SendChar(ch);
+ 609              		.loc 1 633 0
+ 610 0248 7B68     		ldr	r3, [r7, #4]
+ 611 024a 1800     		movs	r0, r3
+ 612 024c FFF7FEFF 		bl	SendChar
+ 634:src/retarget.c ****     return;
+ 613              		.loc 1 634 0
+ 614 0250 C046     		nop
+ 635:src/retarget.c **** }
+ 615              		.loc 1 635 0
+ 616 0252 BD46     		mov	sp, r7
+ 617 0254 02B0     		add	sp, sp, #8
+ 618              		@ sp needed
+ 619 0256 80BD     		pop	{r7, pc}
+ 620              		.cfi_endproc
+ 621              	.LFE70:
+ 622              		.size	_ttywrch, .-_ttywrch
+ 623              		.align	2
+ 624              		.global	fputc
+ 625              		.code	16
+ 626              		.thumb_func
+ 627              		.type	fputc, %function
+ 628              	fputc:
+ 629              	.LFB71:
+ 636:src/retarget.c **** 
+ 637:src/retarget.c **** 
+ 638:src/retarget.c **** /**
+ 639:src/retarget.c ****  * @brief      Write character to stream
+ 640:src/retarget.c ****  *
+ 641:src/retarget.c ****  * @param[in]  ch       Character to be written. The character is passed as its int promotion.
+ 642:src/retarget.c ****  * @param[in]  stream   Pointer to a FILE object that identifies the stream where the character is 
+ 643:src/retarget.c ****  *
+ 644:src/retarget.c ****  * @returns    If there are no errors, the same character that has been written is returned.
+ 645:src/retarget.c ****  *             If an error occurs, EOF is returned and the error indicator is set (see ferror).
+ 646:src/retarget.c ****  *
+ 647:src/retarget.c ****  * @details    Writes a character to the stream and advances the position indicator.\n
+ 648:src/retarget.c ****  *             The character is written at the current position of the stream as indicated \n
+ 649:src/retarget.c ****  *             by the internal position indicator, which is then advanced one character.
+ 650:src/retarget.c ****  *
+ 651:src/retarget.c ****  * @note       The above descriptions are copied from http://www.cplusplus.com/reference/clibrary/c
+ 652:src/retarget.c ****  *
+ 653:src/retarget.c ****  *
+ 654:src/retarget.c ****  */
+ 655:src/retarget.c **** 
+ 656:src/retarget.c **** int fputc(int ch, FILE *stream)
+ 657:src/retarget.c **** {
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 24
+
+
+ 630              		.loc 1 657 0
+ 631              		.cfi_startproc
+ 632              		@ args = 0, pretend = 0, frame = 8
+ 633              		@ frame_needed = 1, uses_anonymous_args = 0
+ 634 0258 80B5     		push	{r7, lr}
+ 635              	.LCFI27:
+ 636              		.cfi_def_cfa_offset 8
+ 637              		.cfi_offset 7, -8
+ 638              		.cfi_offset 14, -4
+ 639 025a 82B0     		sub	sp, sp, #8
+ 640              	.LCFI28:
+ 641              		.cfi_def_cfa_offset 16
+ 642 025c 00AF     		add	r7, sp, #0
+ 643              	.LCFI29:
+ 644              		.cfi_def_cfa_register 7
+ 645 025e 7860     		str	r0, [r7, #4]
+ 646 0260 3960     		str	r1, [r7]
+ 658:src/retarget.c ****     SendChar(ch);
+ 647              		.loc 1 658 0
+ 648 0262 7B68     		ldr	r3, [r7, #4]
+ 649 0264 1800     		movs	r0, r3
+ 650 0266 FFF7FEFF 		bl	SendChar
+ 659:src/retarget.c ****     return ch;
+ 651              		.loc 1 659 0
+ 652 026a 7B68     		ldr	r3, [r7, #4]
+ 660:src/retarget.c **** }
+ 653              		.loc 1 660 0
+ 654 026c 1800     		movs	r0, r3
+ 655 026e BD46     		mov	sp, r7
+ 656 0270 02B0     		add	sp, sp, #8
+ 657              		@ sp needed
+ 658 0272 80BD     		pop	{r7, pc}
+ 659              		.cfi_endproc
+ 660              	.LFE71:
+ 661              		.size	fputc, .-fputc
+ 662              		.align	2
+ 663              		.global	fgetc
+ 664              		.code	16
+ 665              		.thumb_func
+ 666              		.type	fgetc, %function
+ 667              	fgetc:
+ 668              	.LFB72:
+ 661:src/retarget.c **** 
+ 662:src/retarget.c **** 
+ 663:src/retarget.c **** /**
+ 664:src/retarget.c ****  * @brief      Get character from UART debug port or semihosting input
+ 665:src/retarget.c ****  *
+ 666:src/retarget.c ****  * @param[in]  stream   Pointer to a FILE object that identifies the stream on which the operation 
+ 667:src/retarget.c ****  *
+ 668:src/retarget.c ****  * @returns    The character read from UART debug port or semihosting
+ 669:src/retarget.c ****  *
+ 670:src/retarget.c ****  * @details    For get message from debug port or semihosting.
+ 671:src/retarget.c ****  *
+ 672:src/retarget.c ****  */
+ 673:src/retarget.c **** 
+ 674:src/retarget.c **** int fgetc(FILE *stream)
+ 675:src/retarget.c **** {
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 25
+
+
+ 669              		.loc 1 675 0
+ 670              		.cfi_startproc
+ 671              		@ args = 0, pretend = 0, frame = 8
+ 672              		@ frame_needed = 1, uses_anonymous_args = 0
+ 673 0274 80B5     		push	{r7, lr}
+ 674              	.LCFI30:
+ 675              		.cfi_def_cfa_offset 8
+ 676              		.cfi_offset 7, -8
+ 677              		.cfi_offset 14, -4
+ 678 0276 82B0     		sub	sp, sp, #8
+ 679              	.LCFI31:
+ 680              		.cfi_def_cfa_offset 16
+ 681 0278 00AF     		add	r7, sp, #0
+ 682              	.LCFI32:
+ 683              		.cfi_def_cfa_register 7
+ 684 027a 7860     		str	r0, [r7, #4]
+ 676:src/retarget.c ****     return (GetChar());
+ 685              		.loc 1 676 0
+ 686 027c FFF7FEFF 		bl	GetChar
+ 687 0280 0300     		movs	r3, r0
+ 677:src/retarget.c **** }
+ 688              		.loc 1 677 0
+ 689 0282 1800     		movs	r0, r3
+ 690 0284 BD46     		mov	sp, r7
+ 691 0286 02B0     		add	sp, sp, #8
+ 692              		@ sp needed
+ 693 0288 80BD     		pop	{r7, pc}
+ 694              		.cfi_endproc
+ 695              	.LFE72:
+ 696              		.size	fgetc, .-fgetc
+ 697              	.Letext0:
+ 698              		.file 2 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\machine\\_
+ 699              		.file 3 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\lock.
+ 700              		.file 4 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\_type
+ 701              		.file 5 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\lib\\gcc\\arm-none-eabi\\5.4.1\\in
+ 702              		.file 6 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\reent
+ 703              		.file 7 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\_stdi
+ 704              		.file 8 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\stdio.h"
+ 705              		.file 9 "src/TC8234.h"
+ 706              		.file 10 "src/system_TC8234.h"
+ 707 028a C046     		.section	.debug_info,"",%progbits
+ 708              	.Ldebug_info0:
+ 709 0000 DC0B0000 		.4byte	0xbdc
+ 710 0004 0200     		.2byte	0x2
+ 711 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 712 000a 04       		.byte	0x4
+ 713 000b 01       		.uleb128 0x1
+ 714 000c 19000000 		.4byte	.LASF143
+ 715 0010 0C       		.byte	0xc
+ 716 0011 48050000 		.4byte	.LASF144
+ 717 0015 4E020000 		.4byte	.LASF145
+ 718 0019 00000000 		.4byte	.Ltext0
+ 719 001d 8A020000 		.4byte	.Letext0
+ 720 0021 00000000 		.4byte	.Ldebug_line0
+ 721 0025 02       		.uleb128 0x2
+ 722 0026 01       		.byte	0x1
+ 723 0027 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 26
+
+
+ 724 0028 4B010000 		.4byte	.LASF0
+ 725 002c 02       		.uleb128 0x2
+ 726 002d 01       		.byte	0x1
+ 727 002e 08       		.byte	0x8
+ 728 002f D1030000 		.4byte	.LASF1
+ 729 0033 02       		.uleb128 0x2
+ 730 0034 02       		.byte	0x2
+ 731 0035 05       		.byte	0x5
+ 732 0036 77030000 		.4byte	.LASF2
+ 733 003a 02       		.uleb128 0x2
+ 734 003b 02       		.byte	0x2
+ 735 003c 07       		.byte	0x7
+ 736 003d 12050000 		.4byte	.LASF3
+ 737 0041 02       		.uleb128 0x2
+ 738 0042 04       		.byte	0x4
+ 739 0043 05       		.byte	0x5
+ 740 0044 88010000 		.4byte	.LASF4
+ 741 0048 03       		.uleb128 0x3
+ 742 0049 F8010000 		.4byte	.LASF10
+ 743 004d 02       		.byte	0x2
+ 744 004e 41       		.byte	0x41
+ 745 004f 53000000 		.4byte	0x53
+ 746 0053 02       		.uleb128 0x2
+ 747 0054 04       		.byte	0x4
+ 748 0055 07       		.byte	0x7
+ 749 0056 7B020000 		.4byte	.LASF5
+ 750 005a 02       		.uleb128 0x2
+ 751 005b 08       		.byte	0x8
+ 752 005c 05       		.byte	0x5
+ 753 005d BB010000 		.4byte	.LASF6
+ 754 0061 02       		.uleb128 0x2
+ 755 0062 08       		.byte	0x8
+ 756 0063 07       		.byte	0x7
+ 757 0064 DC000000 		.4byte	.LASF7
+ 758 0068 04       		.uleb128 0x4
+ 759 0069 04       		.byte	0x4
+ 760 006a 05       		.byte	0x5
+ 761 006b 696E7400 		.ascii	"int\000"
+ 762 006f 02       		.uleb128 0x2
+ 763 0070 04       		.byte	0x4
+ 764 0071 07       		.byte	0x7
+ 765 0072 A4010000 		.4byte	.LASF8
+ 766 0076 02       		.uleb128 0x2
+ 767 0077 08       		.byte	0x8
+ 768 0078 04       		.byte	0x4
+ 769 0079 A3040000 		.4byte	.LASF9
+ 770 007d 05       		.uleb128 0x5
+ 771 007e 04       		.byte	0x4
+ 772 007f 03       		.uleb128 0x3
+ 773 0080 B7030000 		.4byte	.LASF11
+ 774 0084 03       		.byte	0x3
+ 775 0085 07       		.byte	0x7
+ 776 0086 68000000 		.4byte	0x68
+ 777 008a 03       		.uleb128 0x3
+ 778 008b 3D010000 		.4byte	.LASF12
+ 779 008f 04       		.byte	0x4
+ 780 0090 2C       		.byte	0x2c
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 27
+
+
+ 781 0091 41000000 		.4byte	0x41
+ 782 0095 03       		.uleb128 0x3
+ 783 0096 46030000 		.4byte	.LASF13
+ 784 009a 04       		.byte	0x4
+ 785 009b 72       		.byte	0x72
+ 786 009c 41000000 		.4byte	0x41
+ 787 00a0 06       		.uleb128 0x6
+ 788 00a1 F1020000 		.4byte	.LASF14
+ 789 00a5 05       		.byte	0x5
+ 790 00a6 6501     		.2byte	0x165
+ 791 00a8 6F000000 		.4byte	0x6f
+ 792 00ac 07       		.uleb128 0x7
+ 793 00ad 04       		.byte	0x4
+ 794 00ae 04       		.byte	0x4
+ 795 00af A6       		.byte	0xa6
+ 796 00b0 CB000000 		.4byte	0xcb
+ 797 00b4 08       		.uleb128 0x8
+ 798 00b5 E5020000 		.4byte	.LASF15
+ 799 00b9 04       		.byte	0x4
+ 800 00ba A8       		.byte	0xa8
+ 801 00bb A0000000 		.4byte	0xa0
+ 802 00bf 08       		.uleb128 0x8
+ 803 00c0 37020000 		.4byte	.LASF16
+ 804 00c4 04       		.byte	0x4
+ 805 00c5 A9       		.byte	0xa9
+ 806 00c6 CB000000 		.4byte	0xcb
+ 807 00ca 00       		.byte	0
+ 808 00cb 09       		.uleb128 0x9
+ 809 00cc 2C000000 		.4byte	0x2c
+ 810 00d0 DB000000 		.4byte	0xdb
+ 811 00d4 0A       		.uleb128 0xa
+ 812 00d5 DB000000 		.4byte	0xdb
+ 813 00d9 03       		.byte	0x3
+ 814 00da 00       		.byte	0
+ 815 00db 02       		.uleb128 0x2
+ 816 00dc 04       		.byte	0x4
+ 817 00dd 07       		.byte	0x7
+ 818 00de 2A030000 		.4byte	.LASF17
+ 819 00e2 0B       		.uleb128 0xb
+ 820 00e3 08       		.byte	0x8
+ 821 00e4 04       		.byte	0x4
+ 822 00e5 A3       		.byte	0xa3
+ 823 00e6 07010000 		.4byte	0x107
+ 824 00ea 0C       		.uleb128 0xc
+ 825 00eb 83040000 		.4byte	.LASF18
+ 826 00ef 04       		.byte	0x4
+ 827 00f0 A5       		.byte	0xa5
+ 828 00f1 68000000 		.4byte	0x68
+ 829 00f5 02       		.byte	0x2
+ 830 00f6 23       		.byte	0x23
+ 831 00f7 00       		.uleb128 0
+ 832 00f8 0C       		.uleb128 0xc
+ 833 00f9 8B040000 		.4byte	.LASF19
+ 834 00fd 04       		.byte	0x4
+ 835 00fe AA       		.byte	0xaa
+ 836 00ff AC000000 		.4byte	0xac
+ 837 0103 02       		.byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 28
+
+
+ 838 0104 23       		.byte	0x23
+ 839 0105 04       		.uleb128 0x4
+ 840 0106 00       		.byte	0
+ 841 0107 03       		.uleb128 0x3
+ 842 0108 A5030000 		.4byte	.LASF20
+ 843 010c 04       		.byte	0x4
+ 844 010d AB       		.byte	0xab
+ 845 010e E2000000 		.4byte	0xe2
+ 846 0112 03       		.uleb128 0x3
+ 847 0113 0E020000 		.4byte	.LASF21
+ 848 0117 04       		.byte	0x4
+ 849 0118 AF       		.byte	0xaf
+ 850 0119 7F000000 		.4byte	0x7f
+ 851 011d 03       		.uleb128 0x3
+ 852 011e 2A050000 		.4byte	.LASF22
+ 853 0122 06       		.byte	0x6
+ 854 0123 16       		.byte	0x16
+ 855 0124 53000000 		.4byte	0x53
+ 856 0128 0D       		.uleb128 0xd
+ 857 0129 1F020000 		.4byte	.LASF27
+ 858 012d 18       		.byte	0x18
+ 859 012e 06       		.byte	0x6
+ 860 012f 2F       		.byte	0x2f
+ 861 0130 87010000 		.4byte	0x187
+ 862 0134 0C       		.uleb128 0xc
+ 863 0135 F3040000 		.4byte	.LASF23
+ 864 0139 06       		.byte	0x6
+ 865 013a 31       		.byte	0x31
+ 866 013b 87010000 		.4byte	0x187
+ 867 013f 02       		.byte	0x2
+ 868 0140 23       		.byte	0x23
+ 869 0141 00       		.uleb128 0
+ 870 0142 0E       		.uleb128 0xe
+ 871 0143 5F6B00   		.ascii	"_k\000"
+ 872 0146 06       		.byte	0x6
+ 873 0147 32       		.byte	0x32
+ 874 0148 68000000 		.4byte	0x68
+ 875 014c 02       		.byte	0x2
+ 876 014d 23       		.byte	0x23
+ 877 014e 04       		.uleb128 0x4
+ 878 014f 0C       		.uleb128 0xc
+ 879 0150 65040000 		.4byte	.LASF24
+ 880 0154 06       		.byte	0x6
+ 881 0155 32       		.byte	0x32
+ 882 0156 68000000 		.4byte	0x68
+ 883 015a 02       		.byte	0x2
+ 884 015b 23       		.byte	0x23
+ 885 015c 08       		.uleb128 0x8
+ 886 015d 0C       		.uleb128 0xc
+ 887 015e 03020000 		.4byte	.LASF25
+ 888 0162 06       		.byte	0x6
+ 889 0163 32       		.byte	0x32
+ 890 0164 68000000 		.4byte	0x68
+ 891 0168 02       		.byte	0x2
+ 892 0169 23       		.byte	0x23
+ 893 016a 0C       		.uleb128 0xc
+ 894 016b 0C       		.uleb128 0xc
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 29
+
+
+ 895 016c 57050000 		.4byte	.LASF26
+ 896 0170 06       		.byte	0x6
+ 897 0171 32       		.byte	0x32
+ 898 0172 68000000 		.4byte	0x68
+ 899 0176 02       		.byte	0x2
+ 900 0177 23       		.byte	0x23
+ 901 0178 10       		.uleb128 0x10
+ 902 0179 0E       		.uleb128 0xe
+ 903 017a 5F7800   		.ascii	"_x\000"
+ 904 017d 06       		.byte	0x6
+ 905 017e 33       		.byte	0x33
+ 906 017f 8D010000 		.4byte	0x18d
+ 907 0183 02       		.byte	0x2
+ 908 0184 23       		.byte	0x23
+ 909 0185 14       		.uleb128 0x14
+ 910 0186 00       		.byte	0
+ 911 0187 0F       		.uleb128 0xf
+ 912 0188 04       		.byte	0x4
+ 913 0189 28010000 		.4byte	0x128
+ 914 018d 09       		.uleb128 0x9
+ 915 018e 1D010000 		.4byte	0x11d
+ 916 0192 9D010000 		.4byte	0x19d
+ 917 0196 0A       		.uleb128 0xa
+ 918 0197 DB000000 		.4byte	0xdb
+ 919 019b 00       		.byte	0
+ 920 019c 00       		.byte	0
+ 921 019d 0D       		.uleb128 0xd
+ 922 019e 32020000 		.4byte	.LASF28
+ 923 01a2 24       		.byte	0x24
+ 924 01a3 06       		.byte	0x6
+ 925 01a4 37       		.byte	0x37
+ 926 01a5 28020000 		.4byte	0x228
+ 927 01a9 0C       		.uleb128 0xc
+ 928 01aa 34010000 		.4byte	.LASF29
+ 929 01ae 06       		.byte	0x6
+ 930 01af 39       		.byte	0x39
+ 931 01b0 68000000 		.4byte	0x68
+ 932 01b4 02       		.byte	0x2
+ 933 01b5 23       		.byte	0x23
+ 934 01b6 00       		.uleb128 0
+ 935 01b7 0C       		.uleb128 0xc
+ 936 01b8 9B050000 		.4byte	.LASF30
+ 937 01bc 06       		.byte	0x6
+ 938 01bd 3A       		.byte	0x3a
+ 939 01be 68000000 		.4byte	0x68
+ 940 01c2 02       		.byte	0x2
+ 941 01c3 23       		.byte	0x23
+ 942 01c4 04       		.uleb128 0x4
+ 943 01c5 0C       		.uleb128 0xc
+ 944 01c6 69010000 		.4byte	.LASF31
+ 945 01ca 06       		.byte	0x6
+ 946 01cb 3B       		.byte	0x3b
+ 947 01cc 68000000 		.4byte	0x68
+ 948 01d0 02       		.byte	0x2
+ 949 01d1 23       		.byte	0x23
+ 950 01d2 08       		.uleb128 0x8
+ 951 01d3 0C       		.uleb128 0xc
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 30
+
+
+ 952 01d4 E8050000 		.4byte	.LASF32
+ 953 01d8 06       		.byte	0x6
+ 954 01d9 3C       		.byte	0x3c
+ 955 01da 68000000 		.4byte	0x68
+ 956 01de 02       		.byte	0x2
+ 957 01df 23       		.byte	0x23
+ 958 01e0 0C       		.uleb128 0xc
+ 959 01e1 0C       		.uleb128 0xc
+ 960 01e2 64030000 		.4byte	.LASF33
+ 961 01e6 06       		.byte	0x6
+ 962 01e7 3D       		.byte	0x3d
+ 963 01e8 68000000 		.4byte	0x68
+ 964 01ec 02       		.byte	0x2
+ 965 01ed 23       		.byte	0x23
+ 966 01ee 10       		.uleb128 0x10
+ 967 01ef 0C       		.uleb128 0xc
+ 968 01f0 1A030000 		.4byte	.LASF34
+ 969 01f4 06       		.byte	0x6
+ 970 01f5 3E       		.byte	0x3e
+ 971 01f6 68000000 		.4byte	0x68
+ 972 01fa 02       		.byte	0x2
+ 973 01fb 23       		.byte	0x23
+ 974 01fc 14       		.uleb128 0x14
+ 975 01fd 0C       		.uleb128 0xc
+ 976 01fe 99040000 		.4byte	.LASF35
+ 977 0202 06       		.byte	0x6
+ 978 0203 3F       		.byte	0x3f
+ 979 0204 68000000 		.4byte	0x68
+ 980 0208 02       		.byte	0x2
+ 981 0209 23       		.byte	0x23
+ 982 020a 18       		.uleb128 0x18
+ 983 020b 0C       		.uleb128 0xc
+ 984 020c F3030000 		.4byte	.LASF36
+ 985 0210 06       		.byte	0x6
+ 986 0211 40       		.byte	0x40
+ 987 0212 68000000 		.4byte	0x68
+ 988 0216 02       		.byte	0x2
+ 989 0217 23       		.byte	0x23
+ 990 0218 1C       		.uleb128 0x1c
+ 991 0219 0C       		.uleb128 0xc
+ 992 021a 81050000 		.4byte	.LASF37
+ 993 021e 06       		.byte	0x6
+ 994 021f 41       		.byte	0x41
+ 995 0220 68000000 		.4byte	0x68
+ 996 0224 02       		.byte	0x2
+ 997 0225 23       		.byte	0x23
+ 998 0226 20       		.uleb128 0x20
+ 999 0227 00       		.byte	0
+ 1000 0228 0D       		.uleb128 0xd
+ 1001 0229 D1050000 		.4byte	.LASF38
+ 1002 022d 08       		.byte	0x8
+ 1003 022e 06       		.byte	0x6
+ 1004 022f 75       		.byte	0x75
+ 1005 0230 51020000 		.4byte	0x251
+ 1006 0234 0C       		.uleb128 0xc
+ 1007 0235 63010000 		.4byte	.LASF39
+ 1008 0239 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 31
+
+
+ 1009 023a 76       		.byte	0x76
+ 1010 023b 51020000 		.4byte	0x251
+ 1011 023f 02       		.byte	0x2
+ 1012 0240 23       		.byte	0x23
+ 1013 0241 00       		.uleb128 0
+ 1014 0242 0C       		.uleb128 0xc
+ 1015 0243 00000000 		.4byte	.LASF40
+ 1016 0247 06       		.byte	0x6
+ 1017 0248 77       		.byte	0x77
+ 1018 0249 68000000 		.4byte	0x68
+ 1019 024d 02       		.byte	0x2
+ 1020 024e 23       		.byte	0x23
+ 1021 024f 04       		.uleb128 0x4
+ 1022 0250 00       		.byte	0
+ 1023 0251 0F       		.uleb128 0xf
+ 1024 0252 04       		.byte	0x4
+ 1025 0253 2C000000 		.4byte	0x2c
+ 1026 0257 10       		.uleb128 0x10
+ 1027 0258 6D040000 		.4byte	.LASF41
+ 1028 025c 60       		.byte	0x60
+ 1029 025d 06       		.byte	0x6
+ 1030 025e 7401     		.2byte	0x174
+ 1031 0260 AF030000 		.4byte	0x3af
+ 1032 0264 11       		.uleb128 0x11
+ 1033 0265 AF040000 		.4byte	.LASF42
+ 1034 0269 06       		.byte	0x6
+ 1035 026a 7801     		.2byte	0x178
+ 1036 026c 68000000 		.4byte	0x68
+ 1037 0270 02       		.byte	0x2
+ 1038 0271 23       		.byte	0x23
+ 1039 0272 00       		.uleb128 0
+ 1040 0273 11       		.uleb128 0x11
+ 1041 0274 9D010000 		.4byte	.LASF43
+ 1042 0278 06       		.byte	0x6
+ 1043 0279 7D01     		.2byte	0x17d
+ 1044 027b 1E060000 		.4byte	0x61e
+ 1045 027f 02       		.byte	0x2
+ 1046 0280 23       		.byte	0x23
+ 1047 0281 04       		.uleb128 0x4
+ 1048 0282 11       		.uleb128 0x11
+ 1049 0283 3E020000 		.4byte	.LASF44
+ 1050 0287 06       		.byte	0x6
+ 1051 0288 7D01     		.2byte	0x17d
+ 1052 028a 1E060000 		.4byte	0x61e
+ 1053 028e 02       		.byte	0x2
+ 1054 028f 23       		.byte	0x23
+ 1055 0290 08       		.uleb128 0x8
+ 1056 0291 11       		.uleb128 0x11
+ 1057 0292 17020000 		.4byte	.LASF45
+ 1058 0296 06       		.byte	0x6
+ 1059 0297 7D01     		.2byte	0x17d
+ 1060 0299 1E060000 		.4byte	0x61e
+ 1061 029d 02       		.byte	0x2
+ 1062 029e 23       		.byte	0x23
+ 1063 029f 0C       		.uleb128 0xc
+ 1064 02a0 11       		.uleb128 0x11
+ 1065 02a1 93020000 		.4byte	.LASF46
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 32
+
+
+ 1066 02a5 06       		.byte	0x6
+ 1067 02a6 7F01     		.2byte	0x17f
+ 1068 02a8 68000000 		.4byte	0x68
+ 1069 02ac 02       		.byte	0x2
+ 1070 02ad 23       		.byte	0x23
+ 1071 02ae 10       		.uleb128 0x10
+ 1072 02af 11       		.uleb128 0x11
+ 1073 02b0 0E000000 		.4byte	.LASF47
+ 1074 02b4 06       		.byte	0x6
+ 1075 02b5 8101     		.2byte	0x181
+ 1076 02b7 2E050000 		.4byte	0x52e
+ 1077 02bb 02       		.byte	0x2
+ 1078 02bc 23       		.byte	0x23
+ 1079 02bd 14       		.uleb128 0x14
+ 1080 02be 11       		.uleb128 0x11
+ 1081 02bf 81030000 		.4byte	.LASF48
+ 1082 02c3 06       		.byte	0x6
+ 1083 02c4 8301     		.2byte	0x183
+ 1084 02c6 68000000 		.4byte	0x68
+ 1085 02ca 02       		.byte	0x2
+ 1086 02cb 23       		.byte	0x23
+ 1087 02cc 18       		.uleb128 0x18
+ 1088 02cd 11       		.uleb128 0x11
+ 1089 02ce 4C040000 		.4byte	.LASF49
+ 1090 02d2 06       		.byte	0x6
+ 1091 02d3 8501     		.2byte	0x185
+ 1092 02d5 68000000 		.4byte	0x68
+ 1093 02d9 02       		.byte	0x2
+ 1094 02da 23       		.byte	0x23
+ 1095 02db 1C       		.uleb128 0x1c
+ 1096 02dc 11       		.uleb128 0x11
+ 1097 02dd 3A040000 		.4byte	.LASF50
+ 1098 02e1 06       		.byte	0x6
+ 1099 02e2 8601     		.2byte	0x186
+ 1100 02e4 97070000 		.4byte	0x797
+ 1101 02e8 02       		.byte	0x2
+ 1102 02e9 23       		.byte	0x23
+ 1103 02ea 20       		.uleb128 0x20
+ 1104 02eb 12       		.uleb128 0x12
+ 1105 02ec 5F6D7000 		.ascii	"_mp\000"
+ 1106 02f0 06       		.byte	0x6
+ 1107 02f1 8801     		.2byte	0x188
+ 1108 02f3 9D070000 		.4byte	0x79d
+ 1109 02f7 02       		.byte	0x2
+ 1110 02f8 23       		.byte	0x23
+ 1111 02f9 24       		.uleb128 0x24
+ 1112 02fa 11       		.uleb128 0x11
+ 1113 02fb 42040000 		.4byte	.LASF51
+ 1114 02ff 06       		.byte	0x6
+ 1115 0300 8A01     		.2byte	0x18a
+ 1116 0302 AF070000 		.4byte	0x7af
+ 1117 0306 02       		.byte	0x2
+ 1118 0307 23       		.byte	0x23
+ 1119 0308 28       		.uleb128 0x28
+ 1120 0309 11       		.uleb128 0x11
+ 1121 030a 8C030000 		.4byte	.LASF52
+ 1122 030e 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 33
+
+
+ 1123 030f 8C01     		.2byte	0x18c
+ 1124 0311 68000000 		.4byte	0x68
+ 1125 0315 02       		.byte	0x2
+ 1126 0316 23       		.byte	0x23
+ 1127 0317 2C       		.uleb128 0x2c
+ 1128 0318 11       		.uleb128 0x11
+ 1129 0319 46020000 		.4byte	.LASF53
+ 1130 031d 06       		.byte	0x6
+ 1131 031e 8F01     		.2byte	0x18f
+ 1132 0320 68000000 		.4byte	0x68
+ 1133 0324 02       		.byte	0x2
+ 1134 0325 23       		.byte	0x23
+ 1135 0326 30       		.uleb128 0x30
+ 1136 0327 11       		.uleb128 0x11
+ 1137 0328 C9010000 		.4byte	.LASF54
+ 1138 032c 06       		.byte	0x6
+ 1139 032d 9001     		.2byte	0x190
+ 1140 032f 2E050000 		.4byte	0x52e
+ 1141 0333 02       		.byte	0x2
+ 1142 0334 23       		.byte	0x23
+ 1143 0335 34       		.uleb128 0x34
+ 1144 0336 11       		.uleb128 0x11
+ 1145 0337 A4050000 		.4byte	.LASF55
+ 1146 033b 06       		.byte	0x6
+ 1147 033c 9201     		.2byte	0x192
+ 1148 033e B5070000 		.4byte	0x7b5
+ 1149 0342 02       		.byte	0x2
+ 1150 0343 23       		.byte	0x23
+ 1151 0344 38       		.uleb128 0x38
+ 1152 0345 11       		.uleb128 0x11
+ 1153 0346 8C050000 		.4byte	.LASF56
+ 1154 034a 06       		.byte	0x6
+ 1155 034b 9301     		.2byte	0x193
+ 1156 034d BB070000 		.4byte	0x7bb
+ 1157 0351 02       		.byte	0x2
+ 1158 0352 23       		.byte	0x23
+ 1159 0353 3C       		.uleb128 0x3c
+ 1160 0354 11       		.uleb128 0x11
+ 1161 0355 C8020000 		.4byte	.LASF57
+ 1162 0359 06       		.byte	0x6
+ 1163 035a 9401     		.2byte	0x194
+ 1164 035c 2E050000 		.4byte	0x52e
+ 1165 0360 02       		.byte	0x2
+ 1166 0361 23       		.byte	0x23
+ 1167 0362 40       		.uleb128 0x40
+ 1168 0363 11       		.uleb128 0x11
+ 1169 0364 6C050000 		.4byte	.LASF58
+ 1170 0368 06       		.byte	0x6
+ 1171 0369 9701     		.2byte	0x197
+ 1172 036b CD070000 		.4byte	0x7cd
+ 1173 036f 02       		.byte	0x2
+ 1174 0370 23       		.byte	0x23
+ 1175 0371 44       		.uleb128 0x44
+ 1176 0372 11       		.uleb128 0x11
+ 1177 0373 80010000 		.4byte	.LASF59
+ 1178 0377 06       		.byte	0x6
+ 1179 0378 9F01     		.2byte	0x19f
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 34
+
+
+ 1180 037a DD050000 		.4byte	0x5dd
+ 1181 037e 02       		.byte	0x2
+ 1182 037f 23       		.byte	0x23
+ 1183 0380 48       		.uleb128 0x48
+ 1184 0381 11       		.uleb128 0x11
+ 1185 0382 73010000 		.4byte	.LASF60
+ 1186 0386 06       		.byte	0x6
+ 1187 0387 A001     		.2byte	0x1a0
+ 1188 0389 1E060000 		.4byte	0x61e
+ 1189 038d 02       		.byte	0x2
+ 1190 038e 23       		.byte	0x23
+ 1191 038f 54       		.uleb128 0x54
+ 1192 0390 11       		.uleb128 0x11
+ 1193 0391 24030000 		.4byte	.LASF61
+ 1194 0395 06       		.byte	0x6
+ 1195 0396 A101     		.2byte	0x1a1
+ 1196 0398 D9070000 		.4byte	0x7d9
+ 1197 039c 02       		.byte	0x2
+ 1198 039d 23       		.byte	0x23
+ 1199 039e 58       		.uleb128 0x58
+ 1200 039f 11       		.uleb128 0x11
+ 1201 03a0 BC020000 		.4byte	.LASF62
+ 1202 03a4 06       		.byte	0x6
+ 1203 03a5 A201     		.2byte	0x1a2
+ 1204 03a7 2E050000 		.4byte	0x52e
+ 1205 03ab 02       		.byte	0x2
+ 1206 03ac 23       		.byte	0x23
+ 1207 03ad 5C       		.uleb128 0x5c
+ 1208 03ae 00       		.byte	0
+ 1209 03af 0F       		.uleb128 0xf
+ 1210 03b0 04       		.byte	0x4
+ 1211 03b1 57020000 		.4byte	0x257
+ 1212 03b5 0D       		.uleb128 0xd
+ 1213 03b6 16040000 		.4byte	.LASF63
+ 1214 03ba 68       		.byte	0x68
+ 1215 03bb 06       		.byte	0x6
+ 1216 03bc B5       		.byte	0xb5
+ 1217 03bd 0F050000 		.4byte	0x50f
+ 1218 03c1 0E       		.uleb128 0xe
+ 1219 03c2 5F7000   		.ascii	"_p\000"
+ 1220 03c5 06       		.byte	0x6
+ 1221 03c6 B6       		.byte	0xb6
+ 1222 03c7 51020000 		.4byte	0x251
+ 1223 03cb 02       		.byte	0x2
+ 1224 03cc 23       		.byte	0x23
+ 1225 03cd 00       		.uleb128 0
+ 1226 03ce 0E       		.uleb128 0xe
+ 1227 03cf 5F7200   		.ascii	"_r\000"
+ 1228 03d2 06       		.byte	0x6
+ 1229 03d3 B7       		.byte	0xb7
+ 1230 03d4 68000000 		.4byte	0x68
+ 1231 03d8 02       		.byte	0x2
+ 1232 03d9 23       		.byte	0x23
+ 1233 03da 04       		.uleb128 0x4
+ 1234 03db 0E       		.uleb128 0xe
+ 1235 03dc 5F7700   		.ascii	"_w\000"
+ 1236 03df 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 35
+
+
+ 1237 03e0 B8       		.byte	0xb8
+ 1238 03e1 68000000 		.4byte	0x68
+ 1239 03e5 02       		.byte	0x2
+ 1240 03e6 23       		.byte	0x23
+ 1241 03e7 08       		.uleb128 0x8
+ 1242 03e8 0C       		.uleb128 0xc
+ 1243 03e9 91010000 		.4byte	.LASF64
+ 1244 03ed 06       		.byte	0x6
+ 1245 03ee B9       		.byte	0xb9
+ 1246 03ef 33000000 		.4byte	0x33
+ 1247 03f3 02       		.byte	0x2
+ 1248 03f4 23       		.byte	0x23
+ 1249 03f5 0C       		.uleb128 0xc
+ 1250 03f6 0C       		.uleb128 0xc
+ 1251 03f7 8D020000 		.4byte	.LASF65
+ 1252 03fb 06       		.byte	0x6
+ 1253 03fc BA       		.byte	0xba
+ 1254 03fd 33000000 		.4byte	0x33
+ 1255 0401 02       		.byte	0x2
+ 1256 0402 23       		.byte	0x23
+ 1257 0403 0E       		.uleb128 0xe
+ 1258 0404 0E       		.uleb128 0xe
+ 1259 0405 5F626600 		.ascii	"_bf\000"
+ 1260 0409 06       		.byte	0x6
+ 1261 040a BB       		.byte	0xbb
+ 1262 040b 28020000 		.4byte	0x228
+ 1263 040f 02       		.byte	0x2
+ 1264 0410 23       		.byte	0x23
+ 1265 0411 10       		.uleb128 0x10
+ 1266 0412 0C       		.uleb128 0xc
+ 1267 0413 F3000000 		.4byte	.LASF66
+ 1268 0417 06       		.byte	0x6
+ 1269 0418 BC       		.byte	0xbc
+ 1270 0419 68000000 		.4byte	0x68
+ 1271 041d 02       		.byte	0x2
+ 1272 041e 23       		.byte	0x23
+ 1273 041f 18       		.uleb128 0x18
+ 1274 0420 0C       		.uleb128 0xc
+ 1275 0421 B2000000 		.4byte	.LASF67
+ 1276 0425 06       		.byte	0x6
+ 1277 0426 BF       		.byte	0xbf
+ 1278 0427 AF030000 		.4byte	0x3af
+ 1279 042b 02       		.byte	0x2
+ 1280 042c 23       		.byte	0x23
+ 1281 042d 1C       		.uleb128 0x1c
+ 1282 042e 0C       		.uleb128 0xc
+ 1283 042f 78010000 		.4byte	.LASF68
+ 1284 0433 06       		.byte	0x6
+ 1285 0434 C3       		.byte	0xc3
+ 1286 0435 7D000000 		.4byte	0x7d
+ 1287 0439 02       		.byte	0x2
+ 1288 043a 23       		.byte	0x23
+ 1289 043b 20       		.uleb128 0x20
+ 1290 043c 0C       		.uleb128 0xc
+ 1291 043d 2C020000 		.4byte	.LASF69
+ 1292 0441 06       		.byte	0x6
+ 1293 0442 C5       		.byte	0xc5
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 36
+
+
+ 1294 0443 3B050000 		.4byte	0x53b
+ 1295 0447 02       		.byte	0x2
+ 1296 0448 23       		.byte	0x23
+ 1297 0449 24       		.uleb128 0x24
+ 1298 044a 0C       		.uleb128 0xc
+ 1299 044b 13030000 		.4byte	.LASF70
+ 1300 044f 06       		.byte	0x6
+ 1301 0450 C7       		.byte	0xc7
+ 1302 0451 6B050000 		.4byte	0x56b
+ 1303 0455 02       		.byte	0x2
+ 1304 0456 23       		.byte	0x23
+ 1305 0457 28       		.uleb128 0x28
+ 1306 0458 0C       		.uleb128 0xc
+ 1307 0459 93040000 		.4byte	.LASF71
+ 1308 045d 06       		.byte	0x6
+ 1309 045e CA       		.byte	0xca
+ 1310 045f 90050000 		.4byte	0x590
+ 1311 0463 02       		.byte	0x2
+ 1312 0464 23       		.byte	0x23
+ 1313 0465 2C       		.uleb128 0x2c
+ 1314 0466 0C       		.uleb128 0xc
+ 1315 0467 44010000 		.4byte	.LASF72
+ 1316 046b 06       		.byte	0x6
+ 1317 046c CB       		.byte	0xcb
+ 1318 046d AB050000 		.4byte	0x5ab
+ 1319 0471 02       		.byte	0x2
+ 1320 0472 23       		.byte	0x23
+ 1321 0473 30       		.uleb128 0x30
+ 1322 0474 0E       		.uleb128 0xe
+ 1323 0475 5F756200 		.ascii	"_ub\000"
+ 1324 0479 06       		.byte	0x6
+ 1325 047a CE       		.byte	0xce
+ 1326 047b 28020000 		.4byte	0x228
+ 1327 047f 02       		.byte	0x2
+ 1328 0480 23       		.byte	0x23
+ 1329 0481 34       		.uleb128 0x34
+ 1330 0482 0E       		.uleb128 0xe
+ 1331 0483 5F757000 		.ascii	"_up\000"
+ 1332 0487 06       		.byte	0x6
+ 1333 0488 CF       		.byte	0xcf
+ 1334 0489 51020000 		.4byte	0x251
+ 1335 048d 02       		.byte	0x2
+ 1336 048e 23       		.byte	0x23
+ 1337 048f 3C       		.uleb128 0x3c
+ 1338 0490 0E       		.uleb128 0xe
+ 1339 0491 5F757200 		.ascii	"_ur\000"
+ 1340 0495 06       		.byte	0x6
+ 1341 0496 D0       		.byte	0xd0
+ 1342 0497 68000000 		.4byte	0x68
+ 1343 049b 02       		.byte	0x2
+ 1344 049c 23       		.byte	0x23
+ 1345 049d 40       		.uleb128 0x40
+ 1346 049e 0C       		.uleb128 0xc
+ 1347 049f 5D010000 		.4byte	.LASF73
+ 1348 04a3 06       		.byte	0x6
+ 1349 04a4 D3       		.byte	0xd3
+ 1350 04a5 B1050000 		.4byte	0x5b1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 37
+
+
+ 1351 04a9 02       		.byte	0x2
+ 1352 04aa 23       		.byte	0x23
+ 1353 04ab 44       		.uleb128 0x44
+ 1354 04ac 0C       		.uleb128 0xc
+ 1355 04ad 76050000 		.4byte	.LASF74
+ 1356 04b1 06       		.byte	0x6
+ 1357 04b2 D4       		.byte	0xd4
+ 1358 04b3 C1050000 		.4byte	0x5c1
+ 1359 04b7 02       		.byte	0x2
+ 1360 04b8 23       		.byte	0x23
+ 1361 04b9 47       		.uleb128 0x47
+ 1362 04ba 0E       		.uleb128 0xe
+ 1363 04bb 5F6C6200 		.ascii	"_lb\000"
+ 1364 04bf 06       		.byte	0x6
+ 1365 04c0 D7       		.byte	0xd7
+ 1366 04c1 28020000 		.4byte	0x228
+ 1367 04c5 02       		.byte	0x2
+ 1368 04c6 23       		.byte	0x23
+ 1369 04c7 48       		.uleb128 0x48
+ 1370 04c8 0C       		.uleb128 0xc
+ 1371 04c9 BB040000 		.4byte	.LASF75
+ 1372 04cd 06       		.byte	0x6
+ 1373 04ce DA       		.byte	0xda
+ 1374 04cf 68000000 		.4byte	0x68
+ 1375 04d3 02       		.byte	0x2
+ 1376 04d4 23       		.byte	0x23
+ 1377 04d5 50       		.uleb128 0x50
+ 1378 04d6 0C       		.uleb128 0xc
+ 1379 04d7 D1010000 		.4byte	.LASF76
+ 1380 04db 06       		.byte	0x6
+ 1381 04dc DB       		.byte	0xdb
+ 1382 04dd 8A000000 		.4byte	0x8a
+ 1383 04e1 02       		.byte	0x2
+ 1384 04e2 23       		.byte	0x23
+ 1385 04e3 54       		.uleb128 0x54
+ 1386 04e4 0C       		.uleb128 0xc
+ 1387 04e5 FF020000 		.4byte	.LASF77
+ 1388 04e9 06       		.byte	0x6
+ 1389 04ea E2       		.byte	0xe2
+ 1390 04eb 12010000 		.4byte	0x112
+ 1391 04ef 02       		.byte	0x2
+ 1392 04f0 23       		.byte	0x23
+ 1393 04f1 58       		.uleb128 0x58
+ 1394 04f2 0C       		.uleb128 0xc
+ 1395 04f3 1E040000 		.4byte	.LASF78
+ 1396 04f7 06       		.byte	0x6
+ 1397 04f8 E4       		.byte	0xe4
+ 1398 04f9 07010000 		.4byte	0x107
+ 1399 04fd 02       		.byte	0x2
+ 1400 04fe 23       		.byte	0x23
+ 1401 04ff 5C       		.uleb128 0x5c
+ 1402 0500 0C       		.uleb128 0xc
+ 1403 0501 02040000 		.4byte	.LASF79
+ 1404 0505 06       		.byte	0x6
+ 1405 0506 E5       		.byte	0xe5
+ 1406 0507 68000000 		.4byte	0x68
+ 1407 050b 02       		.byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 38
+
+
+ 1408 050c 23       		.byte	0x23
+ 1409 050d 64       		.uleb128 0x64
+ 1410 050e 00       		.byte	0
+ 1411 050f 13       		.uleb128 0x13
+ 1412 0510 01       		.byte	0x1
+ 1413 0511 68000000 		.4byte	0x68
+ 1414 0515 2E050000 		.4byte	0x52e
+ 1415 0519 14       		.uleb128 0x14
+ 1416 051a AF030000 		.4byte	0x3af
+ 1417 051e 14       		.uleb128 0x14
+ 1418 051f 7D000000 		.4byte	0x7d
+ 1419 0523 14       		.uleb128 0x14
+ 1420 0524 2E050000 		.4byte	0x52e
+ 1421 0528 14       		.uleb128 0x14
+ 1422 0529 68000000 		.4byte	0x68
+ 1423 052d 00       		.byte	0
+ 1424 052e 0F       		.uleb128 0xf
+ 1425 052f 04       		.byte	0x4
+ 1426 0530 34050000 		.4byte	0x534
+ 1427 0534 02       		.uleb128 0x2
+ 1428 0535 01       		.byte	0x1
+ 1429 0536 08       		.byte	0x8
+ 1430 0537 B6040000 		.4byte	.LASF80
+ 1431 053b 0F       		.uleb128 0xf
+ 1432 053c 04       		.byte	0x4
+ 1433 053d 0F050000 		.4byte	0x50f
+ 1434 0541 13       		.uleb128 0x13
+ 1435 0542 01       		.byte	0x1
+ 1436 0543 68000000 		.4byte	0x68
+ 1437 0547 60050000 		.4byte	0x560
+ 1438 054b 14       		.uleb128 0x14
+ 1439 054c AF030000 		.4byte	0x3af
+ 1440 0550 14       		.uleb128 0x14
+ 1441 0551 7D000000 		.4byte	0x7d
+ 1442 0555 14       		.uleb128 0x14
+ 1443 0556 60050000 		.4byte	0x560
+ 1444 055a 14       		.uleb128 0x14
+ 1445 055b 68000000 		.4byte	0x68
+ 1446 055f 00       		.byte	0
+ 1447 0560 0F       		.uleb128 0xf
+ 1448 0561 04       		.byte	0x4
+ 1449 0562 66050000 		.4byte	0x566
+ 1450 0566 15       		.uleb128 0x15
+ 1451 0567 34050000 		.4byte	0x534
+ 1452 056b 0F       		.uleb128 0xf
+ 1453 056c 04       		.byte	0x4
+ 1454 056d 41050000 		.4byte	0x541
+ 1455 0571 13       		.uleb128 0x13
+ 1456 0572 01       		.byte	0x1
+ 1457 0573 95000000 		.4byte	0x95
+ 1458 0577 90050000 		.4byte	0x590
+ 1459 057b 14       		.uleb128 0x14
+ 1460 057c AF030000 		.4byte	0x3af
+ 1461 0580 14       		.uleb128 0x14
+ 1462 0581 7D000000 		.4byte	0x7d
+ 1463 0585 14       		.uleb128 0x14
+ 1464 0586 95000000 		.4byte	0x95
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 39
+
+
+ 1465 058a 14       		.uleb128 0x14
+ 1466 058b 68000000 		.4byte	0x68
+ 1467 058f 00       		.byte	0
+ 1468 0590 0F       		.uleb128 0xf
+ 1469 0591 04       		.byte	0x4
+ 1470 0592 71050000 		.4byte	0x571
+ 1471 0596 13       		.uleb128 0x13
+ 1472 0597 01       		.byte	0x1
+ 1473 0598 68000000 		.4byte	0x68
+ 1474 059c AB050000 		.4byte	0x5ab
+ 1475 05a0 14       		.uleb128 0x14
+ 1476 05a1 AF030000 		.4byte	0x3af
+ 1477 05a5 14       		.uleb128 0x14
+ 1478 05a6 7D000000 		.4byte	0x7d
+ 1479 05aa 00       		.byte	0
+ 1480 05ab 0F       		.uleb128 0xf
+ 1481 05ac 04       		.byte	0x4
+ 1482 05ad 96050000 		.4byte	0x596
+ 1483 05b1 09       		.uleb128 0x9
+ 1484 05b2 2C000000 		.4byte	0x2c
+ 1485 05b6 C1050000 		.4byte	0x5c1
+ 1486 05ba 0A       		.uleb128 0xa
+ 1487 05bb DB000000 		.4byte	0xdb
+ 1488 05bf 02       		.byte	0x2
+ 1489 05c0 00       		.byte	0
+ 1490 05c1 09       		.uleb128 0x9
+ 1491 05c2 2C000000 		.4byte	0x2c
+ 1492 05c6 D1050000 		.4byte	0x5d1
+ 1493 05ca 0A       		.uleb128 0xa
+ 1494 05cb DB000000 		.4byte	0xdb
+ 1495 05cf 00       		.byte	0
+ 1496 05d0 00       		.byte	0
+ 1497 05d1 06       		.uleb128 0x6
+ 1498 05d2 0A040000 		.4byte	.LASF81
+ 1499 05d6 06       		.byte	0x6
+ 1500 05d7 1F01     		.2byte	0x11f
+ 1501 05d9 B5030000 		.4byte	0x3b5
+ 1502 05dd 10       		.uleb128 0x10
+ 1503 05de 5C050000 		.4byte	.LASF82
+ 1504 05e2 0C       		.byte	0xc
+ 1505 05e3 06       		.byte	0x6
+ 1506 05e4 2301     		.2byte	0x123
+ 1507 05e6 18060000 		.4byte	0x618
+ 1508 05ea 11       		.uleb128 0x11
+ 1509 05eb F3040000 		.4byte	.LASF23
+ 1510 05ef 06       		.byte	0x6
+ 1511 05f0 2501     		.2byte	0x125
+ 1512 05f2 18060000 		.4byte	0x618
+ 1513 05f6 02       		.byte	0x2
+ 1514 05f7 23       		.byte	0x23
+ 1515 05f8 00       		.uleb128 0
+ 1516 05f9 11       		.uleb128 0x11
+ 1517 05fa 98020000 		.4byte	.LASF83
+ 1518 05fe 06       		.byte	0x6
+ 1519 05ff 2601     		.2byte	0x126
+ 1520 0601 68000000 		.4byte	0x68
+ 1521 0605 02       		.byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 40
+
+
+ 1522 0606 23       		.byte	0x23
+ 1523 0607 04       		.uleb128 0x4
+ 1524 0608 11       		.uleb128 0x11
+ 1525 0609 E6030000 		.4byte	.LASF84
+ 1526 060d 06       		.byte	0x6
+ 1527 060e 2701     		.2byte	0x127
+ 1528 0610 1E060000 		.4byte	0x61e
+ 1529 0614 02       		.byte	0x2
+ 1530 0615 23       		.byte	0x23
+ 1531 0616 08       		.uleb128 0x8
+ 1532 0617 00       		.byte	0
+ 1533 0618 0F       		.uleb128 0xf
+ 1534 0619 04       		.byte	0x4
+ 1535 061a DD050000 		.4byte	0x5dd
+ 1536 061e 0F       		.uleb128 0xf
+ 1537 061f 04       		.byte	0x4
+ 1538 0620 D1050000 		.4byte	0x5d1
+ 1539 0624 10       		.uleb128 0x10
+ 1540 0625 06000000 		.4byte	.LASF85
+ 1541 0629 18       		.byte	0x18
+ 1542 062a 06       		.byte	0x6
+ 1543 062b 3F01     		.2byte	0x13f
+ 1544 062d 6E060000 		.4byte	0x66e
+ 1545 0631 11       		.uleb128 0x11
+ 1546 0632 74040000 		.4byte	.LASF86
+ 1547 0636 06       		.byte	0x6
+ 1548 0637 4001     		.2byte	0x140
+ 1549 0639 6E060000 		.4byte	0x66e
+ 1550 063d 02       		.byte	0x2
+ 1551 063e 23       		.byte	0x23
+ 1552 063f 00       		.uleb128 0
+ 1553 0640 11       		.uleb128 0x11
+ 1554 0641 0D030000 		.4byte	.LASF87
+ 1555 0645 06       		.byte	0x6
+ 1556 0646 4101     		.2byte	0x141
+ 1557 0648 6E060000 		.4byte	0x66e
+ 1558 064c 02       		.byte	0x2
+ 1559 064d 23       		.byte	0x23
+ 1560 064e 06       		.uleb128 0x6
+ 1561 064f 11       		.uleb128 0x11
+ 1562 0650 25050000 		.4byte	.LASF88
+ 1563 0654 06       		.byte	0x6
+ 1564 0655 4201     		.2byte	0x142
+ 1565 0657 3A000000 		.4byte	0x3a
+ 1566 065b 02       		.byte	0x2
+ 1567 065c 23       		.byte	0x23
+ 1568 065d 0C       		.uleb128 0xc
+ 1569 065e 11       		.uleb128 0x11
+ 1570 065f A8020000 		.4byte	.LASF89
+ 1571 0663 06       		.byte	0x6
+ 1572 0664 4501     		.2byte	0x145
+ 1573 0666 61000000 		.4byte	0x61
+ 1574 066a 02       		.byte	0x2
+ 1575 066b 23       		.byte	0x23
+ 1576 066c 10       		.uleb128 0x10
+ 1577 066d 00       		.byte	0
+ 1578 066e 09       		.uleb128 0x9
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 41
+
+
+ 1579 066f 3A000000 		.4byte	0x3a
+ 1580 0673 7E060000 		.4byte	0x67e
+ 1581 0677 0A       		.uleb128 0xa
+ 1582 0678 DB000000 		.4byte	0xdb
+ 1583 067c 02       		.byte	0x2
+ 1584 067d 00       		.byte	0
+ 1585 067e 10       		.uleb128 0x10
+ 1586 067f EC040000 		.4byte	.LASF90
+ 1587 0683 10       		.byte	0x10
+ 1588 0684 06       		.byte	0x6
+ 1589 0685 5801     		.2byte	0x158
+ 1590 0687 C8060000 		.4byte	0x6c8
+ 1591 068b 11       		.uleb128 0x11
+ 1592 068c DD020000 		.4byte	.LASF91
+ 1593 0690 06       		.byte	0x6
+ 1594 0691 5B01     		.2byte	0x15b
+ 1595 0693 87010000 		.4byte	0x187
+ 1596 0697 02       		.byte	0x2
+ 1597 0698 23       		.byte	0x23
+ 1598 0699 00       		.uleb128 0
+ 1599 069a 11       		.uleb128 0x11
+ 1600 069b B1010000 		.4byte	.LASF92
+ 1601 069f 06       		.byte	0x6
+ 1602 06a0 5C01     		.2byte	0x15c
+ 1603 06a2 68000000 		.4byte	0x68
+ 1604 06a6 02       		.byte	0x2
+ 1605 06a7 23       		.byte	0x23
+ 1606 06a8 04       		.uleb128 0x4
+ 1607 06a9 11       		.uleb128 0x11
+ 1608 06aa CC050000 		.4byte	.LASF93
+ 1609 06ae 06       		.byte	0x6
+ 1610 06af 5D01     		.2byte	0x15d
+ 1611 06b1 87010000 		.4byte	0x187
+ 1612 06b5 02       		.byte	0x2
+ 1613 06b6 23       		.byte	0x23
+ 1614 06b7 08       		.uleb128 0x8
+ 1615 06b8 11       		.uleb128 0x11
+ 1616 06b9 9B030000 		.4byte	.LASF94
+ 1617 06bd 06       		.byte	0x6
+ 1618 06be 5E01     		.2byte	0x15e
+ 1619 06c0 C8060000 		.4byte	0x6c8
+ 1620 06c4 02       		.byte	0x2
+ 1621 06c5 23       		.byte	0x23
+ 1622 06c6 0C       		.uleb128 0xc
+ 1623 06c7 00       		.byte	0
+ 1624 06c8 0F       		.uleb128 0xf
+ 1625 06c9 04       		.byte	0x4
+ 1626 06ca 87010000 		.4byte	0x187
+ 1627 06ce 10       		.uleb128 0x10
+ 1628 06cf 06050000 		.4byte	.LASF95
+ 1629 06d3 50       		.byte	0x50
+ 1630 06d4 06       		.byte	0x6
+ 1631 06d5 6201     		.2byte	0x162
+ 1632 06d7 81070000 		.4byte	0x781
+ 1633 06db 11       		.uleb128 0x11
+ 1634 06dc F9040000 		.4byte	.LASF96
+ 1635 06e0 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 42
+
+
+ 1636 06e1 6501     		.2byte	0x165
+ 1637 06e3 2E050000 		.4byte	0x52e
+ 1638 06e7 02       		.byte	0x2
+ 1639 06e8 23       		.byte	0x23
+ 1640 06e9 00       		.uleb128 0
+ 1641 06ea 11       		.uleb128 0x11
+ 1642 06eb 27040000 		.4byte	.LASF97
+ 1643 06ef 06       		.byte	0x6
+ 1644 06f0 6601     		.2byte	0x166
+ 1645 06f2 07010000 		.4byte	0x107
+ 1646 06f6 02       		.byte	0x2
+ 1647 06f7 23       		.byte	0x23
+ 1648 06f8 04       		.uleb128 0x4
+ 1649 06f9 11       		.uleb128 0x11
+ 1650 06fa 26010000 		.4byte	.LASF98
+ 1651 06fe 06       		.byte	0x6
+ 1652 06ff 6701     		.2byte	0x167
+ 1653 0701 07010000 		.4byte	0x107
+ 1654 0705 02       		.byte	0x2
+ 1655 0706 23       		.byte	0x23
+ 1656 0707 0C       		.uleb128 0xc
+ 1657 0708 11       		.uleb128 0x11
+ 1658 0709 BE050000 		.4byte	.LASF99
+ 1659 070d 06       		.byte	0x6
+ 1660 070e 6801     		.2byte	0x168
+ 1661 0710 07010000 		.4byte	0x107
+ 1662 0714 02       		.byte	0x2
+ 1663 0715 23       		.byte	0x23
+ 1664 0716 14       		.uleb128 0x14
+ 1665 0717 11       		.uleb128 0x11
+ 1666 0718 62050000 		.4byte	.LASF100
+ 1667 071c 06       		.byte	0x6
+ 1668 071d 6901     		.2byte	0x169
+ 1669 071f 81070000 		.4byte	0x781
+ 1670 0723 02       		.byte	0x2
+ 1671 0724 23       		.byte	0x23
+ 1672 0725 1C       		.uleb128 0x1c
+ 1673 0726 11       		.uleb128 0x11
+ 1674 0727 32050000 		.4byte	.LASF101
+ 1675 072b 06       		.byte	0x6
+ 1676 072c 6A01     		.2byte	0x16a
+ 1677 072e 68000000 		.4byte	0x68
+ 1678 0732 02       		.byte	0x2
+ 1679 0733 23       		.byte	0x23
+ 1680 0734 24       		.uleb128 0x24
+ 1681 0735 11       		.uleb128 0x11
+ 1682 0736 EA010000 		.4byte	.LASF102
+ 1683 073a 06       		.byte	0x6
+ 1684 073b 6B01     		.2byte	0x16b
+ 1685 073d 07010000 		.4byte	0x107
+ 1686 0741 02       		.byte	0x2
+ 1687 0742 23       		.byte	0x23
+ 1688 0743 28       		.uleb128 0x28
+ 1689 0744 11       		.uleb128 0x11
+ 1690 0745 0E010000 		.4byte	.LASF103
+ 1691 0749 06       		.byte	0x6
+ 1692 074a 6C01     		.2byte	0x16c
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 43
+
+
+ 1693 074c 07010000 		.4byte	0x107
+ 1694 0750 02       		.byte	0x2
+ 1695 0751 23       		.byte	0x23
+ 1696 0752 30       		.uleb128 0x30
+ 1697 0753 11       		.uleb128 0x11
+ 1698 0754 D9010000 		.4byte	.LASF104
+ 1699 0758 06       		.byte	0x6
+ 1700 0759 6D01     		.2byte	0x16d
+ 1701 075b 07010000 		.4byte	0x107
+ 1702 075f 02       		.byte	0x2
+ 1703 0760 23       		.byte	0x23
+ 1704 0761 38       		.uleb128 0x38
+ 1705 0762 11       		.uleb128 0x11
+ 1706 0763 A9050000 		.4byte	.LASF105
+ 1707 0767 06       		.byte	0x6
+ 1708 0768 6E01     		.2byte	0x16e
+ 1709 076a 07010000 		.4byte	0x107
+ 1710 076e 02       		.byte	0x2
+ 1711 076f 23       		.byte	0x23
+ 1712 0770 40       		.uleb128 0x40
+ 1713 0771 11       		.uleb128 0x11
+ 1714 0772 CB000000 		.4byte	.LASF106
+ 1715 0776 06       		.byte	0x6
+ 1716 0777 6F01     		.2byte	0x16f
+ 1717 0779 07010000 		.4byte	0x107
+ 1718 077d 02       		.byte	0x2
+ 1719 077e 23       		.byte	0x23
+ 1720 077f 48       		.uleb128 0x48
+ 1721 0780 00       		.byte	0
+ 1722 0781 09       		.uleb128 0x9
+ 1723 0782 34050000 		.4byte	0x534
+ 1724 0786 91070000 		.4byte	0x791
+ 1725 078a 0A       		.uleb128 0xa
+ 1726 078b DB000000 		.4byte	0xdb
+ 1727 078f 07       		.byte	0x7
+ 1728 0790 00       		.byte	0
+ 1729 0791 16       		.uleb128 0x16
+ 1730 0792 FC000000 		.4byte	.LASF146
+ 1731 0796 01       		.byte	0x1
+ 1732 0797 0F       		.uleb128 0xf
+ 1733 0798 04       		.byte	0x4
+ 1734 0799 91070000 		.4byte	0x791
+ 1735 079d 0F       		.uleb128 0xf
+ 1736 079e 04       		.byte	0x4
+ 1737 079f 7E060000 		.4byte	0x67e
+ 1738 07a3 17       		.uleb128 0x17
+ 1739 07a4 01       		.byte	0x1
+ 1740 07a5 AF070000 		.4byte	0x7af
+ 1741 07a9 14       		.uleb128 0x14
+ 1742 07aa AF030000 		.4byte	0x3af
+ 1743 07ae 00       		.byte	0
+ 1744 07af 0F       		.uleb128 0xf
+ 1745 07b0 04       		.byte	0x4
+ 1746 07b1 A3070000 		.4byte	0x7a3
+ 1747 07b5 0F       		.uleb128 0xf
+ 1748 07b6 04       		.byte	0x4
+ 1749 07b7 24060000 		.4byte	0x624
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 44
+
+
+ 1750 07bb 0F       		.uleb128 0xf
+ 1751 07bc 04       		.byte	0x4
+ 1752 07bd 9D010000 		.4byte	0x19d
+ 1753 07c1 17       		.uleb128 0x17
+ 1754 07c2 01       		.byte	0x1
+ 1755 07c3 CD070000 		.4byte	0x7cd
+ 1756 07c7 14       		.uleb128 0x14
+ 1757 07c8 68000000 		.4byte	0x68
+ 1758 07cc 00       		.byte	0
+ 1759 07cd 0F       		.uleb128 0xf
+ 1760 07ce 04       		.byte	0x4
+ 1761 07cf D3070000 		.4byte	0x7d3
+ 1762 07d3 0F       		.uleb128 0xf
+ 1763 07d4 04       		.byte	0x4
+ 1764 07d5 C1070000 		.4byte	0x7c1
+ 1765 07d9 0F       		.uleb128 0xf
+ 1766 07da 04       		.byte	0x4
+ 1767 07db CE060000 		.4byte	0x6ce
+ 1768 07df 03       		.uleb128 0x3
+ 1769 07e0 3F050000 		.4byte	.LASF107
+ 1770 07e4 07       		.byte	0x7
+ 1771 07e5 30       		.byte	0x30
+ 1772 07e6 48000000 		.4byte	0x48
+ 1773 07ea 03       		.uleb128 0x3
+ 1774 07eb 98010000 		.4byte	.LASF108
+ 1775 07ef 08       		.byte	0x8
+ 1776 07f0 42       		.byte	0x42
+ 1777 07f1 D1050000 		.4byte	0x5d1
+ 1778 07f5 18       		.uleb128 0x18
+ 1779 07f6 DF070000 		.4byte	0x7df
+ 1780 07fa 19       		.uleb128 0x19
+ 1781 07fb 4C       		.byte	0x4c
+ 1782 07fc 09       		.byte	0x9
+ 1783 07fd 6A56     		.2byte	0x566a
+ 1784 07ff 21090000 		.4byte	0x921
+ 1785 0803 12       		.uleb128 0x12
+ 1786 0804 44415400 		.ascii	"DAT\000"
+ 1787 0808 09       		.byte	0x9
+ 1788 0809 7459     		.2byte	0x5974
+ 1789 080b F5070000 		.4byte	0x7f5
+ 1790 080f 02       		.byte	0x2
+ 1791 0810 23       		.byte	0x23
+ 1792 0811 00       		.uleb128 0
+ 1793 0812 11       		.uleb128 0x11
+ 1794 0813 DA040000 		.4byte	.LASF109
+ 1795 0817 09       		.byte	0x9
+ 1796 0818 7559     		.2byte	0x5975
+ 1797 081a F5070000 		.4byte	0x7f5
+ 1798 081e 02       		.byte	0x2
+ 1799 081f 23       		.byte	0x23
+ 1800 0820 04       		.uleb128 0x4
+ 1801 0821 11       		.uleb128 0x11
+ 1802 0822 7C050000 		.4byte	.LASF110
+ 1803 0826 09       		.byte	0x9
+ 1804 0827 7659     		.2byte	0x5976
+ 1805 0829 F5070000 		.4byte	0x7f5
+ 1806 082d 02       		.byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 45
+
+
+ 1807 082e 23       		.byte	0x23
+ 1808 082f 08       		.uleb128 0x8
+ 1809 0830 11       		.uleb128 0x11
+ 1810 0831 27020000 		.4byte	.LASF111
+ 1811 0835 09       		.byte	0x9
+ 1812 0836 7759     		.2byte	0x5977
+ 1813 0838 F5070000 		.4byte	0x7f5
+ 1814 083c 02       		.byte	0x2
+ 1815 083d 23       		.byte	0x23
+ 1816 083e 0C       		.uleb128 0xc
+ 1817 083f 11       		.uleb128 0x11
+ 1818 0840 BF000000 		.4byte	.LASF112
+ 1819 0844 09       		.byte	0x9
+ 1820 0845 7859     		.2byte	0x5978
+ 1821 0847 F5070000 		.4byte	0x7f5
+ 1822 084b 02       		.byte	0x2
+ 1823 084c 23       		.byte	0x23
+ 1824 084d 10       		.uleb128 0x10
+ 1825 084e 11       		.uleb128 0x11
+ 1826 084f B3020000 		.4byte	.LASF113
+ 1827 0853 09       		.byte	0x9
+ 1828 0854 7959     		.2byte	0x5979
+ 1829 0856 F5070000 		.4byte	0x7f5
+ 1830 085a 02       		.byte	0x2
+ 1831 085b 23       		.byte	0x23
+ 1832 085c 14       		.uleb128 0x14
+ 1833 085d 11       		.uleb128 0x11
+ 1834 085e D5020000 		.4byte	.LASF114
+ 1835 0862 09       		.byte	0x9
+ 1836 0863 7A59     		.2byte	0x597a
+ 1837 0865 F5070000 		.4byte	0x7f5
+ 1838 0869 02       		.byte	0x2
+ 1839 086a 23       		.byte	0x23
+ 1840 086b 18       		.uleb128 0x18
+ 1841 086c 11       		.uleb128 0x11
+ 1842 086d F8020000 		.4byte	.LASF115
+ 1843 0871 09       		.byte	0x9
+ 1844 0872 7B59     		.2byte	0x597b
+ 1845 0874 F5070000 		.4byte	0x7f5
+ 1846 0878 02       		.byte	0x2
+ 1847 0879 23       		.byte	0x23
+ 1848 087a 1C       		.uleb128 0x1c
+ 1849 087b 11       		.uleb128 0x11
+ 1850 087c 09020000 		.4byte	.LASF116
+ 1851 0880 09       		.byte	0x9
+ 1852 0881 7C59     		.2byte	0x597c
+ 1853 0883 F5070000 		.4byte	0x7f5
+ 1854 0887 02       		.byte	0x2
+ 1855 0888 23       		.byte	0x23
+ 1856 0889 20       		.uleb128 0x20
+ 1857 088a 11       		.uleb128 0x11
+ 1858 088b D5040000 		.4byte	.LASF117
+ 1859 088f 09       		.byte	0x9
+ 1860 0890 7D59     		.2byte	0x597d
+ 1861 0892 F5070000 		.4byte	0x7f5
+ 1862 0896 02       		.byte	0x2
+ 1863 0897 23       		.byte	0x23
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 46
+
+
+ 1864 0898 24       		.uleb128 0x24
+ 1865 0899 11       		.uleb128 0x11
+ 1866 089a 11040000 		.4byte	.LASF118
+ 1867 089e 09       		.byte	0x9
+ 1868 089f 7E59     		.2byte	0x597e
+ 1869 08a1 F5070000 		.4byte	0x7f5
+ 1870 08a5 02       		.byte	0x2
+ 1871 08a6 23       		.byte	0x23
+ 1872 08a7 28       		.uleb128 0x28
+ 1873 08a8 11       		.uleb128 0x11
+ 1874 08a9 EC030000 		.4byte	.LASF119
+ 1875 08ad 09       		.byte	0x9
+ 1876 08ae 7F59     		.2byte	0x597f
+ 1877 08b0 F5070000 		.4byte	0x7f5
+ 1878 08b4 02       		.byte	0x2
+ 1879 08b5 23       		.byte	0x23
+ 1880 08b6 2C       		.uleb128 0x2c
+ 1881 08b7 11       		.uleb128 0x11
+ 1882 08b8 05030000 		.4byte	.LASF120
+ 1883 08bc 09       		.byte	0x9
+ 1884 08bd 8059     		.2byte	0x5980
+ 1885 08bf F5070000 		.4byte	0x7f5
+ 1886 08c3 02       		.byte	0x2
+ 1887 08c4 23       		.byte	0x23
+ 1888 08c5 30       		.uleb128 0x30
+ 1889 08c6 11       		.uleb128 0x11
+ 1890 08c7 F2050000 		.4byte	.LASF121
+ 1891 08cb 09       		.byte	0x9
+ 1892 08cc 8159     		.2byte	0x5981
+ 1893 08ce F5070000 		.4byte	0x7f5
+ 1894 08d2 02       		.byte	0x2
+ 1895 08d3 23       		.byte	0x23
+ 1896 08d4 34       		.uleb128 0x34
+ 1897 08d5 11       		.uleb128 0x11
+ 1898 08d6 07010000 		.4byte	.LASF122
+ 1899 08da 09       		.byte	0x9
+ 1900 08db 8259     		.2byte	0x5982
+ 1901 08dd F5070000 		.4byte	0x7f5
+ 1902 08e1 02       		.byte	0x2
+ 1903 08e2 23       		.byte	0x23
+ 1904 08e3 38       		.uleb128 0x38
+ 1905 08e4 11       		.uleb128 0x11
+ 1906 08e5 DF030000 		.4byte	.LASF123
+ 1907 08e9 09       		.byte	0x9
+ 1908 08ea 8359     		.2byte	0x5983
+ 1909 08ec F5070000 		.4byte	0x7f5
+ 1910 08f0 02       		.byte	0x2
+ 1911 08f1 23       		.byte	0x23
+ 1912 08f2 3C       		.uleb128 0x3c
+ 1913 08f3 11       		.uleb128 0x11
+ 1914 08f4 B8050000 		.4byte	.LASF124
+ 1915 08f8 09       		.byte	0x9
+ 1916 08f9 8459     		.2byte	0x5984
+ 1917 08fb F5070000 		.4byte	0x7f5
+ 1918 08ff 02       		.byte	0x2
+ 1919 0900 23       		.byte	0x23
+ 1920 0901 40       		.uleb128 0x40
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 47
+
+
+ 1921 0902 11       		.uleb128 0x11
+ 1922 0903 C5000000 		.4byte	.LASF125
+ 1923 0907 09       		.byte	0x9
+ 1924 0908 8559     		.2byte	0x5985
+ 1925 090a F5070000 		.4byte	0x7f5
+ 1926 090e 02       		.byte	0x2
+ 1927 090f 23       		.byte	0x23
+ 1928 0910 44       		.uleb128 0x44
+ 1929 0911 11       		.uleb128 0x11
+ 1930 0912 5C030000 		.4byte	.LASF126
+ 1931 0916 09       		.byte	0x9
+ 1932 0917 8659     		.2byte	0x5986
+ 1933 0919 F5070000 		.4byte	0x7f5
+ 1934 091d 02       		.byte	0x2
+ 1935 091e 23       		.byte	0x23
+ 1936 091f 48       		.uleb128 0x48
+ 1937 0920 00       		.byte	0
+ 1938 0921 06       		.uleb128 0x6
+ 1939 0922 B0030000 		.4byte	.LASF127
+ 1940 0926 09       		.byte	0x9
+ 1941 0927 8959     		.2byte	0x5989
+ 1942 0929 FA070000 		.4byte	0x7fa
+ 1943 092d 1A       		.uleb128 0x1a
+ 1944 092e 01       		.byte	0x1
+ 1945 092f 2C000000 		.4byte	0x2c
+ 1946 0933 01       		.byte	0x1
+ 1947 0934 27       		.byte	0x27
+ 1948 0935 64090000 		.4byte	0x964
+ 1949 0939 1B       		.uleb128 0x1b
+ 1950 093a 723000   		.ascii	"r0\000"
+ 1951 093d 00       		.byte	0
+ 1952 093e 1B       		.uleb128 0x1b
+ 1953 093f 723100   		.ascii	"r1\000"
+ 1954 0942 01       		.byte	0x1
+ 1955 0943 1B       		.uleb128 0x1b
+ 1956 0944 723200   		.ascii	"r2\000"
+ 1957 0947 02       		.byte	0x2
+ 1958 0948 1B       		.uleb128 0x1b
+ 1959 0949 723300   		.ascii	"r3\000"
+ 1960 094c 03       		.byte	0x3
+ 1961 094d 1B       		.uleb128 0x1b
+ 1962 094e 72313200 		.ascii	"r12\000"
+ 1963 0952 04       		.byte	0x4
+ 1964 0953 1B       		.uleb128 0x1b
+ 1965 0954 6C7200   		.ascii	"lr\000"
+ 1966 0957 05       		.byte	0x5
+ 1967 0958 1B       		.uleb128 0x1b
+ 1968 0959 706300   		.ascii	"pc\000"
+ 1969 095c 06       		.byte	0x6
+ 1970 095d 1B       		.uleb128 0x1b
+ 1971 095e 70737200 		.ascii	"psr\000"
+ 1972 0962 07       		.byte	0x7
+ 1973 0963 00       		.byte	0
+ 1974 0964 1C       		.uleb128 0x1c
+ 1975 0965 6D030000 		.4byte	.LASF147
+ 1976 0969 01       		.byte	0x1
+ 1977 096a 2F       		.byte	0x2f
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 48
+
+
+ 1978 096b 01       		.byte	0x1
+ 1979 096c 00000000 		.4byte	.LFB61
+ 1980 0970 B0000000 		.4byte	.LFE61
+ 1981 0974 00000000 		.4byte	.LLST0
+ 1982 0978 01       		.byte	0x1
+ 1983 0979 8C090000 		.4byte	0x98c
+ 1984 097d 1D       		.uleb128 0x1d
+ 1985 097e 34040000 		.4byte	.LASF128
+ 1986 0982 01       		.byte	0x1
+ 1987 0983 2F       		.byte	0x2f
+ 1988 0984 8C090000 		.4byte	0x98c
+ 1989 0988 02       		.byte	0x2
+ 1990 0989 91       		.byte	0x91
+ 1991 098a 74       		.sleb128 -12
+ 1992 098b 00       		.byte	0
+ 1993 098c 0F       		.uleb128 0xf
+ 1994 098d 04       		.byte	0x4
+ 1995 098e DF070000 		.4byte	0x7df
+ 1996 0992 1E       		.uleb128 0x1e
+ 1997 0993 01       		.byte	0x1
+ 1998 0994 33030000 		.4byte	.LASF129
+ 1999 0998 01       		.byte	0x1
+ 2000 0999 41       		.byte	0x41
+ 2001 099a 01       		.byte	0x1
+ 2002 099b B0000000 		.4byte	.LFB62
+ 2003 099f D0000000 		.4byte	.LFE62
+ 2004 09a3 38000000 		.4byte	.LLST1
+ 2005 09a7 01       		.byte	0x1
+ 2006 09a8 BB090000 		.4byte	0x9bb
+ 2007 09ac 1D       		.uleb128 0x1d
+ 2008 09ad 34040000 		.4byte	.LASF128
+ 2009 09b1 01       		.byte	0x1
+ 2010 09b2 41       		.byte	0x41
+ 2011 09b3 8C090000 		.4byte	0x98c
+ 2012 09b7 02       		.byte	0x2
+ 2013 09b8 91       		.byte	0x91
+ 2014 09b9 74       		.sleb128 -12
+ 2015 09ba 00       		.byte	0
+ 2016 09bb 1F       		.uleb128 0x1f
+ 2017 09bc 01       		.byte	0x1
+ 2018 09bd D8050000 		.4byte	.LASF130
+ 2019 09c1 01       		.byte	0x1
+ 2020 09c2 9101     		.2byte	0x191
+ 2021 09c4 01       		.byte	0x1
+ 2022 09c5 D0000000 		.4byte	.LFB63
+ 2023 09c9 18010000 		.4byte	.LFE63
+ 2024 09cd 70000000 		.4byte	.LLST2
+ 2025 09d1 01       		.byte	0x1
+ 2026 09d2 E5090000 		.4byte	0x9e5
+ 2027 09d6 20       		.uleb128 0x20
+ 2028 09d7 636800   		.ascii	"ch\000"
+ 2029 09da 01       		.byte	0x1
+ 2030 09db 9101     		.2byte	0x191
+ 2031 09dd 68000000 		.4byte	0x68
+ 2032 09e1 02       		.byte	0x2
+ 2033 09e2 91       		.byte	0x91
+ 2034 09e3 74       		.sleb128 -12
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 49
+
+
+ 2035 09e4 00       		.byte	0
+ 2036 09e5 21       		.uleb128 0x21
+ 2037 09e6 01       		.byte	0x1
+ 2038 09e7 13030000 		.4byte	.LASF70
+ 2039 09eb 01       		.byte	0x1
+ 2040 09ec D601     		.2byte	0x1d6
+ 2041 09ee 01       		.byte	0x1
+ 2042 09ef 68000000 		.4byte	0x68
+ 2043 09f3 18010000 		.4byte	.LFB64
+ 2044 09f7 50010000 		.4byte	.LFE64
+ 2045 09fb A8000000 		.4byte	.LLST3
+ 2046 09ff 01       		.byte	0x1
+ 2047 0a00 3F0A0000 		.4byte	0xa3f
+ 2048 0a04 22       		.uleb128 0x22
+ 2049 0a05 FD030000 		.4byte	.LASF131
+ 2050 0a09 01       		.byte	0x1
+ 2051 0a0a D601     		.2byte	0x1d6
+ 2052 0a0c 68000000 		.4byte	0x68
+ 2053 0a10 02       		.byte	0x2
+ 2054 0a11 91       		.byte	0x91
+ 2055 0a12 6C       		.sleb128 -20
+ 2056 0a13 20       		.uleb128 0x20
+ 2057 0a14 70747200 		.ascii	"ptr\000"
+ 2058 0a18 01       		.byte	0x1
+ 2059 0a19 D601     		.2byte	0x1d6
+ 2060 0a1b 2E050000 		.4byte	0x52e
+ 2061 0a1f 02       		.byte	0x2
+ 2062 0a20 91       		.byte	0x91
+ 2063 0a21 68       		.sleb128 -24
+ 2064 0a22 20       		.uleb128 0x20
+ 2065 0a23 6C656E00 		.ascii	"len\000"
+ 2066 0a27 01       		.byte	0x1
+ 2067 0a28 D601     		.2byte	0x1d6
+ 2068 0a2a 68000000 		.4byte	0x68
+ 2069 0a2e 02       		.byte	0x2
+ 2070 0a2f 91       		.byte	0x91
+ 2071 0a30 64       		.sleb128 -28
+ 2072 0a31 23       		.uleb128 0x23
+ 2073 0a32 6900     		.ascii	"i\000"
+ 2074 0a34 01       		.byte	0x1
+ 2075 0a35 D801     		.2byte	0x1d8
+ 2076 0a37 68000000 		.4byte	0x68
+ 2077 0a3b 02       		.byte	0x2
+ 2078 0a3c 91       		.byte	0x91
+ 2079 0a3d 74       		.sleb128 -12
+ 2080 0a3e 00       		.byte	0
+ 2081 0a3f 24       		.uleb128 0x24
+ 2082 0a40 01       		.byte	0x1
+ 2083 0a41 2C020000 		.4byte	.LASF69
+ 2084 0a45 01       		.byte	0x1
+ 2085 0a46 E101     		.2byte	0x1e1
+ 2086 0a48 01       		.byte	0x1
+ 2087 0a49 68000000 		.4byte	0x68
+ 2088 0a4d 50010000 		.4byte	.LFB65
+ 2089 0a51 C4010000 		.4byte	.LFE65
+ 2090 0a55 E0000000 		.4byte	.LLST4
+ 2091 0a59 01       		.byte	0x1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 50
+
+
+ 2092 0a5a 990A0000 		.4byte	0xa99
+ 2093 0a5e 22       		.uleb128 0x22
+ 2094 0a5f FD030000 		.4byte	.LASF131
+ 2095 0a63 01       		.byte	0x1
+ 2096 0a64 E101     		.2byte	0x1e1
+ 2097 0a66 68000000 		.4byte	0x68
+ 2098 0a6a 02       		.byte	0x2
+ 2099 0a6b 91       		.byte	0x91
+ 2100 0a6c 6C       		.sleb128 -20
+ 2101 0a6d 20       		.uleb128 0x20
+ 2102 0a6e 70747200 		.ascii	"ptr\000"
+ 2103 0a72 01       		.byte	0x1
+ 2104 0a73 E101     		.2byte	0x1e1
+ 2105 0a75 2E050000 		.4byte	0x52e
+ 2106 0a79 02       		.byte	0x2
+ 2107 0a7a 91       		.byte	0x91
+ 2108 0a7b 68       		.sleb128 -24
+ 2109 0a7c 20       		.uleb128 0x20
+ 2110 0a7d 6C656E00 		.ascii	"len\000"
+ 2111 0a81 01       		.byte	0x1
+ 2112 0a82 E101     		.2byte	0x1e1
+ 2113 0a84 68000000 		.4byte	0x68
+ 2114 0a88 02       		.byte	0x2
+ 2115 0a89 91       		.byte	0x91
+ 2116 0a8a 64       		.sleb128 -28
+ 2117 0a8b 23       		.uleb128 0x23
+ 2118 0a8c 6900     		.ascii	"i\000"
+ 2119 0a8e 01       		.byte	0x1
+ 2120 0a8f E301     		.2byte	0x1e3
+ 2121 0a91 68000000 		.4byte	0x68
+ 2122 0a95 02       		.byte	0x2
+ 2123 0a96 91       		.byte	0x91
+ 2124 0a97 74       		.sleb128 -12
+ 2125 0a98 00       		.byte	0
+ 2126 0a99 25       		.uleb128 0x25
+ 2127 0a9a 01       		.byte	0x1
+ 2128 0a9b 1D010000 		.4byte	.LASF132
+ 2129 0a9f 01       		.byte	0x1
+ 2130 0aa0 0702     		.2byte	0x207
+ 2131 0aa2 01       		.byte	0x1
+ 2132 0aa3 C4010000 		.4byte	.LFB66
+ 2133 0aa7 DC010000 		.4byte	.LFE66
+ 2134 0aab 18010000 		.4byte	.LLST5
+ 2135 0aaf 01       		.byte	0x1
+ 2136 0ab0 C30A0000 		.4byte	0xac3
+ 2137 0ab4 20       		.uleb128 0x20
+ 2138 0ab5 636800   		.ascii	"ch\000"
+ 2139 0ab8 01       		.byte	0x1
+ 2140 0ab9 0702     		.2byte	0x207
+ 2141 0abb 68000000 		.4byte	0x68
+ 2142 0abf 02       		.byte	0x2
+ 2143 0ac0 91       		.byte	0x91
+ 2144 0ac1 74       		.sleb128 -12
+ 2145 0ac2 00       		.byte	0
+ 2146 0ac3 26       		.uleb128 0x26
+ 2147 0ac4 01       		.byte	0x1
+ 2148 0ac5 54030000 		.4byte	.LASF133
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 51
+
+
+ 2149 0ac9 01       		.byte	0x1
+ 2150 0aca 2B02     		.2byte	0x22b
+ 2151 0acc 01       		.byte	0x1
+ 2152 0acd 34050000 		.4byte	0x534
+ 2153 0ad1 DC010000 		.4byte	.LFB67
+ 2154 0ad5 00020000 		.4byte	.LFE67
+ 2155 0ad9 50010000 		.4byte	.LLST6
+ 2156 0add 01       		.byte	0x1
+ 2157 0ade 26       		.uleb128 0x26
+ 2158 0adf 01       		.byte	0x1
+ 2159 0ae0 57010000 		.4byte	.LASF134
+ 2160 0ae4 01       		.byte	0x1
+ 2161 0ae5 5902     		.2byte	0x259
+ 2162 0ae7 01       		.byte	0x1
+ 2163 0ae8 68000000 		.4byte	0x68
+ 2164 0aec 00020000 		.4byte	.LFB68
+ 2165 0af0 20020000 		.4byte	.LFE68
+ 2166 0af4 7C010000 		.4byte	.LLST7
+ 2167 0af8 01       		.byte	0x1
+ 2168 0af9 26       		.uleb128 0x26
+ 2169 0afa 01       		.byte	0x1
+ 2170 0afb C4040000 		.4byte	.LASF135
+ 2171 0aff 01       		.byte	0x1
+ 2172 0b00 6802     		.2byte	0x268
+ 2173 0b02 01       		.byte	0x1
+ 2174 0b03 68000000 		.4byte	0x68
+ 2175 0b07 20020000 		.4byte	.LFB69
+ 2176 0b0b 40020000 		.4byte	.LFE69
+ 2177 0b0f A8010000 		.4byte	.LLST8
+ 2178 0b13 01       		.byte	0x1
+ 2179 0b14 25       		.uleb128 0x25
+ 2180 0b15 01       		.byte	0x1
+ 2181 0b16 9F020000 		.4byte	.LASF136
+ 2182 0b1a 01       		.byte	0x1
+ 2183 0b1b 7702     		.2byte	0x277
+ 2184 0b1d 01       		.byte	0x1
+ 2185 0b1e 40020000 		.4byte	.LFB70
+ 2186 0b22 58020000 		.4byte	.LFE70
+ 2187 0b26 D4010000 		.4byte	.LLST9
+ 2188 0b2a 01       		.byte	0x1
+ 2189 0b2b 3E0B0000 		.4byte	0xb3e
+ 2190 0b2f 20       		.uleb128 0x20
+ 2191 0b30 636800   		.ascii	"ch\000"
+ 2192 0b33 01       		.byte	0x1
+ 2193 0b34 7702     		.2byte	0x277
+ 2194 0b36 68000000 		.4byte	0x68
+ 2195 0b3a 02       		.byte	0x2
+ 2196 0b3b 91       		.byte	0x91
+ 2197 0b3c 74       		.sleb128 -12
+ 2198 0b3d 00       		.byte	0
+ 2199 0b3e 27       		.uleb128 0x27
+ 2200 0b3f 01       		.byte	0x1
+ 2201 0b40 4E030000 		.4byte	.LASF137
+ 2202 0b44 08       		.byte	0x8
+ 2203 0b45 D6       		.byte	0xd6
+ 2204 0b46 01       		.byte	0x1
+ 2205 0b47 68000000 		.4byte	0x68
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 52
+
+
+ 2206 0b4b 58020000 		.4byte	.LFB71
+ 2207 0b4f 74020000 		.4byte	.LFE71
+ 2208 0b53 0C020000 		.4byte	.LLST10
+ 2209 0b57 01       		.byte	0x1
+ 2210 0b58 7A0B0000 		.4byte	0xb7a
+ 2211 0b5c 20       		.uleb128 0x20
+ 2212 0b5d 636800   		.ascii	"ch\000"
+ 2213 0b60 01       		.byte	0x1
+ 2214 0b61 9002     		.2byte	0x290
+ 2215 0b63 68000000 		.4byte	0x68
+ 2216 0b67 02       		.byte	0x2
+ 2217 0b68 91       		.byte	0x91
+ 2218 0b69 74       		.sleb128 -12
+ 2219 0b6a 22       		.uleb128 0x22
+ 2220 0b6b B8000000 		.4byte	.LASF138
+ 2221 0b6f 01       		.byte	0x1
+ 2222 0b70 9002     		.2byte	0x290
+ 2223 0b72 7A0B0000 		.4byte	0xb7a
+ 2224 0b76 02       		.byte	0x2
+ 2225 0b77 91       		.byte	0x91
+ 2226 0b78 70       		.sleb128 -16
+ 2227 0b79 00       		.byte	0
+ 2228 0b7a 0F       		.uleb128 0xf
+ 2229 0b7b 04       		.byte	0x4
+ 2230 0b7c EA070000 		.4byte	0x7ea
+ 2231 0b80 27       		.uleb128 0x27
+ 2232 0b81 01       		.byte	0x1
+ 2233 0b82 EB020000 		.4byte	.LASF139
+ 2234 0b86 08       		.byte	0x8
+ 2235 0b87 D4       		.byte	0xd4
+ 2236 0b88 01       		.byte	0x1
+ 2237 0b89 68000000 		.4byte	0x68
+ 2238 0b8d 74020000 		.4byte	.LFB72
+ 2239 0b91 8A020000 		.4byte	.LFE72
+ 2240 0b95 44020000 		.4byte	.LLST11
+ 2241 0b99 01       		.byte	0x1
+ 2242 0b9a AE0B0000 		.4byte	0xbae
+ 2243 0b9e 22       		.uleb128 0x22
+ 2244 0b9f B8000000 		.4byte	.LASF138
+ 2245 0ba3 01       		.byte	0x1
+ 2246 0ba4 A202     		.2byte	0x2a2
+ 2247 0ba6 7A0B0000 		.4byte	0xb7a
+ 2248 0baa 02       		.byte	0x2
+ 2249 0bab 91       		.byte	0x91
+ 2250 0bac 74       		.sleb128 -12
+ 2251 0bad 00       		.byte	0
+ 2252 0bae 28       		.uleb128 0x28
+ 2253 0baf E0040000 		.4byte	.LASF140
+ 2254 0bb3 0A       		.byte	0xa
+ 2255 0bb4 2E       		.byte	0x2e
+ 2256 0bb5 DF070000 		.4byte	0x7df
+ 2257 0bb9 01       		.byte	0x1
+ 2258 0bba 01       		.byte	0x1
+ 2259 0bbb 29       		.uleb128 0x29
+ 2260 0bbc 7A040000 		.4byte	.LASF141
+ 2261 0bc0 01       		.byte	0x1
+ 2262 0bc1 24       		.byte	0x24
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 53
+
+
+ 2263 0bc2 EA070000 		.4byte	0x7ea
+ 2264 0bc6 01       		.byte	0x1
+ 2265 0bc7 05       		.byte	0x5
+ 2266 0bc8 03       		.byte	0x3
+ 2267 0bc9 00000000 		.4byte	__stdout
+ 2268 0bcd 29       		.uleb128 0x29
+ 2269 0bce C9030000 		.4byte	.LASF142
+ 2270 0bd2 01       		.byte	0x1
+ 2271 0bd3 25       		.byte	0x25
+ 2272 0bd4 EA070000 		.4byte	0x7ea
+ 2273 0bd8 01       		.byte	0x1
+ 2274 0bd9 05       		.byte	0x5
+ 2275 0bda 03       		.byte	0x3
+ 2276 0bdb 00000000 		.4byte	__stdin
+ 2277 0bdf 00       		.byte	0
+ 2278              		.section	.debug_abbrev,"",%progbits
+ 2279              	.Ldebug_abbrev0:
+ 2280 0000 01       		.uleb128 0x1
+ 2281 0001 11       		.uleb128 0x11
+ 2282 0002 01       		.byte	0x1
+ 2283 0003 25       		.uleb128 0x25
+ 2284 0004 0E       		.uleb128 0xe
+ 2285 0005 13       		.uleb128 0x13
+ 2286 0006 0B       		.uleb128 0xb
+ 2287 0007 03       		.uleb128 0x3
+ 2288 0008 0E       		.uleb128 0xe
+ 2289 0009 1B       		.uleb128 0x1b
+ 2290 000a 0E       		.uleb128 0xe
+ 2291 000b 11       		.uleb128 0x11
+ 2292 000c 01       		.uleb128 0x1
+ 2293 000d 12       		.uleb128 0x12
+ 2294 000e 01       		.uleb128 0x1
+ 2295 000f 10       		.uleb128 0x10
+ 2296 0010 06       		.uleb128 0x6
+ 2297 0011 00       		.byte	0
+ 2298 0012 00       		.byte	0
+ 2299 0013 02       		.uleb128 0x2
+ 2300 0014 24       		.uleb128 0x24
+ 2301 0015 00       		.byte	0
+ 2302 0016 0B       		.uleb128 0xb
+ 2303 0017 0B       		.uleb128 0xb
+ 2304 0018 3E       		.uleb128 0x3e
+ 2305 0019 0B       		.uleb128 0xb
+ 2306 001a 03       		.uleb128 0x3
+ 2307 001b 0E       		.uleb128 0xe
+ 2308 001c 00       		.byte	0
+ 2309 001d 00       		.byte	0
+ 2310 001e 03       		.uleb128 0x3
+ 2311 001f 16       		.uleb128 0x16
+ 2312 0020 00       		.byte	0
+ 2313 0021 03       		.uleb128 0x3
+ 2314 0022 0E       		.uleb128 0xe
+ 2315 0023 3A       		.uleb128 0x3a
+ 2316 0024 0B       		.uleb128 0xb
+ 2317 0025 3B       		.uleb128 0x3b
+ 2318 0026 0B       		.uleb128 0xb
+ 2319 0027 49       		.uleb128 0x49
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 54
+
+
+ 2320 0028 13       		.uleb128 0x13
+ 2321 0029 00       		.byte	0
+ 2322 002a 00       		.byte	0
+ 2323 002b 04       		.uleb128 0x4
+ 2324 002c 24       		.uleb128 0x24
+ 2325 002d 00       		.byte	0
+ 2326 002e 0B       		.uleb128 0xb
+ 2327 002f 0B       		.uleb128 0xb
+ 2328 0030 3E       		.uleb128 0x3e
+ 2329 0031 0B       		.uleb128 0xb
+ 2330 0032 03       		.uleb128 0x3
+ 2331 0033 08       		.uleb128 0x8
+ 2332 0034 00       		.byte	0
+ 2333 0035 00       		.byte	0
+ 2334 0036 05       		.uleb128 0x5
+ 2335 0037 0F       		.uleb128 0xf
+ 2336 0038 00       		.byte	0
+ 2337 0039 0B       		.uleb128 0xb
+ 2338 003a 0B       		.uleb128 0xb
+ 2339 003b 00       		.byte	0
+ 2340 003c 00       		.byte	0
+ 2341 003d 06       		.uleb128 0x6
+ 2342 003e 16       		.uleb128 0x16
+ 2343 003f 00       		.byte	0
+ 2344 0040 03       		.uleb128 0x3
+ 2345 0041 0E       		.uleb128 0xe
+ 2346 0042 3A       		.uleb128 0x3a
+ 2347 0043 0B       		.uleb128 0xb
+ 2348 0044 3B       		.uleb128 0x3b
+ 2349 0045 05       		.uleb128 0x5
+ 2350 0046 49       		.uleb128 0x49
+ 2351 0047 13       		.uleb128 0x13
+ 2352 0048 00       		.byte	0
+ 2353 0049 00       		.byte	0
+ 2354 004a 07       		.uleb128 0x7
+ 2355 004b 17       		.uleb128 0x17
+ 2356 004c 01       		.byte	0x1
+ 2357 004d 0B       		.uleb128 0xb
+ 2358 004e 0B       		.uleb128 0xb
+ 2359 004f 3A       		.uleb128 0x3a
+ 2360 0050 0B       		.uleb128 0xb
+ 2361 0051 3B       		.uleb128 0x3b
+ 2362 0052 0B       		.uleb128 0xb
+ 2363 0053 01       		.uleb128 0x1
+ 2364 0054 13       		.uleb128 0x13
+ 2365 0055 00       		.byte	0
+ 2366 0056 00       		.byte	0
+ 2367 0057 08       		.uleb128 0x8
+ 2368 0058 0D       		.uleb128 0xd
+ 2369 0059 00       		.byte	0
+ 2370 005a 03       		.uleb128 0x3
+ 2371 005b 0E       		.uleb128 0xe
+ 2372 005c 3A       		.uleb128 0x3a
+ 2373 005d 0B       		.uleb128 0xb
+ 2374 005e 3B       		.uleb128 0x3b
+ 2375 005f 0B       		.uleb128 0xb
+ 2376 0060 49       		.uleb128 0x49
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 55
+
+
+ 2377 0061 13       		.uleb128 0x13
+ 2378 0062 00       		.byte	0
+ 2379 0063 00       		.byte	0
+ 2380 0064 09       		.uleb128 0x9
+ 2381 0065 01       		.uleb128 0x1
+ 2382 0066 01       		.byte	0x1
+ 2383 0067 49       		.uleb128 0x49
+ 2384 0068 13       		.uleb128 0x13
+ 2385 0069 01       		.uleb128 0x1
+ 2386 006a 13       		.uleb128 0x13
+ 2387 006b 00       		.byte	0
+ 2388 006c 00       		.byte	0
+ 2389 006d 0A       		.uleb128 0xa
+ 2390 006e 21       		.uleb128 0x21
+ 2391 006f 00       		.byte	0
+ 2392 0070 49       		.uleb128 0x49
+ 2393 0071 13       		.uleb128 0x13
+ 2394 0072 2F       		.uleb128 0x2f
+ 2395 0073 0B       		.uleb128 0xb
+ 2396 0074 00       		.byte	0
+ 2397 0075 00       		.byte	0
+ 2398 0076 0B       		.uleb128 0xb
+ 2399 0077 13       		.uleb128 0x13
+ 2400 0078 01       		.byte	0x1
+ 2401 0079 0B       		.uleb128 0xb
+ 2402 007a 0B       		.uleb128 0xb
+ 2403 007b 3A       		.uleb128 0x3a
+ 2404 007c 0B       		.uleb128 0xb
+ 2405 007d 3B       		.uleb128 0x3b
+ 2406 007e 0B       		.uleb128 0xb
+ 2407 007f 01       		.uleb128 0x1
+ 2408 0080 13       		.uleb128 0x13
+ 2409 0081 00       		.byte	0
+ 2410 0082 00       		.byte	0
+ 2411 0083 0C       		.uleb128 0xc
+ 2412 0084 0D       		.uleb128 0xd
+ 2413 0085 00       		.byte	0
+ 2414 0086 03       		.uleb128 0x3
+ 2415 0087 0E       		.uleb128 0xe
+ 2416 0088 3A       		.uleb128 0x3a
+ 2417 0089 0B       		.uleb128 0xb
+ 2418 008a 3B       		.uleb128 0x3b
+ 2419 008b 0B       		.uleb128 0xb
+ 2420 008c 49       		.uleb128 0x49
+ 2421 008d 13       		.uleb128 0x13
+ 2422 008e 38       		.uleb128 0x38
+ 2423 008f 0A       		.uleb128 0xa
+ 2424 0090 00       		.byte	0
+ 2425 0091 00       		.byte	0
+ 2426 0092 0D       		.uleb128 0xd
+ 2427 0093 13       		.uleb128 0x13
+ 2428 0094 01       		.byte	0x1
+ 2429 0095 03       		.uleb128 0x3
+ 2430 0096 0E       		.uleb128 0xe
+ 2431 0097 0B       		.uleb128 0xb
+ 2432 0098 0B       		.uleb128 0xb
+ 2433 0099 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 56
+
+
+ 2434 009a 0B       		.uleb128 0xb
+ 2435 009b 3B       		.uleb128 0x3b
+ 2436 009c 0B       		.uleb128 0xb
+ 2437 009d 01       		.uleb128 0x1
+ 2438 009e 13       		.uleb128 0x13
+ 2439 009f 00       		.byte	0
+ 2440 00a0 00       		.byte	0
+ 2441 00a1 0E       		.uleb128 0xe
+ 2442 00a2 0D       		.uleb128 0xd
+ 2443 00a3 00       		.byte	0
+ 2444 00a4 03       		.uleb128 0x3
+ 2445 00a5 08       		.uleb128 0x8
+ 2446 00a6 3A       		.uleb128 0x3a
+ 2447 00a7 0B       		.uleb128 0xb
+ 2448 00a8 3B       		.uleb128 0x3b
+ 2449 00a9 0B       		.uleb128 0xb
+ 2450 00aa 49       		.uleb128 0x49
+ 2451 00ab 13       		.uleb128 0x13
+ 2452 00ac 38       		.uleb128 0x38
+ 2453 00ad 0A       		.uleb128 0xa
+ 2454 00ae 00       		.byte	0
+ 2455 00af 00       		.byte	0
+ 2456 00b0 0F       		.uleb128 0xf
+ 2457 00b1 0F       		.uleb128 0xf
+ 2458 00b2 00       		.byte	0
+ 2459 00b3 0B       		.uleb128 0xb
+ 2460 00b4 0B       		.uleb128 0xb
+ 2461 00b5 49       		.uleb128 0x49
+ 2462 00b6 13       		.uleb128 0x13
+ 2463 00b7 00       		.byte	0
+ 2464 00b8 00       		.byte	0
+ 2465 00b9 10       		.uleb128 0x10
+ 2466 00ba 13       		.uleb128 0x13
+ 2467 00bb 01       		.byte	0x1
+ 2468 00bc 03       		.uleb128 0x3
+ 2469 00bd 0E       		.uleb128 0xe
+ 2470 00be 0B       		.uleb128 0xb
+ 2471 00bf 0B       		.uleb128 0xb
+ 2472 00c0 3A       		.uleb128 0x3a
+ 2473 00c1 0B       		.uleb128 0xb
+ 2474 00c2 3B       		.uleb128 0x3b
+ 2475 00c3 05       		.uleb128 0x5
+ 2476 00c4 01       		.uleb128 0x1
+ 2477 00c5 13       		.uleb128 0x13
+ 2478 00c6 00       		.byte	0
+ 2479 00c7 00       		.byte	0
+ 2480 00c8 11       		.uleb128 0x11
+ 2481 00c9 0D       		.uleb128 0xd
+ 2482 00ca 00       		.byte	0
+ 2483 00cb 03       		.uleb128 0x3
+ 2484 00cc 0E       		.uleb128 0xe
+ 2485 00cd 3A       		.uleb128 0x3a
+ 2486 00ce 0B       		.uleb128 0xb
+ 2487 00cf 3B       		.uleb128 0x3b
+ 2488 00d0 05       		.uleb128 0x5
+ 2489 00d1 49       		.uleb128 0x49
+ 2490 00d2 13       		.uleb128 0x13
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 57
+
+
+ 2491 00d3 38       		.uleb128 0x38
+ 2492 00d4 0A       		.uleb128 0xa
+ 2493 00d5 00       		.byte	0
+ 2494 00d6 00       		.byte	0
+ 2495 00d7 12       		.uleb128 0x12
+ 2496 00d8 0D       		.uleb128 0xd
+ 2497 00d9 00       		.byte	0
+ 2498 00da 03       		.uleb128 0x3
+ 2499 00db 08       		.uleb128 0x8
+ 2500 00dc 3A       		.uleb128 0x3a
+ 2501 00dd 0B       		.uleb128 0xb
+ 2502 00de 3B       		.uleb128 0x3b
+ 2503 00df 05       		.uleb128 0x5
+ 2504 00e0 49       		.uleb128 0x49
+ 2505 00e1 13       		.uleb128 0x13
+ 2506 00e2 38       		.uleb128 0x38
+ 2507 00e3 0A       		.uleb128 0xa
+ 2508 00e4 00       		.byte	0
+ 2509 00e5 00       		.byte	0
+ 2510 00e6 13       		.uleb128 0x13
+ 2511 00e7 15       		.uleb128 0x15
+ 2512 00e8 01       		.byte	0x1
+ 2513 00e9 27       		.uleb128 0x27
+ 2514 00ea 0C       		.uleb128 0xc
+ 2515 00eb 49       		.uleb128 0x49
+ 2516 00ec 13       		.uleb128 0x13
+ 2517 00ed 01       		.uleb128 0x1
+ 2518 00ee 13       		.uleb128 0x13
+ 2519 00ef 00       		.byte	0
+ 2520 00f0 00       		.byte	0
+ 2521 00f1 14       		.uleb128 0x14
+ 2522 00f2 05       		.uleb128 0x5
+ 2523 00f3 00       		.byte	0
+ 2524 00f4 49       		.uleb128 0x49
+ 2525 00f5 13       		.uleb128 0x13
+ 2526 00f6 00       		.byte	0
+ 2527 00f7 00       		.byte	0
+ 2528 00f8 15       		.uleb128 0x15
+ 2529 00f9 26       		.uleb128 0x26
+ 2530 00fa 00       		.byte	0
+ 2531 00fb 49       		.uleb128 0x49
+ 2532 00fc 13       		.uleb128 0x13
+ 2533 00fd 00       		.byte	0
+ 2534 00fe 00       		.byte	0
+ 2535 00ff 16       		.uleb128 0x16
+ 2536 0100 13       		.uleb128 0x13
+ 2537 0101 00       		.byte	0
+ 2538 0102 03       		.uleb128 0x3
+ 2539 0103 0E       		.uleb128 0xe
+ 2540 0104 3C       		.uleb128 0x3c
+ 2541 0105 0C       		.uleb128 0xc
+ 2542 0106 00       		.byte	0
+ 2543 0107 00       		.byte	0
+ 2544 0108 17       		.uleb128 0x17
+ 2545 0109 15       		.uleb128 0x15
+ 2546 010a 01       		.byte	0x1
+ 2547 010b 27       		.uleb128 0x27
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 58
+
+
+ 2548 010c 0C       		.uleb128 0xc
+ 2549 010d 01       		.uleb128 0x1
+ 2550 010e 13       		.uleb128 0x13
+ 2551 010f 00       		.byte	0
+ 2552 0110 00       		.byte	0
+ 2553 0111 18       		.uleb128 0x18
+ 2554 0112 35       		.uleb128 0x35
+ 2555 0113 00       		.byte	0
+ 2556 0114 49       		.uleb128 0x49
+ 2557 0115 13       		.uleb128 0x13
+ 2558 0116 00       		.byte	0
+ 2559 0117 00       		.byte	0
+ 2560 0118 19       		.uleb128 0x19
+ 2561 0119 13       		.uleb128 0x13
+ 2562 011a 01       		.byte	0x1
+ 2563 011b 0B       		.uleb128 0xb
+ 2564 011c 0B       		.uleb128 0xb
+ 2565 011d 3A       		.uleb128 0x3a
+ 2566 011e 0B       		.uleb128 0xb
+ 2567 011f 3B       		.uleb128 0x3b
+ 2568 0120 05       		.uleb128 0x5
+ 2569 0121 01       		.uleb128 0x1
+ 2570 0122 13       		.uleb128 0x13
+ 2571 0123 00       		.byte	0
+ 2572 0124 00       		.byte	0
+ 2573 0125 1A       		.uleb128 0x1a
+ 2574 0126 04       		.uleb128 0x4
+ 2575 0127 01       		.byte	0x1
+ 2576 0128 0B       		.uleb128 0xb
+ 2577 0129 0B       		.uleb128 0xb
+ 2578 012a 49       		.uleb128 0x49
+ 2579 012b 13       		.uleb128 0x13
+ 2580 012c 3A       		.uleb128 0x3a
+ 2581 012d 0B       		.uleb128 0xb
+ 2582 012e 3B       		.uleb128 0x3b
+ 2583 012f 0B       		.uleb128 0xb
+ 2584 0130 01       		.uleb128 0x1
+ 2585 0131 13       		.uleb128 0x13
+ 2586 0132 00       		.byte	0
+ 2587 0133 00       		.byte	0
+ 2588 0134 1B       		.uleb128 0x1b
+ 2589 0135 28       		.uleb128 0x28
+ 2590 0136 00       		.byte	0
+ 2591 0137 03       		.uleb128 0x3
+ 2592 0138 08       		.uleb128 0x8
+ 2593 0139 1C       		.uleb128 0x1c
+ 2594 013a 0B       		.uleb128 0xb
+ 2595 013b 00       		.byte	0
+ 2596 013c 00       		.byte	0
+ 2597 013d 1C       		.uleb128 0x1c
+ 2598 013e 2E       		.uleb128 0x2e
+ 2599 013f 01       		.byte	0x1
+ 2600 0140 03       		.uleb128 0x3
+ 2601 0141 0E       		.uleb128 0xe
+ 2602 0142 3A       		.uleb128 0x3a
+ 2603 0143 0B       		.uleb128 0xb
+ 2604 0144 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 59
+
+
+ 2605 0145 0B       		.uleb128 0xb
+ 2606 0146 27       		.uleb128 0x27
+ 2607 0147 0C       		.uleb128 0xc
+ 2608 0148 11       		.uleb128 0x11
+ 2609 0149 01       		.uleb128 0x1
+ 2610 014a 12       		.uleb128 0x12
+ 2611 014b 01       		.uleb128 0x1
+ 2612 014c 40       		.uleb128 0x40
+ 2613 014d 06       		.uleb128 0x6
+ 2614 014e 9642     		.uleb128 0x2116
+ 2615 0150 0C       		.uleb128 0xc
+ 2616 0151 01       		.uleb128 0x1
+ 2617 0152 13       		.uleb128 0x13
+ 2618 0153 00       		.byte	0
+ 2619 0154 00       		.byte	0
+ 2620 0155 1D       		.uleb128 0x1d
+ 2621 0156 05       		.uleb128 0x5
+ 2622 0157 00       		.byte	0
+ 2623 0158 03       		.uleb128 0x3
+ 2624 0159 0E       		.uleb128 0xe
+ 2625 015a 3A       		.uleb128 0x3a
+ 2626 015b 0B       		.uleb128 0xb
+ 2627 015c 3B       		.uleb128 0x3b
+ 2628 015d 0B       		.uleb128 0xb
+ 2629 015e 49       		.uleb128 0x49
+ 2630 015f 13       		.uleb128 0x13
+ 2631 0160 02       		.uleb128 0x2
+ 2632 0161 0A       		.uleb128 0xa
+ 2633 0162 00       		.byte	0
+ 2634 0163 00       		.byte	0
+ 2635 0164 1E       		.uleb128 0x1e
+ 2636 0165 2E       		.uleb128 0x2e
+ 2637 0166 01       		.byte	0x1
+ 2638 0167 3F       		.uleb128 0x3f
+ 2639 0168 0C       		.uleb128 0xc
+ 2640 0169 03       		.uleb128 0x3
+ 2641 016a 0E       		.uleb128 0xe
+ 2642 016b 3A       		.uleb128 0x3a
+ 2643 016c 0B       		.uleb128 0xb
+ 2644 016d 3B       		.uleb128 0x3b
+ 2645 016e 0B       		.uleb128 0xb
+ 2646 016f 27       		.uleb128 0x27
+ 2647 0170 0C       		.uleb128 0xc
+ 2648 0171 11       		.uleb128 0x11
+ 2649 0172 01       		.uleb128 0x1
+ 2650 0173 12       		.uleb128 0x12
+ 2651 0174 01       		.uleb128 0x1
+ 2652 0175 40       		.uleb128 0x40
+ 2653 0176 06       		.uleb128 0x6
+ 2654 0177 9642     		.uleb128 0x2116
+ 2655 0179 0C       		.uleb128 0xc
+ 2656 017a 01       		.uleb128 0x1
+ 2657 017b 13       		.uleb128 0x13
+ 2658 017c 00       		.byte	0
+ 2659 017d 00       		.byte	0
+ 2660 017e 1F       		.uleb128 0x1f
+ 2661 017f 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 60
+
+
+ 2662 0180 01       		.byte	0x1
+ 2663 0181 3F       		.uleb128 0x3f
+ 2664 0182 0C       		.uleb128 0xc
+ 2665 0183 03       		.uleb128 0x3
+ 2666 0184 0E       		.uleb128 0xe
+ 2667 0185 3A       		.uleb128 0x3a
+ 2668 0186 0B       		.uleb128 0xb
+ 2669 0187 3B       		.uleb128 0x3b
+ 2670 0188 05       		.uleb128 0x5
+ 2671 0189 27       		.uleb128 0x27
+ 2672 018a 0C       		.uleb128 0xc
+ 2673 018b 11       		.uleb128 0x11
+ 2674 018c 01       		.uleb128 0x1
+ 2675 018d 12       		.uleb128 0x12
+ 2676 018e 01       		.uleb128 0x1
+ 2677 018f 40       		.uleb128 0x40
+ 2678 0190 06       		.uleb128 0x6
+ 2679 0191 9742     		.uleb128 0x2117
+ 2680 0193 0C       		.uleb128 0xc
+ 2681 0194 01       		.uleb128 0x1
+ 2682 0195 13       		.uleb128 0x13
+ 2683 0196 00       		.byte	0
+ 2684 0197 00       		.byte	0
+ 2685 0198 20       		.uleb128 0x20
+ 2686 0199 05       		.uleb128 0x5
+ 2687 019a 00       		.byte	0
+ 2688 019b 03       		.uleb128 0x3
+ 2689 019c 08       		.uleb128 0x8
+ 2690 019d 3A       		.uleb128 0x3a
+ 2691 019e 0B       		.uleb128 0xb
+ 2692 019f 3B       		.uleb128 0x3b
+ 2693 01a0 05       		.uleb128 0x5
+ 2694 01a1 49       		.uleb128 0x49
+ 2695 01a2 13       		.uleb128 0x13
+ 2696 01a3 02       		.uleb128 0x2
+ 2697 01a4 0A       		.uleb128 0xa
+ 2698 01a5 00       		.byte	0
+ 2699 01a6 00       		.byte	0
+ 2700 01a7 21       		.uleb128 0x21
+ 2701 01a8 2E       		.uleb128 0x2e
+ 2702 01a9 01       		.byte	0x1
+ 2703 01aa 3F       		.uleb128 0x3f
+ 2704 01ab 0C       		.uleb128 0xc
+ 2705 01ac 03       		.uleb128 0x3
+ 2706 01ad 0E       		.uleb128 0xe
+ 2707 01ae 3A       		.uleb128 0x3a
+ 2708 01af 0B       		.uleb128 0xb
+ 2709 01b0 3B       		.uleb128 0x3b
+ 2710 01b1 05       		.uleb128 0x5
+ 2711 01b2 27       		.uleb128 0x27
+ 2712 01b3 0C       		.uleb128 0xc
+ 2713 01b4 49       		.uleb128 0x49
+ 2714 01b5 13       		.uleb128 0x13
+ 2715 01b6 11       		.uleb128 0x11
+ 2716 01b7 01       		.uleb128 0x1
+ 2717 01b8 12       		.uleb128 0x12
+ 2718 01b9 01       		.uleb128 0x1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 61
+
+
+ 2719 01ba 40       		.uleb128 0x40
+ 2720 01bb 06       		.uleb128 0x6
+ 2721 01bc 9642     		.uleb128 0x2116
+ 2722 01be 0C       		.uleb128 0xc
+ 2723 01bf 01       		.uleb128 0x1
+ 2724 01c0 13       		.uleb128 0x13
+ 2725 01c1 00       		.byte	0
+ 2726 01c2 00       		.byte	0
+ 2727 01c3 22       		.uleb128 0x22
+ 2728 01c4 05       		.uleb128 0x5
+ 2729 01c5 00       		.byte	0
+ 2730 01c6 03       		.uleb128 0x3
+ 2731 01c7 0E       		.uleb128 0xe
+ 2732 01c8 3A       		.uleb128 0x3a
+ 2733 01c9 0B       		.uleb128 0xb
+ 2734 01ca 3B       		.uleb128 0x3b
+ 2735 01cb 05       		.uleb128 0x5
+ 2736 01cc 49       		.uleb128 0x49
+ 2737 01cd 13       		.uleb128 0x13
+ 2738 01ce 02       		.uleb128 0x2
+ 2739 01cf 0A       		.uleb128 0xa
+ 2740 01d0 00       		.byte	0
+ 2741 01d1 00       		.byte	0
+ 2742 01d2 23       		.uleb128 0x23
+ 2743 01d3 34       		.uleb128 0x34
+ 2744 01d4 00       		.byte	0
+ 2745 01d5 03       		.uleb128 0x3
+ 2746 01d6 08       		.uleb128 0x8
+ 2747 01d7 3A       		.uleb128 0x3a
+ 2748 01d8 0B       		.uleb128 0xb
+ 2749 01d9 3B       		.uleb128 0x3b
+ 2750 01da 05       		.uleb128 0x5
+ 2751 01db 49       		.uleb128 0x49
+ 2752 01dc 13       		.uleb128 0x13
+ 2753 01dd 02       		.uleb128 0x2
+ 2754 01de 0A       		.uleb128 0xa
+ 2755 01df 00       		.byte	0
+ 2756 01e0 00       		.byte	0
+ 2757 01e1 24       		.uleb128 0x24
+ 2758 01e2 2E       		.uleb128 0x2e
+ 2759 01e3 01       		.byte	0x1
+ 2760 01e4 3F       		.uleb128 0x3f
+ 2761 01e5 0C       		.uleb128 0xc
+ 2762 01e6 03       		.uleb128 0x3
+ 2763 01e7 0E       		.uleb128 0xe
+ 2764 01e8 3A       		.uleb128 0x3a
+ 2765 01e9 0B       		.uleb128 0xb
+ 2766 01ea 3B       		.uleb128 0x3b
+ 2767 01eb 05       		.uleb128 0x5
+ 2768 01ec 27       		.uleb128 0x27
+ 2769 01ed 0C       		.uleb128 0xc
+ 2770 01ee 49       		.uleb128 0x49
+ 2771 01ef 13       		.uleb128 0x13
+ 2772 01f0 11       		.uleb128 0x11
+ 2773 01f1 01       		.uleb128 0x1
+ 2774 01f2 12       		.uleb128 0x12
+ 2775 01f3 01       		.uleb128 0x1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 62
+
+
+ 2776 01f4 40       		.uleb128 0x40
+ 2777 01f5 06       		.uleb128 0x6
+ 2778 01f6 9742     		.uleb128 0x2117
+ 2779 01f8 0C       		.uleb128 0xc
+ 2780 01f9 01       		.uleb128 0x1
+ 2781 01fa 13       		.uleb128 0x13
+ 2782 01fb 00       		.byte	0
+ 2783 01fc 00       		.byte	0
+ 2784 01fd 25       		.uleb128 0x25
+ 2785 01fe 2E       		.uleb128 0x2e
+ 2786 01ff 01       		.byte	0x1
+ 2787 0200 3F       		.uleb128 0x3f
+ 2788 0201 0C       		.uleb128 0xc
+ 2789 0202 03       		.uleb128 0x3
+ 2790 0203 0E       		.uleb128 0xe
+ 2791 0204 3A       		.uleb128 0x3a
+ 2792 0205 0B       		.uleb128 0xb
+ 2793 0206 3B       		.uleb128 0x3b
+ 2794 0207 05       		.uleb128 0x5
+ 2795 0208 27       		.uleb128 0x27
+ 2796 0209 0C       		.uleb128 0xc
+ 2797 020a 11       		.uleb128 0x11
+ 2798 020b 01       		.uleb128 0x1
+ 2799 020c 12       		.uleb128 0x12
+ 2800 020d 01       		.uleb128 0x1
+ 2801 020e 40       		.uleb128 0x40
+ 2802 020f 06       		.uleb128 0x6
+ 2803 0210 9642     		.uleb128 0x2116
+ 2804 0212 0C       		.uleb128 0xc
+ 2805 0213 01       		.uleb128 0x1
+ 2806 0214 13       		.uleb128 0x13
+ 2807 0215 00       		.byte	0
+ 2808 0216 00       		.byte	0
+ 2809 0217 26       		.uleb128 0x26
+ 2810 0218 2E       		.uleb128 0x2e
+ 2811 0219 00       		.byte	0
+ 2812 021a 3F       		.uleb128 0x3f
+ 2813 021b 0C       		.uleb128 0xc
+ 2814 021c 03       		.uleb128 0x3
+ 2815 021d 0E       		.uleb128 0xe
+ 2816 021e 3A       		.uleb128 0x3a
+ 2817 021f 0B       		.uleb128 0xb
+ 2818 0220 3B       		.uleb128 0x3b
+ 2819 0221 05       		.uleb128 0x5
+ 2820 0222 27       		.uleb128 0x27
+ 2821 0223 0C       		.uleb128 0xc
+ 2822 0224 49       		.uleb128 0x49
+ 2823 0225 13       		.uleb128 0x13
+ 2824 0226 11       		.uleb128 0x11
+ 2825 0227 01       		.uleb128 0x1
+ 2826 0228 12       		.uleb128 0x12
+ 2827 0229 01       		.uleb128 0x1
+ 2828 022a 40       		.uleb128 0x40
+ 2829 022b 06       		.uleb128 0x6
+ 2830 022c 9742     		.uleb128 0x2117
+ 2831 022e 0C       		.uleb128 0xc
+ 2832 022f 00       		.byte	0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 63
+
+
+ 2833 0230 00       		.byte	0
+ 2834 0231 27       		.uleb128 0x27
+ 2835 0232 2E       		.uleb128 0x2e
+ 2836 0233 01       		.byte	0x1
+ 2837 0234 3F       		.uleb128 0x3f
+ 2838 0235 0C       		.uleb128 0xc
+ 2839 0236 03       		.uleb128 0x3
+ 2840 0237 0E       		.uleb128 0xe
+ 2841 0238 3A       		.uleb128 0x3a
+ 2842 0239 0B       		.uleb128 0xb
+ 2843 023a 3B       		.uleb128 0x3b
+ 2844 023b 0B       		.uleb128 0xb
+ 2845 023c 27       		.uleb128 0x27
+ 2846 023d 0C       		.uleb128 0xc
+ 2847 023e 49       		.uleb128 0x49
+ 2848 023f 13       		.uleb128 0x13
+ 2849 0240 11       		.uleb128 0x11
+ 2850 0241 01       		.uleb128 0x1
+ 2851 0242 12       		.uleb128 0x12
+ 2852 0243 01       		.uleb128 0x1
+ 2853 0244 40       		.uleb128 0x40
+ 2854 0245 06       		.uleb128 0x6
+ 2855 0246 9642     		.uleb128 0x2116
+ 2856 0248 0C       		.uleb128 0xc
+ 2857 0249 01       		.uleb128 0x1
+ 2858 024a 13       		.uleb128 0x13
+ 2859 024b 00       		.byte	0
+ 2860 024c 00       		.byte	0
+ 2861 024d 28       		.uleb128 0x28
+ 2862 024e 34       		.uleb128 0x34
+ 2863 024f 00       		.byte	0
+ 2864 0250 03       		.uleb128 0x3
+ 2865 0251 0E       		.uleb128 0xe
+ 2866 0252 3A       		.uleb128 0x3a
+ 2867 0253 0B       		.uleb128 0xb
+ 2868 0254 3B       		.uleb128 0x3b
+ 2869 0255 0B       		.uleb128 0xb
+ 2870 0256 49       		.uleb128 0x49
+ 2871 0257 13       		.uleb128 0x13
+ 2872 0258 3F       		.uleb128 0x3f
+ 2873 0259 0C       		.uleb128 0xc
+ 2874 025a 3C       		.uleb128 0x3c
+ 2875 025b 0C       		.uleb128 0xc
+ 2876 025c 00       		.byte	0
+ 2877 025d 00       		.byte	0
+ 2878 025e 29       		.uleb128 0x29
+ 2879 025f 34       		.uleb128 0x34
+ 2880 0260 00       		.byte	0
+ 2881 0261 03       		.uleb128 0x3
+ 2882 0262 0E       		.uleb128 0xe
+ 2883 0263 3A       		.uleb128 0x3a
+ 2884 0264 0B       		.uleb128 0xb
+ 2885 0265 3B       		.uleb128 0x3b
+ 2886 0266 0B       		.uleb128 0xb
+ 2887 0267 49       		.uleb128 0x49
+ 2888 0268 13       		.uleb128 0x13
+ 2889 0269 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 64
+
+
+ 2890 026a 0C       		.uleb128 0xc
+ 2891 026b 02       		.uleb128 0x2
+ 2892 026c 0A       		.uleb128 0xa
+ 2893 026d 00       		.byte	0
+ 2894 026e 00       		.byte	0
+ 2895 026f 00       		.byte	0
+ 2896              		.section	.debug_loc,"",%progbits
+ 2897              	.Ldebug_loc0:
+ 2898              	.LLST0:
+ 2899 0000 00000000 		.4byte	.LFB61-.Ltext0
+ 2900 0004 02000000 		.4byte	.LCFI0-.Ltext0
+ 2901 0008 0200     		.2byte	0x2
+ 2902 000a 7D       		.byte	0x7d
+ 2903 000b 00       		.sleb128 0
+ 2904 000c 02000000 		.4byte	.LCFI0-.Ltext0
+ 2905 0010 04000000 		.4byte	.LCFI1-.Ltext0
+ 2906 0014 0200     		.2byte	0x2
+ 2907 0016 7D       		.byte	0x7d
+ 2908 0017 08       		.sleb128 8
+ 2909 0018 04000000 		.4byte	.LCFI1-.Ltext0
+ 2910 001c 06000000 		.4byte	.LCFI2-.Ltext0
+ 2911 0020 0200     		.2byte	0x2
+ 2912 0022 7D       		.byte	0x7d
+ 2913 0023 10       		.sleb128 16
+ 2914 0024 06000000 		.4byte	.LCFI2-.Ltext0
+ 2915 0028 B0000000 		.4byte	.LFE61-.Ltext0
+ 2916 002c 0200     		.2byte	0x2
+ 2917 002e 77       		.byte	0x77
+ 2918 002f 10       		.sleb128 16
+ 2919 0030 00000000 		.4byte	0
+ 2920 0034 00000000 		.4byte	0
+ 2921              	.LLST1:
+ 2922 0038 B0000000 		.4byte	.LFB62-.Ltext0
+ 2923 003c B2000000 		.4byte	.LCFI3-.Ltext0
+ 2924 0040 0200     		.2byte	0x2
+ 2925 0042 7D       		.byte	0x7d
+ 2926 0043 00       		.sleb128 0
+ 2927 0044 B2000000 		.4byte	.LCFI3-.Ltext0
+ 2928 0048 B4000000 		.4byte	.LCFI4-.Ltext0
+ 2929 004c 0200     		.2byte	0x2
+ 2930 004e 7D       		.byte	0x7d
+ 2931 004f 08       		.sleb128 8
+ 2932 0050 B4000000 		.4byte	.LCFI4-.Ltext0
+ 2933 0054 B6000000 		.4byte	.LCFI5-.Ltext0
+ 2934 0058 0200     		.2byte	0x2
+ 2935 005a 7D       		.byte	0x7d
+ 2936 005b 10       		.sleb128 16
+ 2937 005c B6000000 		.4byte	.LCFI5-.Ltext0
+ 2938 0060 D0000000 		.4byte	.LFE62-.Ltext0
+ 2939 0064 0200     		.2byte	0x2
+ 2940 0066 77       		.byte	0x77
+ 2941 0067 10       		.sleb128 16
+ 2942 0068 00000000 		.4byte	0
+ 2943 006c 00000000 		.4byte	0
+ 2944              	.LLST2:
+ 2945 0070 D0000000 		.4byte	.LFB63-.Ltext0
+ 2946 0074 D2000000 		.4byte	.LCFI6-.Ltext0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 65
+
+
+ 2947 0078 0200     		.2byte	0x2
+ 2948 007a 7D       		.byte	0x7d
+ 2949 007b 00       		.sleb128 0
+ 2950 007c D2000000 		.4byte	.LCFI6-.Ltext0
+ 2951 0080 D4000000 		.4byte	.LCFI7-.Ltext0
+ 2952 0084 0200     		.2byte	0x2
+ 2953 0086 7D       		.byte	0x7d
+ 2954 0087 08       		.sleb128 8
+ 2955 0088 D4000000 		.4byte	.LCFI7-.Ltext0
+ 2956 008c D6000000 		.4byte	.LCFI8-.Ltext0
+ 2957 0090 0200     		.2byte	0x2
+ 2958 0092 7D       		.byte	0x7d
+ 2959 0093 10       		.sleb128 16
+ 2960 0094 D6000000 		.4byte	.LCFI8-.Ltext0
+ 2961 0098 18010000 		.4byte	.LFE63-.Ltext0
+ 2962 009c 0200     		.2byte	0x2
+ 2963 009e 77       		.byte	0x77
+ 2964 009f 10       		.sleb128 16
+ 2965 00a0 00000000 		.4byte	0
+ 2966 00a4 00000000 		.4byte	0
+ 2967              	.LLST3:
+ 2968 00a8 18010000 		.4byte	.LFB64-.Ltext0
+ 2969 00ac 1A010000 		.4byte	.LCFI9-.Ltext0
+ 2970 00b0 0200     		.2byte	0x2
+ 2971 00b2 7D       		.byte	0x7d
+ 2972 00b3 00       		.sleb128 0
+ 2973 00b4 1A010000 		.4byte	.LCFI9-.Ltext0
+ 2974 00b8 1C010000 		.4byte	.LCFI10-.Ltext0
+ 2975 00bc 0200     		.2byte	0x2
+ 2976 00be 7D       		.byte	0x7d
+ 2977 00bf 08       		.sleb128 8
+ 2978 00c0 1C010000 		.4byte	.LCFI10-.Ltext0
+ 2979 00c4 1E010000 		.4byte	.LCFI11-.Ltext0
+ 2980 00c8 0200     		.2byte	0x2
+ 2981 00ca 7D       		.byte	0x7d
+ 2982 00cb 20       		.sleb128 32
+ 2983 00cc 1E010000 		.4byte	.LCFI11-.Ltext0
+ 2984 00d0 50010000 		.4byte	.LFE64-.Ltext0
+ 2985 00d4 0200     		.2byte	0x2
+ 2986 00d6 77       		.byte	0x77
+ 2987 00d7 20       		.sleb128 32
+ 2988 00d8 00000000 		.4byte	0
+ 2989 00dc 00000000 		.4byte	0
+ 2990              	.LLST4:
+ 2991 00e0 50010000 		.4byte	.LFB65-.Ltext0
+ 2992 00e4 52010000 		.4byte	.LCFI12-.Ltext0
+ 2993 00e8 0200     		.2byte	0x2
+ 2994 00ea 7D       		.byte	0x7d
+ 2995 00eb 00       		.sleb128 0
+ 2996 00ec 52010000 		.4byte	.LCFI12-.Ltext0
+ 2997 00f0 54010000 		.4byte	.LCFI13-.Ltext0
+ 2998 00f4 0200     		.2byte	0x2
+ 2999 00f6 7D       		.byte	0x7d
+ 3000 00f7 08       		.sleb128 8
+ 3001 00f8 54010000 		.4byte	.LCFI13-.Ltext0
+ 3002 00fc 56010000 		.4byte	.LCFI14-.Ltext0
+ 3003 0100 0200     		.2byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 66
+
+
+ 3004 0102 7D       		.byte	0x7d
+ 3005 0103 20       		.sleb128 32
+ 3006 0104 56010000 		.4byte	.LCFI14-.Ltext0
+ 3007 0108 C4010000 		.4byte	.LFE65-.Ltext0
+ 3008 010c 0200     		.2byte	0x2
+ 3009 010e 77       		.byte	0x77
+ 3010 010f 20       		.sleb128 32
+ 3011 0110 00000000 		.4byte	0
+ 3012 0114 00000000 		.4byte	0
+ 3013              	.LLST5:
+ 3014 0118 C4010000 		.4byte	.LFB66-.Ltext0
+ 3015 011c C6010000 		.4byte	.LCFI15-.Ltext0
+ 3016 0120 0200     		.2byte	0x2
+ 3017 0122 7D       		.byte	0x7d
+ 3018 0123 00       		.sleb128 0
+ 3019 0124 C6010000 		.4byte	.LCFI15-.Ltext0
+ 3020 0128 C8010000 		.4byte	.LCFI16-.Ltext0
+ 3021 012c 0200     		.2byte	0x2
+ 3022 012e 7D       		.byte	0x7d
+ 3023 012f 08       		.sleb128 8
+ 3024 0130 C8010000 		.4byte	.LCFI16-.Ltext0
+ 3025 0134 CA010000 		.4byte	.LCFI17-.Ltext0
+ 3026 0138 0200     		.2byte	0x2
+ 3027 013a 7D       		.byte	0x7d
+ 3028 013b 10       		.sleb128 16
+ 3029 013c CA010000 		.4byte	.LCFI17-.Ltext0
+ 3030 0140 DC010000 		.4byte	.LFE66-.Ltext0
+ 3031 0144 0200     		.2byte	0x2
+ 3032 0146 77       		.byte	0x77
+ 3033 0147 10       		.sleb128 16
+ 3034 0148 00000000 		.4byte	0
+ 3035 014c 00000000 		.4byte	0
+ 3036              	.LLST6:
+ 3037 0150 DC010000 		.4byte	.LFB67-.Ltext0
+ 3038 0154 DE010000 		.4byte	.LCFI18-.Ltext0
+ 3039 0158 0200     		.2byte	0x2
+ 3040 015a 7D       		.byte	0x7d
+ 3041 015b 00       		.sleb128 0
+ 3042 015c DE010000 		.4byte	.LCFI18-.Ltext0
+ 3043 0160 E0010000 		.4byte	.LCFI19-.Ltext0
+ 3044 0164 0200     		.2byte	0x2
+ 3045 0166 7D       		.byte	0x7d
+ 3046 0167 08       		.sleb128 8
+ 3047 0168 E0010000 		.4byte	.LCFI19-.Ltext0
+ 3048 016c 00020000 		.4byte	.LFE67-.Ltext0
+ 3049 0170 0200     		.2byte	0x2
+ 3050 0172 77       		.byte	0x77
+ 3051 0173 08       		.sleb128 8
+ 3052 0174 00000000 		.4byte	0
+ 3053 0178 00000000 		.4byte	0
+ 3054              	.LLST7:
+ 3055 017c 00020000 		.4byte	.LFB68-.Ltext0
+ 3056 0180 02020000 		.4byte	.LCFI20-.Ltext0
+ 3057 0184 0200     		.2byte	0x2
+ 3058 0186 7D       		.byte	0x7d
+ 3059 0187 00       		.sleb128 0
+ 3060 0188 02020000 		.4byte	.LCFI20-.Ltext0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 67
+
+
+ 3061 018c 04020000 		.4byte	.LCFI21-.Ltext0
+ 3062 0190 0200     		.2byte	0x2
+ 3063 0192 7D       		.byte	0x7d
+ 3064 0193 08       		.sleb128 8
+ 3065 0194 04020000 		.4byte	.LCFI21-.Ltext0
+ 3066 0198 20020000 		.4byte	.LFE68-.Ltext0
+ 3067 019c 0200     		.2byte	0x2
+ 3068 019e 77       		.byte	0x77
+ 3069 019f 08       		.sleb128 8
+ 3070 01a0 00000000 		.4byte	0
+ 3071 01a4 00000000 		.4byte	0
+ 3072              	.LLST8:
+ 3073 01a8 20020000 		.4byte	.LFB69-.Ltext0
+ 3074 01ac 22020000 		.4byte	.LCFI22-.Ltext0
+ 3075 01b0 0200     		.2byte	0x2
+ 3076 01b2 7D       		.byte	0x7d
+ 3077 01b3 00       		.sleb128 0
+ 3078 01b4 22020000 		.4byte	.LCFI22-.Ltext0
+ 3079 01b8 24020000 		.4byte	.LCFI23-.Ltext0
+ 3080 01bc 0200     		.2byte	0x2
+ 3081 01be 7D       		.byte	0x7d
+ 3082 01bf 08       		.sleb128 8
+ 3083 01c0 24020000 		.4byte	.LCFI23-.Ltext0
+ 3084 01c4 40020000 		.4byte	.LFE69-.Ltext0
+ 3085 01c8 0200     		.2byte	0x2
+ 3086 01ca 77       		.byte	0x77
+ 3087 01cb 08       		.sleb128 8
+ 3088 01cc 00000000 		.4byte	0
+ 3089 01d0 00000000 		.4byte	0
+ 3090              	.LLST9:
+ 3091 01d4 40020000 		.4byte	.LFB70-.Ltext0
+ 3092 01d8 42020000 		.4byte	.LCFI24-.Ltext0
+ 3093 01dc 0200     		.2byte	0x2
+ 3094 01de 7D       		.byte	0x7d
+ 3095 01df 00       		.sleb128 0
+ 3096 01e0 42020000 		.4byte	.LCFI24-.Ltext0
+ 3097 01e4 44020000 		.4byte	.LCFI25-.Ltext0
+ 3098 01e8 0200     		.2byte	0x2
+ 3099 01ea 7D       		.byte	0x7d
+ 3100 01eb 08       		.sleb128 8
+ 3101 01ec 44020000 		.4byte	.LCFI25-.Ltext0
+ 3102 01f0 46020000 		.4byte	.LCFI26-.Ltext0
+ 3103 01f4 0200     		.2byte	0x2
+ 3104 01f6 7D       		.byte	0x7d
+ 3105 01f7 10       		.sleb128 16
+ 3106 01f8 46020000 		.4byte	.LCFI26-.Ltext0
+ 3107 01fc 58020000 		.4byte	.LFE70-.Ltext0
+ 3108 0200 0200     		.2byte	0x2
+ 3109 0202 77       		.byte	0x77
+ 3110 0203 10       		.sleb128 16
+ 3111 0204 00000000 		.4byte	0
+ 3112 0208 00000000 		.4byte	0
+ 3113              	.LLST10:
+ 3114 020c 58020000 		.4byte	.LFB71-.Ltext0
+ 3115 0210 5A020000 		.4byte	.LCFI27-.Ltext0
+ 3116 0214 0200     		.2byte	0x2
+ 3117 0216 7D       		.byte	0x7d
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 68
+
+
+ 3118 0217 00       		.sleb128 0
+ 3119 0218 5A020000 		.4byte	.LCFI27-.Ltext0
+ 3120 021c 5C020000 		.4byte	.LCFI28-.Ltext0
+ 3121 0220 0200     		.2byte	0x2
+ 3122 0222 7D       		.byte	0x7d
+ 3123 0223 08       		.sleb128 8
+ 3124 0224 5C020000 		.4byte	.LCFI28-.Ltext0
+ 3125 0228 5E020000 		.4byte	.LCFI29-.Ltext0
+ 3126 022c 0200     		.2byte	0x2
+ 3127 022e 7D       		.byte	0x7d
+ 3128 022f 10       		.sleb128 16
+ 3129 0230 5E020000 		.4byte	.LCFI29-.Ltext0
+ 3130 0234 74020000 		.4byte	.LFE71-.Ltext0
+ 3131 0238 0200     		.2byte	0x2
+ 3132 023a 77       		.byte	0x77
+ 3133 023b 10       		.sleb128 16
+ 3134 023c 00000000 		.4byte	0
+ 3135 0240 00000000 		.4byte	0
+ 3136              	.LLST11:
+ 3137 0244 74020000 		.4byte	.LFB72-.Ltext0
+ 3138 0248 76020000 		.4byte	.LCFI30-.Ltext0
+ 3139 024c 0200     		.2byte	0x2
+ 3140 024e 7D       		.byte	0x7d
+ 3141 024f 00       		.sleb128 0
+ 3142 0250 76020000 		.4byte	.LCFI30-.Ltext0
+ 3143 0254 78020000 		.4byte	.LCFI31-.Ltext0
+ 3144 0258 0200     		.2byte	0x2
+ 3145 025a 7D       		.byte	0x7d
+ 3146 025b 08       		.sleb128 8
+ 3147 025c 78020000 		.4byte	.LCFI31-.Ltext0
+ 3148 0260 7A020000 		.4byte	.LCFI32-.Ltext0
+ 3149 0264 0200     		.2byte	0x2
+ 3150 0266 7D       		.byte	0x7d
+ 3151 0267 10       		.sleb128 16
+ 3152 0268 7A020000 		.4byte	.LCFI32-.Ltext0
+ 3153 026c 8A020000 		.4byte	.LFE72-.Ltext0
+ 3154 0270 0200     		.2byte	0x2
+ 3155 0272 77       		.byte	0x77
+ 3156 0273 10       		.sleb128 16
+ 3157 0274 00000000 		.4byte	0
+ 3158 0278 00000000 		.4byte	0
+ 3159              		.section	.debug_aranges,"",%progbits
+ 3160 0000 1C000000 		.4byte	0x1c
+ 3161 0004 0200     		.2byte	0x2
+ 3162 0006 00000000 		.4byte	.Ldebug_info0
+ 3163 000a 04       		.byte	0x4
+ 3164 000b 00       		.byte	0
+ 3165 000c 0000     		.2byte	0
+ 3166 000e 0000     		.2byte	0
+ 3167 0010 00000000 		.4byte	.Ltext0
+ 3168 0014 8A020000 		.4byte	.Letext0-.Ltext0
+ 3169 0018 00000000 		.4byte	0
+ 3170 001c 00000000 		.4byte	0
+ 3171              		.section	.debug_line,"",%progbits
+ 3172              	.Ldebug_line0:
+ 3173 0000 81020000 		.section	.debug_str,"MS",%progbits,1
+ 3173      0200DB01 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 69
+
+
+ 3173      00000201 
+ 3173      FB0E0D00 
+ 3173      01010101 
+ 3174              	.LASF40:
+ 3175 0000 5F73697A 		.ascii	"_size\000"
+ 3175      6500
+ 3176              	.LASF85:
+ 3177 0006 5F72616E 		.ascii	"_rand48\000"
+ 3177      64343800 
+ 3178              	.LASF47:
+ 3179 000e 5F656D65 		.ascii	"_emergency\000"
+ 3179      7267656E 
+ 3179      637900
+ 3180              	.LASF143:
+ 3181 0019 474E5520 		.ascii	"GNU C11 5.4.1 20160919 (release) [ARM/embedded-5-br"
+ 3181      43313120 
+ 3181      352E342E 
+ 3181      31203230 
+ 3181      31363039 
+ 3182 004c 616E6368 		.ascii	"anch revision 240496] -mthumb -mapcs-frame -mthumb-"
+ 3182      20726576 
+ 3182      6973696F 
+ 3182      6E203234 
+ 3182      30343936 
+ 3183 007f 696E7465 		.ascii	"interwork -march=armv8-m.base -mcmse -gdwarf-2 -O0\000"
+ 3183      72776F72 
+ 3183      6B202D6D 
+ 3183      61726368 
+ 3183      3D61726D 
+ 3184              	.LASF67:
+ 3185 00b2 5F646174 		.ascii	"_data\000"
+ 3185      6100
+ 3186              	.LASF138:
+ 3187 00b8 73747265 		.ascii	"stream\000"
+ 3187      616D00
+ 3188              	.LASF112:
+ 3189 00bf 4D4F4445 		.ascii	"MODEM\000"
+ 3189      4D00
+ 3190              	.LASF125:
+ 3191 00c5 574B5354 		.ascii	"WKSTS\000"
+ 3191      5300
+ 3192              	.LASF106:
+ 3193 00cb 5F776373 		.ascii	"_wcsrtombs_state\000"
+ 3193      72746F6D 
+ 3193      62735F73 
+ 3193      74617465 
+ 3193      00
+ 3194              	.LASF7:
+ 3195 00dc 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 3195      206C6F6E 
+ 3195      6720756E 
+ 3195      7369676E 
+ 3195      65642069 
+ 3196              	.LASF66:
+ 3197 00f3 5F6C6266 		.ascii	"_lbfsize\000"
+ 3197      73697A65 
+ 3197      00
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 70
+
+
+ 3198              	.LASF146:
+ 3199 00fc 5F5F6C6F 		.ascii	"__locale_t\000"
+ 3199      63616C65 
+ 3199      5F7400
+ 3200              	.LASF122:
+ 3201 0107 4C494E53 		.ascii	"LINSTS\000"
+ 3201      545300
+ 3202              	.LASF103:
+ 3203 010e 5F6D6272 		.ascii	"_mbrtowc_state\000"
+ 3203      746F7763 
+ 3203      5F737461 
+ 3203      746500
+ 3204              	.LASF132:
+ 3205 011d 53656E64 		.ascii	"SendChar\000"
+ 3205      43686172 
+ 3205      00
+ 3206              	.LASF98:
+ 3207 0126 5F776374 		.ascii	"_wctomb_state\000"
+ 3207      6F6D625F 
+ 3207      73746174 
+ 3207      6500
+ 3208              	.LASF29:
+ 3209 0134 5F5F746D 		.ascii	"__tm_sec\000"
+ 3209      5F736563 
+ 3209      00
+ 3210              	.LASF12:
+ 3211 013d 5F6F6666 		.ascii	"_off_t\000"
+ 3211      5F7400
+ 3212              	.LASF72:
+ 3213 0144 5F636C6F 		.ascii	"_close\000"
+ 3213      736500
+ 3214              	.LASF0:
+ 3215 014b 7369676E 		.ascii	"signed char\000"
+ 3215      65642063 
+ 3215      68617200 
+ 3216              	.LASF134:
+ 3217 0157 6B626869 		.ascii	"kbhit\000"
+ 3217      7400
+ 3218              	.LASF73:
+ 3219 015d 5F756275 		.ascii	"_ubuf\000"
+ 3219      6600
+ 3220              	.LASF39:
+ 3221 0163 5F626173 		.ascii	"_base\000"
+ 3221      6500
+ 3222              	.LASF31:
+ 3223 0169 5F5F746D 		.ascii	"__tm_hour\000"
+ 3223      5F686F75 
+ 3223      7200
+ 3224              	.LASF60:
+ 3225 0173 5F5F7366 		.ascii	"__sf\000"
+ 3225      00
+ 3226              	.LASF68:
+ 3227 0178 5F636F6F 		.ascii	"_cookie\000"
+ 3227      6B696500 
+ 3228              	.LASF59:
+ 3229 0180 5F5F7367 		.ascii	"__sglue\000"
+ 3229      6C756500 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 71
+
+
+ 3230              	.LASF4:
+ 3231 0188 6C6F6E67 		.ascii	"long int\000"
+ 3231      20696E74 
+ 3231      00
+ 3232              	.LASF64:
+ 3233 0191 5F666C61 		.ascii	"_flags\000"
+ 3233      677300
+ 3234              	.LASF108:
+ 3235 0198 46494C45 		.ascii	"FILE\000"
+ 3235      00
+ 3236              	.LASF43:
+ 3237 019d 5F737464 		.ascii	"_stdin\000"
+ 3237      696E00
+ 3238              	.LASF8:
+ 3239 01a4 756E7369 		.ascii	"unsigned int\000"
+ 3239      676E6564 
+ 3239      20696E74 
+ 3239      00
+ 3240              	.LASF92:
+ 3241 01b1 5F726573 		.ascii	"_result_k\000"
+ 3241      756C745F 
+ 3241      6B00
+ 3242              	.LASF6:
+ 3243 01bb 6C6F6E67 		.ascii	"long long int\000"
+ 3243      206C6F6E 
+ 3243      6720696E 
+ 3243      7400
+ 3244              	.LASF54:
+ 3245 01c9 5F637674 		.ascii	"_cvtbuf\000"
+ 3245      62756600 
+ 3246              	.LASF76:
+ 3247 01d1 5F6F6666 		.ascii	"_offset\000"
+ 3247      73657400 
+ 3248              	.LASF104:
+ 3249 01d9 5F6D6273 		.ascii	"_mbsrtowcs_state\000"
+ 3249      72746F77 
+ 3249      63735F73 
+ 3249      74617465 
+ 3249      00
+ 3250              	.LASF102:
+ 3251 01ea 5F6D6272 		.ascii	"_mbrlen_state\000"
+ 3251      6C656E5F 
+ 3251      73746174 
+ 3251      6500
+ 3252              	.LASF10:
+ 3253 01f8 5F5F7569 		.ascii	"__uint32_t\000"
+ 3253      6E743332 
+ 3253      5F7400
+ 3254              	.LASF25:
+ 3255 0203 5F736967 		.ascii	"_sign\000"
+ 3255      6E00
+ 3256              	.LASF116:
+ 3257 0209 544F5554 		.ascii	"TOUT\000"
+ 3257      00
+ 3258              	.LASF21:
+ 3259 020e 5F666C6F 		.ascii	"_flock_t\000"
+ 3259      636B5F74 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 72
+
+
+ 3259      00
+ 3260              	.LASF45:
+ 3261 0217 5F737464 		.ascii	"_stderr\000"
+ 3261      65727200 
+ 3262              	.LASF27:
+ 3263 021f 5F426967 		.ascii	"_Bigint\000"
+ 3263      696E7400 
+ 3264              	.LASF111:
+ 3265 0227 4C494E45 		.ascii	"LINE\000"
+ 3265      00
+ 3266              	.LASF69:
+ 3267 022c 5F726561 		.ascii	"_read\000"
+ 3267      6400
+ 3268              	.LASF28:
+ 3269 0232 5F5F746D 		.ascii	"__tm\000"
+ 3269      00
+ 3270              	.LASF16:
+ 3271 0237 5F5F7763 		.ascii	"__wchb\000"
+ 3271      686200
+ 3272              	.LASF44:
+ 3273 023e 5F737464 		.ascii	"_stdout\000"
+ 3273      6F757400 
+ 3274              	.LASF53:
+ 3275 0246 5F637674 		.ascii	"_cvtlen\000"
+ 3275      6C656E00 
+ 3276              	.LASF145:
+ 3277 024e 433A5C55 		.ascii	"C:\\Users\\CCMA\\workspace\\TrustZoneSecureGccUv\000"
+ 3277      73657273 
+ 3277      5C43434D 
+ 3277      415C776F 
+ 3277      726B7370 
+ 3278              	.LASF5:
+ 3279 027b 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3279      20756E73 
+ 3279      69676E65 
+ 3279      6420696E 
+ 3279      7400
+ 3280              	.LASF65:
+ 3281 028d 5F66696C 		.ascii	"_file\000"
+ 3281      6500
+ 3282              	.LASF46:
+ 3283 0293 5F696E63 		.ascii	"_inc\000"
+ 3283      00
+ 3284              	.LASF83:
+ 3285 0298 5F6E696F 		.ascii	"_niobs\000"
+ 3285      627300
+ 3286              	.LASF136:
+ 3287 029f 5F747479 		.ascii	"_ttywrch\000"
+ 3287      77726368 
+ 3287      00
+ 3288              	.LASF89:
+ 3289 02a8 5F72616E 		.ascii	"_rand_next\000"
+ 3289      645F6E65 
+ 3289      787400
+ 3290              	.LASF113:
+ 3291 02b3 4D4F4445 		.ascii	"MODEMSTS\000"
+ 3291      4D535453 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 73
+
+
+ 3291      00
+ 3292              	.LASF62:
+ 3293 02bc 5F736967 		.ascii	"_signal_buf\000"
+ 3293      6E616C5F 
+ 3293      62756600 
+ 3294              	.LASF57:
+ 3295 02c8 5F617363 		.ascii	"_asctime_buf\000"
+ 3295      74696D65 
+ 3295      5F627566 
+ 3295      00
+ 3296              	.LASF114:
+ 3297 02d5 4649464F 		.ascii	"FIFOSTS\000"
+ 3297      53545300 
+ 3298              	.LASF91:
+ 3299 02dd 5F726573 		.ascii	"_result\000"
+ 3299      756C7400 
+ 3300              	.LASF15:
+ 3301 02e5 5F5F7763 		.ascii	"__wch\000"
+ 3301      6800
+ 3302              	.LASF139:
+ 3303 02eb 66676574 		.ascii	"fgetc\000"
+ 3303      6300
+ 3304              	.LASF14:
+ 3305 02f1 77696E74 		.ascii	"wint_t\000"
+ 3305      5F7400
+ 3306              	.LASF115:
+ 3307 02f8 494E5453 		.ascii	"INTSTS\000"
+ 3307      545300
+ 3308              	.LASF77:
+ 3309 02ff 5F6C6F63 		.ascii	"_lock\000"
+ 3309      6B00
+ 3310              	.LASF120:
+ 3311 0305 46554E43 		.ascii	"FUNCSEL\000"
+ 3311      53454C00 
+ 3312              	.LASF87:
+ 3313 030d 5F6D756C 		.ascii	"_mult\000"
+ 3313      7400
+ 3314              	.LASF70:
+ 3315 0313 5F777269 		.ascii	"_write\000"
+ 3315      746500
+ 3316              	.LASF34:
+ 3317 031a 5F5F746D 		.ascii	"__tm_year\000"
+ 3317      5F796561 
+ 3317      7200
+ 3318              	.LASF61:
+ 3319 0324 5F6D6973 		.ascii	"_misc\000"
+ 3319      6300
+ 3320              	.LASF17:
+ 3321 032a 73697A65 		.ascii	"sizetype\000"
+ 3321      74797065 
+ 3321      00
+ 3322              	.LASF129:
+ 3323 0333 48617264 		.ascii	"Hard_Fault_Handler\000"
+ 3323      5F466175 
+ 3323      6C745F48 
+ 3323      616E646C 
+ 3323      657200
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 74
+
+
+ 3324              	.LASF13:
+ 3325 0346 5F66706F 		.ascii	"_fpos_t\000"
+ 3325      735F7400 
+ 3326              	.LASF137:
+ 3327 034e 66707574 		.ascii	"fputc\000"
+ 3327      6300
+ 3328              	.LASF133:
+ 3329 0354 47657443 		.ascii	"GetChar\000"
+ 3329      68617200 
+ 3330              	.LASF126:
+ 3331 035c 44574B43 		.ascii	"DWKCOMP\000"
+ 3331      4F4D5000 
+ 3332              	.LASF33:
+ 3333 0364 5F5F746D 		.ascii	"__tm_mon\000"
+ 3333      5F6D6F6E 
+ 3333      00
+ 3334              	.LASF147:
+ 3335 036d 73746163 		.ascii	"stackDump\000"
+ 3335      6B44756D 
+ 3335      7000
+ 3336              	.LASF2:
+ 3337 0377 73686F72 		.ascii	"short int\000"
+ 3337      7420696E 
+ 3337      7400
+ 3338              	.LASF48:
+ 3339 0381 5F5F7364 		.ascii	"__sdidinit\000"
+ 3339      6964696E 
+ 3339      697400
+ 3340              	.LASF52:
+ 3341 038c 5F67616D 		.ascii	"_gamma_signgam\000"
+ 3341      6D615F73 
+ 3341      69676E67 
+ 3341      616D00
+ 3342              	.LASF94:
+ 3343 039b 5F667265 		.ascii	"_freelist\000"
+ 3343      656C6973 
+ 3343      7400
+ 3344              	.LASF20:
+ 3345 03a5 5F6D6273 		.ascii	"_mbstate_t\000"
+ 3345      74617465 
+ 3345      5F7400
+ 3346              	.LASF127:
+ 3347 03b0 55415254 		.ascii	"UART_T\000"
+ 3347      5F5400
+ 3348              	.LASF11:
+ 3349 03b7 5F4C4F43 		.ascii	"_LOCK_RECURSIVE_T\000"
+ 3349      4B5F5245 
+ 3349      43555253 
+ 3349      4956455F 
+ 3349      5400
+ 3350              	.LASF142:
+ 3351 03c9 5F5F7374 		.ascii	"__stdin\000"
+ 3351      64696E00 
+ 3352              	.LASF1:
+ 3353 03d1 756E7369 		.ascii	"unsigned char\000"
+ 3353      676E6564 
+ 3353      20636861 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 75
+
+
+ 3353      7200
+ 3354              	.LASF123:
+ 3355 03df 4252434F 		.ascii	"BRCOMP\000"
+ 3355      4D5000
+ 3356              	.LASF84:
+ 3357 03e6 5F696F62 		.ascii	"_iobs\000"
+ 3357      7300
+ 3358              	.LASF119:
+ 3359 03ec 414C5443 		.ascii	"ALTCTL\000"
+ 3359      544C00
+ 3360              	.LASF36:
+ 3361 03f3 5F5F746D 		.ascii	"__tm_yday\000"
+ 3361      5F796461 
+ 3361      7900
+ 3362              	.LASF131:
+ 3363 03fd 66696C65 		.ascii	"file\000"
+ 3363      00
+ 3364              	.LASF79:
+ 3365 0402 5F666C61 		.ascii	"_flags2\000"
+ 3365      67733200 
+ 3366              	.LASF81:
+ 3367 040a 5F5F4649 		.ascii	"__FILE\000"
+ 3367      4C4500
+ 3368              	.LASF118:
+ 3369 0411 49524441 		.ascii	"IRDA\000"
+ 3369      00
+ 3370              	.LASF63:
+ 3371 0416 5F5F7346 		.ascii	"__sFILE\000"
+ 3371      494C4500 
+ 3372              	.LASF78:
+ 3373 041e 5F6D6273 		.ascii	"_mbstate\000"
+ 3373      74617465 
+ 3373      00
+ 3374              	.LASF97:
+ 3375 0427 5F6D626C 		.ascii	"_mblen_state\000"
+ 3375      656E5F73 
+ 3375      74617465 
+ 3375      00
+ 3376              	.LASF128:
+ 3377 0434 73746163 		.ascii	"stack\000"
+ 3377      6B00
+ 3378              	.LASF50:
+ 3379 043a 5F6C6F63 		.ascii	"_locale\000"
+ 3379      616C6500 
+ 3380              	.LASF51:
+ 3381 0442 5F5F636C 		.ascii	"__cleanup\000"
+ 3381      65616E75 
+ 3381      7000
+ 3382              	.LASF49:
+ 3383 044c 5F756E73 		.ascii	"_unspecified_locale_info\000"
+ 3383      70656369 
+ 3383      66696564 
+ 3383      5F6C6F63 
+ 3383      616C655F 
+ 3384              	.LASF24:
+ 3385 0465 5F6D6178 		.ascii	"_maxwds\000"
+ 3385      77647300 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 76
+
+
+ 3386              	.LASF41:
+ 3387 046d 5F726565 		.ascii	"_reent\000"
+ 3387      6E7400
+ 3388              	.LASF86:
+ 3389 0474 5F736565 		.ascii	"_seed\000"
+ 3389      6400
+ 3390              	.LASF141:
+ 3391 047a 5F5F7374 		.ascii	"__stdout\000"
+ 3391      646F7574 
+ 3391      00
+ 3392              	.LASF18:
+ 3393 0483 5F5F636F 		.ascii	"__count\000"
+ 3393      756E7400 
+ 3394              	.LASF19:
+ 3395 048b 5F5F7661 		.ascii	"__value\000"
+ 3395      6C756500 
+ 3396              	.LASF71:
+ 3397 0493 5F736565 		.ascii	"_seek\000"
+ 3397      6B00
+ 3398              	.LASF35:
+ 3399 0499 5F5F746D 		.ascii	"__tm_wday\000"
+ 3399      5F776461 
+ 3399      7900
+ 3400              	.LASF9:
+ 3401 04a3 6C6F6E67 		.ascii	"long double\000"
+ 3401      20646F75 
+ 3401      626C6500 
+ 3402              	.LASF42:
+ 3403 04af 5F657272 		.ascii	"_errno\000"
+ 3403      6E6F00
+ 3404              	.LASF80:
+ 3405 04b6 63686172 		.ascii	"char\000"
+ 3405      00
+ 3406              	.LASF75:
+ 3407 04bb 5F626C6B 		.ascii	"_blksize\000"
+ 3407      73697A65 
+ 3407      00
+ 3408              	.LASF135:
+ 3409 04c4 49734465 		.ascii	"IsDebugFifoEmpty\000"
+ 3409      62756746 
+ 3409      69666F45 
+ 3409      6D707479 
+ 3409      00
+ 3410              	.LASF117:
+ 3411 04d5 42415544 		.ascii	"BAUD\000"
+ 3411      00
+ 3412              	.LASF109:
+ 3413 04da 494E5445 		.ascii	"INTEN\000"
+ 3413      4E00
+ 3414              	.LASF140:
+ 3415 04e0 4379636C 		.ascii	"CyclesPerUs\000"
+ 3415      65735065 
+ 3415      72557300 
+ 3416              	.LASF90:
+ 3417 04ec 5F6D7072 		.ascii	"_mprec\000"
+ 3417      656300
+ 3418              	.LASF23:
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 77
+
+
+ 3419 04f3 5F6E6578 		.ascii	"_next\000"
+ 3419      7400
+ 3420              	.LASF96:
+ 3421 04f9 5F737472 		.ascii	"_strtok_last\000"
+ 3421      746F6B5F 
+ 3421      6C617374 
+ 3421      00
+ 3422              	.LASF95:
+ 3423 0506 5F6D6973 		.ascii	"_misc_reent\000"
+ 3423      635F7265 
+ 3423      656E7400 
+ 3424              	.LASF3:
+ 3425 0512 73686F72 		.ascii	"short unsigned int\000"
+ 3425      7420756E 
+ 3425      7369676E 
+ 3425      65642069 
+ 3425      6E7400
+ 3426              	.LASF88:
+ 3427 0525 5F616464 		.ascii	"_add\000"
+ 3427      00
+ 3428              	.LASF22:
+ 3429 052a 5F5F554C 		.ascii	"__ULong\000"
+ 3429      6F6E6700 
+ 3430              	.LASF101:
+ 3431 0532 5F676574 		.ascii	"_getdate_err\000"
+ 3431      64617465 
+ 3431      5F657272 
+ 3431      00
+ 3432              	.LASF107:
+ 3433 053f 75696E74 		.ascii	"uint32_t\000"
+ 3433      33325F74 
+ 3433      00
+ 3434              	.LASF144:
+ 3435 0548 7372632F 		.ascii	"src/retarget.c\000"
+ 3435      72657461 
+ 3435      72676574 
+ 3435      2E6300
+ 3436              	.LASF26:
+ 3437 0557 5F776473 		.ascii	"_wds\000"
+ 3437      00
+ 3438              	.LASF82:
+ 3439 055c 5F676C75 		.ascii	"_glue\000"
+ 3439      6500
+ 3440              	.LASF100:
+ 3441 0562 5F6C3634 		.ascii	"_l64a_buf\000"
+ 3441      615F6275 
+ 3441      6600
+ 3442              	.LASF58:
+ 3443 056c 5F736967 		.ascii	"_sig_func\000"
+ 3443      5F66756E 
+ 3443      6300
+ 3444              	.LASF74:
+ 3445 0576 5F6E6275 		.ascii	"_nbuf\000"
+ 3445      6600
+ 3446              	.LASF110:
+ 3447 057c 4649464F 		.ascii	"FIFO\000"
+ 3447      00
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 78
+
+
+ 3448              	.LASF37:
+ 3449 0581 5F5F746D 		.ascii	"__tm_isdst\000"
+ 3449      5F697364 
+ 3449      737400
+ 3450              	.LASF56:
+ 3451 058c 5F6C6F63 		.ascii	"_localtime_buf\000"
+ 3451      616C7469 
+ 3451      6D655F62 
+ 3451      756600
+ 3452              	.LASF30:
+ 3453 059b 5F5F746D 		.ascii	"__tm_min\000"
+ 3453      5F6D696E 
+ 3453      00
+ 3454              	.LASF55:
+ 3455 05a4 5F723438 		.ascii	"_r48\000"
+ 3455      00
+ 3456              	.LASF105:
+ 3457 05a9 5F776372 		.ascii	"_wcrtomb_state\000"
+ 3457      746F6D62 
+ 3457      5F737461 
+ 3457      746500
+ 3458              	.LASF124:
+ 3459 05b8 574B4354 		.ascii	"WKCTL\000"
+ 3459      4C00
+ 3460              	.LASF99:
+ 3461 05be 5F6D6274 		.ascii	"_mbtowc_state\000"
+ 3461      6F77635F 
+ 3461      73746174 
+ 3461      6500
+ 3462              	.LASF93:
+ 3463 05cc 5F703573 		.ascii	"_p5s\000"
+ 3463      00
+ 3464              	.LASF38:
+ 3465 05d1 5F5F7362 		.ascii	"__sbuf\000"
+ 3465      756600
+ 3466              	.LASF130:
+ 3467 05d8 53656E64 		.ascii	"SendChar_ToUART\000"
+ 3467      43686172 
+ 3467      5F546F55 
+ 3467      41525400 
+ 3468              	.LASF32:
+ 3469 05e8 5F5F746D 		.ascii	"__tm_mday\000"
+ 3469      5F6D6461 
+ 3469      7900
+ 3470              	.LASF121:
+ 3471 05f2 4C494E43 		.ascii	"LINCTL\000"
+ 3471      544C00
+ 3472              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160919 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s 			page 79
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 retarget.c
+                            *COM*:00000068 __stdout
+                            *COM*:00000068 __stdin
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:22     .rodata:00000000 $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:47     .text:00000000 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:51     .text:00000000 stackDump
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:142    .text:00000090 $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:158    .text:000000b0 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:163    .text:000000b0 Hard_Fault_Handler
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:195    .text:000000cc $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:199    .text:000000d0 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:204    .text:000000d0 SendChar_ToUART
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:266    .text:00000114 $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:270    .text:00000118 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:275    .text:00000118 _write
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:333    .text:00000150 _read
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:424    .text:000001c0 $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:428    .text:000001c4 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:433    .text:000001c4 SendChar
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:469    .text:000001dc GetChar
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:503    .text:000001fc $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:507    .text:00000200 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:512    .text:00000200 kbhit
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:542    .text:0000021c $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:546    .text:00000220 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:551    .text:00000220 IsDebugFifoEmpty
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:582    .text:0000023c $d
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:586    .text:00000240 $t
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:591    .text:00000240 _ttywrch
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:628    .text:00000258 fputc
+C:\Users\CCMA\AppData\Local\Temp\ccP3MDSH.s:667    .text:00000274 fgetc
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+printf
+puts

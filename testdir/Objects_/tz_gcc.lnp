@@ -1,0 +1,1 @@
+-T ./flash.ld -mthumb -mthumb-interwork -o "./Objects/tz_gcc.elf" "./objects/main.o" "./objects/retarget.o" "./objects/secureattrib.o" "./objects/system_tc8234.o" -nostartfiles -nodefaultlibs

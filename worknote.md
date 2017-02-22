@@ -208,30 +208,33 @@ teamviewer
    install sublime, install jvm, install eclipse CDT
 
    wireless
-    ifconfig -- 用來開啟/關閉介面卡
-    iwconfig -- 用設定無線的 SSID, key
-    iwlist -- 用來搜尋周圍 AP
-    dhcpcd -- 經由 dhcp 得到 ip
+        ifconfig -- 用來開啟/關閉介面卡
+        iwconfig -- 用設定無線的 SSID, key
+        iwlist -- 用來搜尋周圍 AP
+        dhcpcd -- 經由 dhcp 得到 ip
 
-    首先，先找出你的無線網卡是哪個名字
-    ifconfig -a
+        首先，先找出你的無線網卡是哪個名字
+        ifconfig -a
 
-    找到介面的名字後，若是沒有打開，就把它打開
-    ifconfig wlan0 up
+        找到介面的名字後，若是沒有打開，就把它打開
+        ifconfig wlan0 up
 
-    接著，設定無線網卡的 SSID (在 linux 世界都叫它 ESSID)
-    iwconfig wlan0 essid <essid>
+        接著，設定無線網卡的 SSID (在 linux 世界都叫它 ESSID)
+        iwconfig wlan0 essid <essid>
 
-    還有設定無線網卡的金鑰
-    iwconfig wlan0 key <key>
+        還有設定無線網卡的金鑰
+        iwconfig wlan0 key <key>
 
-    最後，設定 ip，若是使用 dhcp，使用指令如下
-    dhcpcd wlan0
+        最後，設定 ip，若是使用 dhcp，使用指令如下
+        dhcpcd wlan0
 
-    指定 ip 則是使用下例指令
-    ifconfig wlan0 192.168.1.2
-    網路匣道設定
-    route add default 192.168.1.1
+        指定 ip 則是使用下例指令
+        ifconfig wlan0 192.168.1.2
+        網路匣道設定
+        route add default 192.168.1.1
+
+    install perforce
+    perforce linux super username:super, pass:most general
 
 >>google chrome
     在網頁上水平捲動	按住 Shift 鍵並滾動滑鼠滾輪
@@ -522,12 +525,13 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
                 list tree file
                 
     >>efficient        
-        note7 recover webpage
+        note7 chrome 手機模式瀏覽
         markdown insert http link but can't display on website default, need to delete all the indent 
         sublime 讀檔二進位轉換 edit config0 is possible?
         sublime how to collapse & unfold yaml format
         sublime search but can jump to result directly, need to mouse click
         command windows paste & copy, file browswer that can keep previous setting
+        01937 can't new txt file by right key mouse 
         01937 use AndroidAP, PC also use, PCANY WHERE , delete wormhole
         如何快速reget windows 工作快取
         linux server as NAS and github server

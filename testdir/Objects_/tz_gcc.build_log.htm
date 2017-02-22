@@ -1,0 +1,234 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: £gVision V5.22.0.0
+Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: cc MIS NUVOTON Flex license: MDK-ARM Professional: 10 user(s) (mdk_pro) Operation stops: 31 May 2017
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Professional: 10 user(s)  Version: 5.22
+Toolchain Path:  C:\Program Files\GNU Tools ARM Embedded\5.4 2016q3\bin
+C Compiler:      GCC.exe
+Assembler:       AS.exe
+Linker/Locator:  LD.exe
+Library Manager: AR.exe
+Hex Converter:   OBJCOPY.exe
+CPU DLL:         
+Dialog DLL:      
+Target DLL:      UL2V8M.DLL V1.2.0.0
+Dialog DLL:      TCM.DLL V1.21.0.0
+ 
+<h2>Project:</h2>
+C:\Users\CCMA\workspace\TrustZoneSecureGcc\tz_gcc.uvprojx
+Project File Date:  02/09/2017
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+main.o:(.bss+0x0): multiple definition of `pfNonSecure_LED_On'
+./objects/main.o:(.bss+0x0): first defined here
+main.o: In function `NVIC_SetPriority':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1500: multiple definition of `pfNonSecure_LED_Off'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1500: first defined here
+main.o: In function `Secure_LED_On':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:36: multiple definition of `Secure_LED_On'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:36: first defined here
+main.o: In function `Secure_LED_On':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:36: multiple definition of `__acle_se_Secure_LED_On'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:36: first defined here
+main.o: In function `Secure_LED_Off':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:44: multiple definition of `Secure_LED_Off'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:44: first defined here
+main.o: In function `Secure_LED_Off':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:44: multiple definition of `__acle_se_Secure_LED_Off'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:44: first defined here
+main.o: In function `Secure_LED_On_callback':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:56: multiple definition of `Secure_LED_On_callback'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:56: first defined here
+main.o: In function `Secure_LED_On_callback':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:56: multiple definition of `__acle_se_Secure_LED_On_callback'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:56: first defined here
+main.o: In function `Secure_LED_Off_callback':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:63: multiple definition of `Secure_LED_Off_callback'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:63: first defined here
+main.o: In function `Secure_LED_Off_callback':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:63: multiple definition of `__acle_se_Secure_LED_Off_callback'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:63: first defined here
+main.o: In function `GetSystemCoreClock':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:70: multiple definition of `GetSystemCoreClock'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:70: first defined here
+main.o: In function `GetSystemCoreClock':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:70: multiple definition of `__acle_se_GetSystemCoreClock'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:70: first defined here
+main.o: In function `SysTick_Handler':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:80: multiple definition of `SysTick_Handler'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:80: first defined here
+main.o: In function `NVIC_SetPriority':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1500: multiple definition of `tests2'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1500: first defined here
+main.o: In function `NVIC_SetPriority':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1501: multiple definition of `tests3'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/core_armv8mbl.h:1501: first defined here
+main.o: In function `main':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:175: multiple definition of `main'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:175: first defined here
+main.o: In function `SYS_Init':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:289: multiple definition of `SYS_Init'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:289: first defined here
+main.o: In function `UART0_Init':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:347: multiple definition of `UART0_Init'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:347: first defined here
+main.o: In function `Nonsecure_Init':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:258: multiple definition of `Nonsecure_Init'
+./objects/main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:258: first defined here
+SecureAttrib.o:(.bss+0x0): multiple definition of `idau_ref'
+./objects/secureattrib.o:(.bss+0x0): first defined here
+SecureAttrib.o: In function `SecureAttrib':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/SecureAttrib.c:64: multiple definition of `SecureAttrib'
+./objects/secureattrib.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/SecureAttrib.c:64: first defined here
+system_TC8234.o:(.rodata+0x0): multiple definition of `gau32ClkSrcTbl'
+./objects/system_tc8234.o:(.rodata+0x0): first defined here
+system_TC8234.o: In function `SystemCoreClockUpdate':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/system_TC8234.c:43: multiple definition of `SystemCoreClockUpdate'
+./objects/system_tc8234.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/system_TC8234.c:43: first defined here
+system_TC8234.o: In function `SystemInit':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/system_TC8234.c:85: multiple definition of `SystemInit'
+./objects/system_tc8234.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/system_TC8234.c:85: first defined here
+retarget.o: In function `Hard_Fault_Handler':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:66: multiple definition of `Hard_Fault_Handler'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:66: first defined here
+retarget.o: In function `SendChar_ToUART':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:402: multiple definition of `SendChar_ToUART'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:402: first defined here
+retarget.o: In function `_write':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:471: multiple definition of `_write'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:471: first defined here
+retarget.o: In function `_read':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:482: multiple definition of `_read'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:482: first defined here
+retarget.o: In function `SendChar':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:520: multiple definition of `SendChar'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:520: first defined here
+retarget.o: In function `GetChar':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:556: multiple definition of `GetChar'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:556: first defined here
+retarget.o: In function `kbhit':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:602: multiple definition of `kbhit'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:602: first defined here
+retarget.o: In function `IsDebugFifoEmpty':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:617: multiple definition of `IsDebugFifoEmpty'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:617: first defined here
+retarget.o: In function `_ttywrch':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:632: multiple definition of `_ttywrch'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:632: first defined here
+retarget.o: In function `fputc':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:657: multiple definition of `fputc'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:657: first defined here
+retarget.o: In function `fgetc':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:675: multiple definition of `fgetc'
+./objects/retarget.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/retarget.c:675: first defined here
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-printf.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-printf.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-puts.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-puts.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-wbuf.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-wbuf.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-wsetup.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-wsetup.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fflush.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fflush.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-findfp.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-findfp.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fwalk.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fwalk.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-impure.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-impure.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-makebuf.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-makebuf.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memset.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memset.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-freer.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-freer.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-mallocr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-mallocr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-vfprintf.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-vfprintf.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-vfprintf_i.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-vfprintf_i.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-sbrkr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-sbrkr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-stdio.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-stdio.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-writer.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-writer.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-closer.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-closer.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fstatr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fstatr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fvwrite.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-fvwrite.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-isattyr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-isattyr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-lseekr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-lseekr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memchr-stub.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memchr-stub.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memcpy-stub.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memcpy-stub.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memmove.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-memmove.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-mlock.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-mlock.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-reallocr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-reallocr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-readr.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-readr.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-reent.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-reent.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-msizer.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libc_nano.a(lib_a-nano-msizer.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(close.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(close.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(fstat.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(fstat.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(isatty.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(isatty.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(lseek.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(lseek.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(sbrk.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/thumb\libnosys.a(sbrk.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_udivsi3.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_udivsi3.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_divsi3.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_divsi3.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: error: c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_dvmd_tls.o): Conflicting CPU architectures 16/2
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: failed to merge target specific data of file c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/thumb\libgcc.a(_dvmd_tls.o)
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: BFD (GNU Tools for ARM Embedded Processors) 2.26.2.20160923 assertion fail /home/build/work/GCC-5-build/src/binutils/bfd/elf32-arm.c:5717
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: BFD (GNU Tools for ARM Embedded Processors) 2.26.2.20160923 assertion fail /home/build/work/GCC-5-build/src/binutils/bfd/elf32-arm.c:5717
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: BFD (GNU Tools for ARM Embedded Processors) 2.26.2.20160923 assertion fail /home/build/work/GCC-5-build/src/binutils/bfd/elf32-arm.c:5717
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: BFD (GNU Tools for ARM Embedded Processors) 2.26.2.20160923 assertion fail /home/build/work/GCC-5-build/src/binutils/bfd/elf32-arm.c:5717
+c:/program files/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/bin/ld.exe: BFD (GNU Tools for ARM Embedded Processors) 2.26.2.20160923 assertion fail /home/build/work/GCC-5-build/src/binutils/bfd/elf32-arm.c:5717
+./objects/main.o: In function `SysTick_Handler':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:96: undefined reference to `__gnu_cmse_nonsecure_call'
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:102: undefined reference to `__gnu_cmse_nonsecure_call'
+./objects/main.o: In function `Nonsecure_Init':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:277: undefined reference to `__gnu_cmse_nonsecure_call'
+main.o: In function `SysTick_Handler':
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:96: undefined reference to `__gnu_cmse_nonsecure_call'
+C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:102: undefined reference to `__gnu_cmse_nonsecure_call'
+main.o:C:\Users\CCMA\workspace\TrustZoneSecureGcc/./src/main.c:277: more undefined references to `__gnu_cmse_nonsecure_call' follow
+collect2.exe: error: ld returned 1 exit status
+".\Objects\tz_gcc.elf" - 1 Error(s), 0 Warning(s).
+
+<h2>Collection of Component include folders:</h2>
+  C:\Users\CCMA\workspace\TrustZoneSecureGcc\RTE\_Target_1
+  C:\keil\522\ARM\PACK\ARM\CMSIS\5.0.0\Device\ARM\ARMv8MBL\Include
+
+<h2>Collection of Component Files used:</h2>
+Target not created.
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>

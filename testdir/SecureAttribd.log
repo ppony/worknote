@@ -1,0 +1,13 @@
+
+SecureAttrib.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <SecureAttrib>:
+   0:	b580      	push	{r7, lr}
+   2:	af00      	add	r7, sp, #0
+   4:	46c0      	nop			; (mov r8, r8)
+   6:	46bd      	mov	sp, r7
+   8:	bd80      	pop	{r7, pc}
+   a:	46c0      	nop			; (mov r8, r8)

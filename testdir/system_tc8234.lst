@@ -1,0 +1,2754 @@
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.arch armv8-m.base
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"system_TC8234.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.align	2
+  20              		.global	SystemCoreClockUpdate
+  21              		.code	16
+  22              		.thumb_func
+  23              		.type	SystemCoreClockUpdate, %function
+  24              	SystemCoreClockUpdate:
+  25              	.LFB63:
+  26              		.file 1 "src/system_TC8234.c"
+   1:src/system_TC8234.c **** /**************************************************************************//**
+   2:src/system_TC8234.c ****  * @file     system_TC8234.c
+   3:src/system_TC8234.c ****  * @version  V2.00
+   4:src/system_TC8234.c ****  * $Revision: 4 $
+   5:src/system_TC8234.c ****  * $Date: 16/08/15 10:33a $
+   6:src/system_TC8234.c ****  * @brief    System Setting Source File
+   7:src/system_TC8234.c ****  *
+   8:src/system_TC8234.c ****  * @note
+   9:src/system_TC8234.c ****  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
+  10:src/system_TC8234.c ****  *
+  11:src/system_TC8234.c ****  ******************************************************************************/
+  12:src/system_TC8234.c **** #include <stdio.h>
+  13:src/system_TC8234.c **** #include <stdint.h>
+  14:src/system_TC8234.c **** #include "TC8234.h"
+  15:src/system_TC8234.c **** 
+  16:src/system_TC8234.c **** #if defined (__ARM_FEATURE_CMSE) &&  (__ARM_FEATURE_CMSE == 3U)
+  17:src/system_TC8234.c ****   #include "partition_TC8234.h"
+  18:src/system_TC8234.c **** #endif
+  19:src/system_TC8234.c **** 
+  20:src/system_TC8234.c **** 
+  21:src/system_TC8234.c **** extern void *g_pfnVectors;                   /* see startup file */
+  22:src/system_TC8234.c **** 
+  23:src/system_TC8234.c **** /*----------------------------------------------------------------------------
+  24:src/system_TC8234.c ****   Clock Variable definitions
+  25:src/system_TC8234.c ****  *----------------------------------------------------------------------------*/
+  26:src/system_TC8234.c **** //uint32_t SystemCoreClock  = __HSI;              /*!< System Clock Frequency (Core Clock) */
+  27:src/system_TC8234.c **** //uint32_t CyclesPerUs      = (__HSI / 1000000);  /*!< Cycles per micro second             */
+  28:src/system_TC8234.c **** //uint32_t PllClock         = __HSI;              /*!< PLL Output Clock Frequency          */
+  29:src/system_TC8234.c **** const uint32_t gau32ClkSrcTbl[] = {__HXT, __LXT, 0, __LIRC, 0, 0, __HIRC48, __HIRC};
+  30:src/system_TC8234.c **** 
+  31:src/system_TC8234.c **** 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 2
+
+
+  32:src/system_TC8234.c **** /**
+  33:src/system_TC8234.c ****  * @brief    Update the Variable SystemCoreClock
+  34:src/system_TC8234.c ****  *
+  35:src/system_TC8234.c ****  * @param    None
+  36:src/system_TC8234.c ****  *
+  37:src/system_TC8234.c ****  * @return   None
+  38:src/system_TC8234.c ****  *
+  39:src/system_TC8234.c ****  * @details  This function is used to update the variable SystemCoreClock
+  40:src/system_TC8234.c ****  *           and must be called whenever the core clock is changed.
+  41:src/system_TC8234.c ****  */
+  42:src/system_TC8234.c **** void SystemCoreClockUpdate(void)
+  43:src/system_TC8234.c **** {
+  27              		.loc 1 43 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  44:src/system_TC8234.c **** #if 0
+  45:src/system_TC8234.c **** 	uint32_t u32Freq, u32ClkSrc;
+  46:src/system_TC8234.c ****     uint32_t u32HclkDiv;
+  47:src/system_TC8234.c **** 
+  48:src/system_TC8234.c ****     u32ClkSrc = CLK->CLKSEL0 & CLK_CLKSEL0_HCLKSEL_Msk;
+  49:src/system_TC8234.c **** 
+  50:src/system_TC8234.c ****     /* Update PLL Clock */
+  51:src/system_TC8234.c ****     PllClock = CLK_GetPLLClockFreq();
+  52:src/system_TC8234.c **** 
+  53:src/system_TC8234.c ****     if(u32ClkSrc != CLK_CLKSEL0_HCLKSEL_PLL)
+  54:src/system_TC8234.c ****     {
+  55:src/system_TC8234.c ****         /* Use the clock sources directly */
+  56:src/system_TC8234.c ****         u32Freq = gau32ClkSrcTbl[u32ClkSrc];
+  57:src/system_TC8234.c ****     }
+  58:src/system_TC8234.c ****     else
+  59:src/system_TC8234.c ****     {
+  60:src/system_TC8234.c ****         /* Use PLL clock */
+  61:src/system_TC8234.c ****         u32Freq = PllClock;
+  62:src/system_TC8234.c ****     }
+  63:src/system_TC8234.c **** 
+  64:src/system_TC8234.c ****     u32HclkDiv = (CLK->CLKDIV0 & CLK_CLKDIV0_HCLKDIV_Msk) + 1;
+  65:src/system_TC8234.c **** 
+  66:src/system_TC8234.c ****     /* Update System Core Clock */
+  67:src/system_TC8234.c ****     SystemCoreClock = u32Freq / u32HclkDiv;
+  68:src/system_TC8234.c **** 
+  69:src/system_TC8234.c ****     CyclesPerUs = (SystemCoreClock + 500000) / 1000000;
+  70:src/system_TC8234.c **** #endif
+  71:src/system_TC8234.c **** }
+  32              		.loc 1 71 0
+  33              		@ sp needed
+  34 0000 7047     		bx	lr
+  35              		.cfi_endproc
+  36              	.LFE63:
+  37              		.size	SystemCoreClockUpdate, .-SystemCoreClockUpdate
+  38 0002 C046     		.align	2
+  39              		.global	SystemInit
+  40              		.code	16
+  41              		.thumb_func
+  42              		.type	SystemInit, %function
+  43              	SystemInit:
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 3
+
+
+  44              	.LFB64:
+  72:src/system_TC8234.c **** 
+  73:src/system_TC8234.c **** 
+  74:src/system_TC8234.c **** 
+  75:src/system_TC8234.c **** /**
+  76:src/system_TC8234.c ****  * @brief    System Initialization
+  77:src/system_TC8234.c ****  *
+  78:src/system_TC8234.c ****  * @param    None
+  79:src/system_TC8234.c ****  *
+  80:src/system_TC8234.c ****  * @return   None
+  81:src/system_TC8234.c ****  *
+  82:src/system_TC8234.c ****  * @details  The necessary initialization of system. Global variables are forbidden here.
+  83:src/system_TC8234.c ****  */
+  84:src/system_TC8234.c **** void SystemInit (void)
+  85:src/system_TC8234.c **** {
+  45              		.loc 1 85 0
+  46              		.cfi_startproc
+  47              		@ args = 0, pretend = 0, frame = 0
+  48              		@ frame_needed = 0, uses_anonymous_args = 0
+  49 0004 10B5     		push	{r4, lr}
+  50              	.LCFI0:
+  51              		.cfi_def_cfa_offset 8
+  52              		.cfi_offset 4, -8
+  53              		.cfi_offset 14, -4
+  86:src/system_TC8234.c **** #if defined (__VTOR_PRESENT) && (__VTOR_PRESENT == 1U)
+  87:src/system_TC8234.c **** 	SCB->VTOR = (uint32_t) &g_pfnVectors;
+  54              		.loc 1 87 0
+  55 0006 2549     		ldr	r1, .L3
+  56 0008 254B     		ldr	r3, .L3+4
+  57 000a 8B60     		str	r3, [r1, #8]
+  58              	.LBB8:
+  59              	.LBB9:
+  60              		.file 2 "src/partition_TC8234.h"
+   1:src/partition_TC8234.h **** /**************************************************************************//**
+   2:src/partition_TC8234.h ****  * @file     partition_TC8234.c
+   3:src/partition_TC8234.h ****  * @version  V2.00
+   4:src/partition_TC8234.h ****  * $Revision: 3 $
+   5:src/partition_TC8234.h ****  * $Date: 16/08/15 6:25p $
+   6:src/partition_TC8234.h ****  * @brief    SAU configuration for secure/nonsecure region settings.
+   7:src/partition_TC8234.h ****  *
+   8:src/partition_TC8234.h ****  * @note
+   9:src/partition_TC8234.h ****  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
+  10:src/partition_TC8234.h ****  *
+  11:src/partition_TC8234.h ****  ******************************************************************************/
+  12:src/partition_TC8234.h **** 
+  13:src/partition_TC8234.h **** #ifndef PARTITION_TC8234
+  14:src/partition_TC8234.h **** #define PARTITION_TC8234
+  15:src/partition_TC8234.h **** 
+  16:src/partition_TC8234.h **** /*
+  17:src/partition_TC8234.h **** //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
+  18:src/partition_TC8234.h **** */
+  19:src/partition_TC8234.h **** 
+  20:src/partition_TC8234.h **** /*
+  21:src/partition_TC8234.h **** // <e>Secure Attribute Unit (SAU) Control
+  22:src/partition_TC8234.h **** */
+  23:src/partition_TC8234.h **** #define SAU_INIT_CTRL 1
+  24:src/partition_TC8234.h **** 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 4
+
+
+  25:src/partition_TC8234.h **** /*
+  26:src/partition_TC8234.h **** //   <q> Enable SAU
+  27:src/partition_TC8234.h **** //   <i> To enable Secure Attribute Unit (SAU).
+  28:src/partition_TC8234.h **** */
+  29:src/partition_TC8234.h **** #define SAU_INIT_CTRL_ENABLE 1
+  30:src/partition_TC8234.h **** 
+  31:src/partition_TC8234.h **** /*
+  32:src/partition_TC8234.h **** //   <o> All Memory Attribute When SAU is disabled
+  33:src/partition_TC8234.h **** //     <0=> All Memory is Secure
+  34:src/partition_TC8234.h **** //     <1=> All Memory is Non-Secure
+  35:src/partition_TC8234.h **** //   <i> To set the ALLNS bit in SAU CTRL.
+  36:src/partition_TC8234.h **** //   <i> When all Memory is Non-Secure (ALLNS is 1), IDAU can override memory map configuration.
+  37:src/partition_TC8234.h **** */
+  38:src/partition_TC8234.h **** #define SAU_INIT_CTRL_ALLNS  0
+  39:src/partition_TC8234.h **** 
+  40:src/partition_TC8234.h **** /*
+  41:src/partition_TC8234.h **** // </e>
+  42:src/partition_TC8234.h **** */
+  43:src/partition_TC8234.h **** 
+  44:src/partition_TC8234.h **** /*
+  45:src/partition_TC8234.h **** // <h>Enable and Set Secure/Non-Secure region
+  46:src/partition_TC8234.h **** */
+  47:src/partition_TC8234.h **** #define SAU_REGIONS_MAX   8                 /* Max. number of SAU regions */
+  48:src/partition_TC8234.h **** 
+  49:src/partition_TC8234.h **** /*
+  50:src/partition_TC8234.h **** //   <e>SAU Region 0
+  51:src/partition_TC8234.h **** //   <i> Setup SAU Region 0
+  52:src/partition_TC8234.h **** */
+  53:src/partition_TC8234.h **** #define SAU_INIT_REGION0    1
+  54:src/partition_TC8234.h **** /*
+  55:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+  56:src/partition_TC8234.h **** */
+  57:src/partition_TC8234.h **** #define SAU_INIT_START0     0x00000000      /* start address of SAU region 0 */
+  58:src/partition_TC8234.h **** /*
+  59:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+  60:src/partition_TC8234.h **** */
+  61:src/partition_TC8234.h **** #define SAU_INIT_END0       0x00040000      /* end address of SAU region 0 */
+  62:src/partition_TC8234.h **** /*
+  63:src/partition_TC8234.h **** //     <o>Region is
+  64:src/partition_TC8234.h **** //         <0=>Non-Secure
+  65:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+  66:src/partition_TC8234.h **** */
+  67:src/partition_TC8234.h **** #define SAU_INIT_NSC0       1
+  68:src/partition_TC8234.h **** /*
+  69:src/partition_TC8234.h **** //   </e>
+  70:src/partition_TC8234.h **** */
+  71:src/partition_TC8234.h **** 
+  72:src/partition_TC8234.h **** /*
+  73:src/partition_TC8234.h **** //   <e>SAU Region 1
+  74:src/partition_TC8234.h **** //   <i> Setup SAU Region 1
+  75:src/partition_TC8234.h **** */
+  76:src/partition_TC8234.h **** #define SAU_INIT_REGION1    1
+  77:src/partition_TC8234.h **** /*
+  78:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+  79:src/partition_TC8234.h **** */
+  80:src/partition_TC8234.h **** #define SAU_INIT_START1     0x10040000
+  81:src/partition_TC8234.h **** /*
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 5
+
+
+  82:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+  83:src/partition_TC8234.h **** */
+  84:src/partition_TC8234.h **** #define SAU_INIT_END1       0x1007FFFF
+  85:src/partition_TC8234.h **** /*
+  86:src/partition_TC8234.h **** //     <o>Region is
+  87:src/partition_TC8234.h **** //         <0=>Non-Secure
+  88:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+  89:src/partition_TC8234.h **** */
+  90:src/partition_TC8234.h **** #define SAU_INIT_NSC1       0
+  91:src/partition_TC8234.h **** /*
+  92:src/partition_TC8234.h **** //   </e>
+  93:src/partition_TC8234.h **** */
+  94:src/partition_TC8234.h **** 
+  95:src/partition_TC8234.h **** /*
+  96:src/partition_TC8234.h **** //   <e>SAU Region 2
+  97:src/partition_TC8234.h **** //   <i> Setup SAU Region 2
+  98:src/partition_TC8234.h **** */
+  99:src/partition_TC8234.h **** #define SAU_INIT_REGION2    1
+ 100:src/partition_TC8234.h **** /*
+ 101:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 102:src/partition_TC8234.h **** */
+ 103:src/partition_TC8234.h **** #define SAU_INIT_START2     0x2000FC00
+ 104:src/partition_TC8234.h **** /*
+ 105:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 106:src/partition_TC8234.h **** */
+ 107:src/partition_TC8234.h **** #define SAU_INIT_END2       0x2000FFFF
+ 108:src/partition_TC8234.h **** /*
+ 109:src/partition_TC8234.h **** //     <o>Region is
+ 110:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 111:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 112:src/partition_TC8234.h **** */
+ 113:src/partition_TC8234.h **** #define SAU_INIT_NSC2       1
+ 114:src/partition_TC8234.h **** /*
+ 115:src/partition_TC8234.h **** //   </e>
+ 116:src/partition_TC8234.h **** */
+ 117:src/partition_TC8234.h **** 
+ 118:src/partition_TC8234.h **** /*
+ 119:src/partition_TC8234.h **** //   <e>SAU Region 3
+ 120:src/partition_TC8234.h **** //   <i> Setup SAU Region 3
+ 121:src/partition_TC8234.h **** */
+ 122:src/partition_TC8234.h **** #define SAU_INIT_REGION3    1
+ 123:src/partition_TC8234.h **** /*
+ 124:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 125:src/partition_TC8234.h **** */
+ 126:src/partition_TC8234.h **** #define SAU_INIT_START3     0x30010000
+ 127:src/partition_TC8234.h **** /*
+ 128:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 129:src/partition_TC8234.h **** */
+ 130:src/partition_TC8234.h **** #define SAU_INIT_END3       0x3001FFFF
+ 131:src/partition_TC8234.h **** /*
+ 132:src/partition_TC8234.h **** //     <o>Region is
+ 133:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 134:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 135:src/partition_TC8234.h **** */
+ 136:src/partition_TC8234.h **** #define SAU_INIT_NSC3       0
+ 137:src/partition_TC8234.h **** /*
+ 138:src/partition_TC8234.h **** //   </e>
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 6
+
+
+ 139:src/partition_TC8234.h **** */
+ 140:src/partition_TC8234.h **** 
+ 141:src/partition_TC8234.h **** /*
+ 142:src/partition_TC8234.h **** //   <e>SAU Region 4
+ 143:src/partition_TC8234.h **** //   <i> Setup SAU Region 4
+ 144:src/partition_TC8234.h **** */
+ 145:src/partition_TC8234.h **** #define SAU_INIT_REGION4    1
+ 146:src/partition_TC8234.h **** /*
+ 147:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 148:src/partition_TC8234.h **** */
+ 149:src/partition_TC8234.h **** #define SAU_INIT_START4     0x50000000      /* start address of SAU region 4 */
+ 150:src/partition_TC8234.h **** 
+ 151:src/partition_TC8234.h **** /*
+ 152:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 153:src/partition_TC8234.h **** */
+ 154:src/partition_TC8234.h **** #define SAU_INIT_END4       0x5FFFFFFF      /* end address of SAU region 4 */
+ 155:src/partition_TC8234.h **** 
+ 156:src/partition_TC8234.h **** /*
+ 157:src/partition_TC8234.h **** //     <o>Region is
+ 158:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 159:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 160:src/partition_TC8234.h **** */
+ 161:src/partition_TC8234.h **** #define SAU_INIT_NSC4       0
+ 162:src/partition_TC8234.h **** /*
+ 163:src/partition_TC8234.h **** //   </e>
+ 164:src/partition_TC8234.h **** */
+ 165:src/partition_TC8234.h **** 
+ 166:src/partition_TC8234.h **** /*
+ 167:src/partition_TC8234.h **** //   <e>SAU Region 5
+ 168:src/partition_TC8234.h **** //   <i> Setup SAU Region 5
+ 169:src/partition_TC8234.h **** */
+ 170:src/partition_TC8234.h **** #define SAU_INIT_REGION5    1
+ 171:src/partition_TC8234.h **** 
+ 172:src/partition_TC8234.h **** /*
+ 173:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 174:src/partition_TC8234.h **** */
+ 175:src/partition_TC8234.h **** #define SAU_INIT_START5     0x00807C00
+ 176:src/partition_TC8234.h **** 
+ 177:src/partition_TC8234.h **** /*
+ 178:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 179:src/partition_TC8234.h **** */
+ 180:src/partition_TC8234.h **** #define SAU_INIT_END5       0x00807FFF
+ 181:src/partition_TC8234.h **** 
+ 182:src/partition_TC8234.h **** /*
+ 183:src/partition_TC8234.h **** //     <o>Region is
+ 184:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 185:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 186:src/partition_TC8234.h **** */
+ 187:src/partition_TC8234.h **** #define SAU_INIT_NSC5       1
+ 188:src/partition_TC8234.h **** /*
+ 189:src/partition_TC8234.h **** //   </e>
+ 190:src/partition_TC8234.h **** */
+ 191:src/partition_TC8234.h **** 
+ 192:src/partition_TC8234.h **** /*
+ 193:src/partition_TC8234.h **** //   <e>SAU Region 6
+ 194:src/partition_TC8234.h **** //   <i> Setup SAU Region 6
+ 195:src/partition_TC8234.h **** */
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 7
+
+
+ 196:src/partition_TC8234.h **** #define SAU_INIT_REGION6    0
+ 197:src/partition_TC8234.h **** 
+ 198:src/partition_TC8234.h **** /*
+ 199:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 200:src/partition_TC8234.h **** */
+ 201:src/partition_TC8234.h **** #define SAU_INIT_START6     0x00000000
+ 202:src/partition_TC8234.h **** 
+ 203:src/partition_TC8234.h **** /*
+ 204:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 205:src/partition_TC8234.h **** */
+ 206:src/partition_TC8234.h **** #define SAU_INIT_END6       0x00000000
+ 207:src/partition_TC8234.h **** 
+ 208:src/partition_TC8234.h **** /*
+ 209:src/partition_TC8234.h **** //     <o>Region is
+ 210:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 211:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 212:src/partition_TC8234.h **** */
+ 213:src/partition_TC8234.h **** #define SAU_INIT_NSC6       0
+ 214:src/partition_TC8234.h **** /*
+ 215:src/partition_TC8234.h **** //   </e>
+ 216:src/partition_TC8234.h **** */
+ 217:src/partition_TC8234.h **** 
+ 218:src/partition_TC8234.h **** /*
+ 219:src/partition_TC8234.h **** //   <e>SAU Region 7
+ 220:src/partition_TC8234.h **** //   <i> Setup SAU Region 7
+ 221:src/partition_TC8234.h **** */
+ 222:src/partition_TC8234.h **** #define SAU_INIT_REGION7    0
+ 223:src/partition_TC8234.h **** 
+ 224:src/partition_TC8234.h **** /*
+ 225:src/partition_TC8234.h **** //     <o>Start Address <0-0xFFFFFFE0>
+ 226:src/partition_TC8234.h **** */
+ 227:src/partition_TC8234.h **** #define SAU_INIT_START7     0x00000000
+ 228:src/partition_TC8234.h **** 
+ 229:src/partition_TC8234.h **** /*
+ 230:src/partition_TC8234.h **** //     <o>End Address <0x1F-0xFFFFFFFF>
+ 231:src/partition_TC8234.h **** */
+ 232:src/partition_TC8234.h **** #define SAU_INIT_END7       0x00000000
+ 233:src/partition_TC8234.h **** 
+ 234:src/partition_TC8234.h **** /*
+ 235:src/partition_TC8234.h **** //     <o>Region is
+ 236:src/partition_TC8234.h **** //         <0=>Non-Secure
+ 237:src/partition_TC8234.h **** //         <1=>Secure, Non-Secure Callable
+ 238:src/partition_TC8234.h **** */
+ 239:src/partition_TC8234.h **** #define SAU_INIT_NSC7       0
+ 240:src/partition_TC8234.h **** /*
+ 241:src/partition_TC8234.h **** //   </e>
+ 242:src/partition_TC8234.h **** */
+ 243:src/partition_TC8234.h **** 
+ 244:src/partition_TC8234.h **** /*
+ 245:src/partition_TC8234.h **** // </h>
+ 246:src/partition_TC8234.h **** */
+ 247:src/partition_TC8234.h **** 
+ 248:src/partition_TC8234.h **** /*
+ 249:src/partition_TC8234.h **** // <e>Setup behaviour of Sleep and Exception Handling
+ 250:src/partition_TC8234.h **** */
+ 251:src/partition_TC8234.h **** #define SCB_CSR_AIRCR_INIT  1
+ 252:src/partition_TC8234.h **** 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 8
+
+
+ 253:src/partition_TC8234.h **** /*
+ 254:src/partition_TC8234.h **** //   <o> Deep Sleep can be enabled by
+ 255:src/partition_TC8234.h **** //     <0=>Secure and Non-Secure state
+ 256:src/partition_TC8234.h **** //     <1=>Secure state only
+ 257:src/partition_TC8234.h **** //   <i> Value for SCB->CSR register bit DEEPSLEEPS
+ 258:src/partition_TC8234.h **** */
+ 259:src/partition_TC8234.h **** #define SCB_CSR_DEEPSLEEPS_VAL  0
+ 260:src/partition_TC8234.h **** 
+ 261:src/partition_TC8234.h **** /*
+ 262:src/partition_TC8234.h **** //   <o>System reset request accessible from
+ 263:src/partition_TC8234.h **** //     <0=> Secure and Non-Secure state
+ 264:src/partition_TC8234.h **** //     <1=> Secure state only
+ 265:src/partition_TC8234.h **** //   <i> Value for SCB->AIRCR register bit SYSRESETREQS
+ 266:src/partition_TC8234.h **** */
+ 267:src/partition_TC8234.h **** #define SCB_AIRCR_SYSRESETREQS_VAL  0
+ 268:src/partition_TC8234.h **** 
+ 269:src/partition_TC8234.h **** /*
+ 270:src/partition_TC8234.h **** //   <o>Priority of Non-Secure exceptions is
+ 271:src/partition_TC8234.h **** //     <0=> Not altered
+ 272:src/partition_TC8234.h **** //     <1=> Lowered to 0x80-0xFF
+ 273:src/partition_TC8234.h **** //   <i> Value for SCB->AIRCR register bit PRIS
+ 274:src/partition_TC8234.h **** */
+ 275:src/partition_TC8234.h **** #define SCB_AIRCR_PRIS_VAL      0
+ 276:src/partition_TC8234.h **** 
+ 277:src/partition_TC8234.h **** /*
+ 278:src/partition_TC8234.h **** //   <o>BusFault, HardFault, and NMI target
+ 279:src/partition_TC8234.h **** //     <0=> Secure state
+ 280:src/partition_TC8234.h **** //     <1=> Non-Secure state
+ 281:src/partition_TC8234.h **** //   <i> Value for SCB->AIRCR register bit BFHFNMINS
+ 282:src/partition_TC8234.h **** */
+ 283:src/partition_TC8234.h **** #define SCB_AIRCR_BFHFNMINS_VAL 1
+ 284:src/partition_TC8234.h **** 
+ 285:src/partition_TC8234.h **** /*
+ 286:src/partition_TC8234.h **** // </e>
+ 287:src/partition_TC8234.h **** */
+ 288:src/partition_TC8234.h **** 
+ 289:src/partition_TC8234.h **** 
+ 290:src/partition_TC8234.h **** /*
+ 291:src/partition_TC8234.h **** // <h>Assign Interrupt to Secure or Non-secure Vector
+ 292:src/partition_TC8234.h **** */
+ 293:src/partition_TC8234.h **** 
+ 294:src/partition_TC8234.h **** /*
+ 295:src/partition_TC8234.h ****     Initialize ITNS 0 (Interrupts 0..31)
+ 296:src/partition_TC8234.h **** */
+ 297:src/partition_TC8234.h **** #define NVIC_INIT_ITNS0    1
+ 298:src/partition_TC8234.h **** /*
+ 299:src/partition_TC8234.h **** // Interrupts 0..31
+ 300:src/partition_TC8234.h **** //   <o.0>  BOD Interrupt         <0=> Secure <1=> Non-Secure
+ 301:src/partition_TC8234.h **** //   <o.1>  IRC Interrupt         <0=> Secure <1=> Non-Secure
+ 302:src/partition_TC8234.h **** //   <o.2>  PWRWU Interrupt       <0=> Secure <1=> Non-Secure
+ 303:src/partition_TC8234.h **** //   <o.3>  SRAM Interrupt        <0=> Secure <1=> Non-Secure
+ 304:src/partition_TC8234.h **** //   <o.4>  CLKFAIL Interrupt     <0=> Secure <1=> Non-Secure
+ 305:src/partition_TC8234.h **** //
+ 306:src/partition_TC8234.h **** //   <o.6>  RTC Interrupt         <0=> Secure <1=> Non-Secure
+ 307:src/partition_TC8234.h **** //   <o.7>  TAMPER Interrupt      <0=> Secure <1=> Non-Secure
+ 308:src/partition_TC8234.h **** //   <o.8>  WDT Interrupt         <0=> Secure <1=> Non-Secure
+ 309:src/partition_TC8234.h **** //   <o.9>  WWDT Interrupt        <0=> Secure <1=> Non-Secure
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 9
+
+
+ 310:src/partition_TC8234.h **** //   <o.10> EINT0 Interrupt       <0=> Secure <1=> Non-Secure
+ 311:src/partition_TC8234.h **** //   <o.11> EINT1 Interrupt       <0=> Secure <1=> Non-Secure
+ 312:src/partition_TC8234.h **** //   <o.12> EINT2 Interrupt       <0=> Secure <1=> Non-Secure
+ 313:src/partition_TC8234.h **** //   <o.13> EINT3 Interrupt       <0=> Secure <1=> Non-Secure
+ 314:src/partition_TC8234.h **** //   <o.14> EINT4 Interrupt       <0=> Secure <1=> Non-Secure
+ 315:src/partition_TC8234.h **** //   <o.15> EINT5 Interrupt       <0=> Secure <1=> Non-Secure
+ 316:src/partition_TC8234.h **** //   <o.16> GPA Interrupt         <0=> Secure <1=> Non-Secure
+ 317:src/partition_TC8234.h **** //   <o.17> GPB Interrupt         <0=> Secure <1=> Non-Secure
+ 318:src/partition_TC8234.h **** //   <o.18> GPC Interrupt         <0=> Secure <1=> Non-Secure
+ 319:src/partition_TC8234.h **** //   <o.19> GPD Interrupt         <0=> Secure <1=> Non-Secure
+ 320:src/partition_TC8234.h **** //   <o.20> GPE Interrupt         <0=> Secure <1=> Non-Secure
+ 321:src/partition_TC8234.h **** //   <o.21> GPF Interrupt         <0=> Secure <1=> Non-Secure
+ 322:src/partition_TC8234.h **** //   <o.22> SPI0 Interrupt        <0=> Secure <1=> Non-Secure
+ 323:src/partition_TC8234.h **** //   <o.23> SPI1 Interrupt        <0=> Secure <1=> Non-Secure
+ 324:src/partition_TC8234.h **** //   <o.24> BRAKE0 Interrupt      <0=> Secure <1=> Non-Secure
+ 325:src/partition_TC8234.h **** //   <o.25> PWM0_P0 Interrupt     <0=> Secure <1=> Non-Secure
+ 326:src/partition_TC8234.h **** //   <o.26> PWM0_P1 Interrupt     <0=> Secure <1=> Non-Secure
+ 327:src/partition_TC8234.h **** //   <o.27> PWM0_P2 Interrupt     <0=> Secure <1=> Non-Secure
+ 328:src/partition_TC8234.h **** //   <o.28> BRAKE1 Interrupt      <0=> Secure <1=> Non-Secure
+ 329:src/partition_TC8234.h **** //   <o.29> PWM1_P0 Interrupt     <0=> Secure <1=> Non-Secure
+ 330:src/partition_TC8234.h **** //   <o.30> PWM1_P1 Interrupt     <0=> Secure <1=> Non-Secure
+ 331:src/partition_TC8234.h **** //   <o.31> PWM1_P2 Interrupt     <0=> Secure <1=> Non-Secure
+ 332:src/partition_TC8234.h **** */
+ 333:src/partition_TC8234.h **** #define NVIC_INIT_ITNS0_VAL      0x00000000
+ 334:src/partition_TC8234.h **** 
+ 335:src/partition_TC8234.h **** 
+ 336:src/partition_TC8234.h **** /*
+ 337:src/partition_TC8234.h ****     Initialize ITNS 1 (Interrupts 32..63)
+ 338:src/partition_TC8234.h **** */
+ 339:src/partition_TC8234.h **** 
+ 340:src/partition_TC8234.h **** #define NVIC_INIT_ITNS1    1
+ 341:src/partition_TC8234.h **** 
+ 342:src/partition_TC8234.h **** /*
+ 343:src/partition_TC8234.h **** // Interrupts 32..63
+ 344:src/partition_TC8234.h **** //   <o.0>  TMR0 Interrupt   <0=> Secure <1=> Non-Secure
+ 345:src/partition_TC8234.h **** //   <o.1>  TMR1 Interrupt   <0=> Secure <1=> Non-Secure
+ 346:src/partition_TC8234.h **** //   <o.2>  TMR2 Interrupt   <0=> Secure <1=> Non-Secure
+ 347:src/partition_TC8234.h **** //   <o.3>  TMR3 Interrupt   <0=> Secure <1=> Non-Secure
+ 348:src/partition_TC8234.h **** //   <o.4>  UART0 Interrupt  <0=> Secure <1=> Non-Secure
+ 349:src/partition_TC8234.h **** //   <o.5>  UART1 Interrupt  <0=> Secure <1=> Non-Secure
+ 350:src/partition_TC8234.h **** //   <o.6>  I2C0 Interrupt   <0=> Secure <1=> Non-Secure
+ 351:src/partition_TC8234.h **** //   <o.7>  I2C1 Interrupt   <0=> Secure <1=> Non-Secure
+ 352:src/partition_TC8234.h **** //   <o.8>  PDMA Interrupt   <0=> Secure <1=> Non-Secure
+ 353:src/partition_TC8234.h **** //   <o.9> DAC Interrupt    <0=> Secure <1=> Non-Secure
+ 354:src/partition_TC8234.h **** //   <o.10> EADC0 Interrupt  <0=> Secure <1=> Non-Secure
+ 355:src/partition_TC8234.h **** //   <o.11> EADC1 Interrupt  <0=> Secure <1=> Non-Secure
+ 356:src/partition_TC8234.h **** //   <o.12> ACMP01 Interrupt <0=> Secure <1=> Non-Secure
+ 357:src/partition_TC8234.h **** //
+ 358:src/partition_TC8234.h **** //   <o.14> EADC2 Interrupt  <0=> Secure <1=> Non-Secure
+ 359:src/partition_TC8234.h **** //   <o.15> EADC3 Interrupt  <0=> Secure <1=> Non-Secure
+ 360:src/partition_TC8234.h **** //   <o.16> UART2 Interrupt  <0=> Secure <1=> Non-Secure
+ 361:src/partition_TC8234.h **** //   <o.17> UART3 Interrupt  <0=> Secure <1=> Non-Secure
+ 362:src/partition_TC8234.h **** //
+ 363:src/partition_TC8234.h **** //   <o.19> SPI2 Interrupt   <0=> Secure <1=> Non-Secure
+ 364:src/partition_TC8234.h **** //   <o.20> SPI3 Interrupt   <0=> Secure <1=> Non-Secure
+ 365:src/partition_TC8234.h **** //   <o.21> USBD Interrupt   <0=> Secure <1=> Non-Secure
+ 366:src/partition_TC8234.h **** //   <o.22> USBH Interrupt   <0=> Secure <1=> Non-Secure
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 10
+
+
+ 367:src/partition_TC8234.h **** //   <o.23> OTG Interrupt    <0=> Secure <1=> Non-Secure
+ 368:src/partition_TC8234.h **** //   <o.24> CAN0 Interrupt   <0=> Secure <1=> Non-Secure
+ 369:src/partition_TC8234.h **** //   <o.25> CAN1 Interrupt   <0=> Secure <1=> Non-Secure
+ 370:src/partition_TC8234.h **** //   <o.26> SC0 Interrupt    <0=> Secure <1=> Non-Secure
+ 371:src/partition_TC8234.h **** //   <o.27> SC1 Interrupt    <0=> Secure <1=> Non-Secure
+ 372:src/partition_TC8234.h **** //   <o.28> SC2 Interrupt    <0=> Secure <1=> Non-Secure
+ 373:src/partition_TC8234.h **** //   <o.29> SC3 Interrupt    <0=> Secure <1=> Non-Secure
+ 374:src/partition_TC8234.h **** //   <o.30> SPI4 Interrupt   <0=> Secure <1=> Non-Secure
+ 375:src/partition_TC8234.h **** //   <o.31> SD0 Interrupt    <0=> Secure <1=> Non-Secure
+ 376:src/partition_TC8234.h **** */
+ 377:src/partition_TC8234.h **** #define NVIC_INIT_ITNS1_VAL      0x00000000
+ 378:src/partition_TC8234.h **** 
+ 379:src/partition_TC8234.h **** 
+ 380:src/partition_TC8234.h **** /*
+ 381:src/partition_TC8234.h ****     Initialize ITNS 2 (Interrupts 64..95)
+ 382:src/partition_TC8234.h **** */
+ 383:src/partition_TC8234.h **** 
+ 384:src/partition_TC8234.h **** #define NVIC_INIT_ITNS2    1
+ 385:src/partition_TC8234.h **** /*
+ 386:src/partition_TC8234.h **** //
+ 387:src/partition_TC8234.h **** //   <o.1>  USBD Interrupt   <0=> Secure <1=> Non-Secure
+ 388:src/partition_TC8234.h **** //
+ 389:src/partition_TC8234.h **** //
+ 390:src/partition_TC8234.h **** //   <o.4>  I2S0 Interrupt   <0=> Secure <1=> Non-Secure
+ 391:src/partition_TC8234.h **** //
+ 392:src/partition_TC8234.h **** //   <o.6>  OPA0 Interrupt   <0=> Secure <1=> Non-Secure
+ 393:src/partition_TC8234.h **** //   <o.7>  CRPT Interrupt   <0=> Secure <1=> Non-Secure
+ 394:src/partition_TC8234.h **** //   <o.8> GPG Interrupt    <0=> Secure <1=> Non-Secure
+ 395:src/partition_TC8234.h **** //   <o.9> EINT6 Interrupt  <0=> Secure <1=> Non-Secure
+ 396:src/partition_TC8234.h **** //   <o.10> UART4 Interrupt  <0=> Secure <1=> Non-Secure
+ 397:src/partition_TC8234.h **** //   <o.11> UART5 Interrupt  <0=> Secure <1=> Non-Secure
+ 398:src/partition_TC8234.h **** //   <o.12> USCI0 Interrupt  <0=> Secure <1=> Non-Secure
+ 399:src/partition_TC8234.h **** //   <o.13> USCI1 Interrupt  <0=> Secure <1=> Non-Secure
+ 400:src/partition_TC8234.h **** //   <o.14> BPWM0 Interrupt  <0=> Secure <1=> Non-Secure
+ 401:src/partition_TC8234.h **** //   <o.15> BPWM1 Interrupt  <0=> Secure <1=> Non-Secure
+ 402:src/partition_TC8234.h **** //
+ 403:src/partition_TC8234.h **** //
+ 404:src/partition_TC8234.h **** //   <o.18> I2C2 Interrupt   <0=> Secure <1=> Non-Secure
+ 405:src/partition_TC8234.h **** //
+ 406:src/partition_TC8234.h **** //   <o.20> QEI0 Interrupt   <0=> Secure <1=> Non-Secure
+ 407:src/partition_TC8234.h **** //   <o.21> QEI1 Interrupt   <0=> Secure <1=> Non-Secure
+ 408:src/partition_TC8234.h **** //   <o.22> ECAP0 Interrupt  <0=> Secure <1=> Non-Secure
+ 409:src/partition_TC8234.h **** //   <o.23> ECAP1 Interrupt  <0=> Secure <1=> Non-Secure
+ 410:src/partition_TC8234.h **** //   <o.24> GPH Interrupt    <0=> Secure <1=> Non-Secure
+ 411:src/partition_TC8234.h **** //   <o.25> EINT7 Interrupt  <0=> Secure <1=> Non-Secure
+ 412:src/partition_TC8234.h **** //   <o.26> SD1 Interrupt    <0=> Secure <1=> Non-Secure
+ 413:src/partition_TC8234.h **** //
+ 414:src/partition_TC8234.h **** //
+ 415:src/partition_TC8234.h **** //
+ 416:src/partition_TC8234.h **** //   <o.30> SWDC Interrupt   <0=> Secure <1=> Non-Secure
+ 417:src/partition_TC8234.h **** //   <o.31> ETMC Interrupt   <0=> Secure <1=> Non-Secure
+ 418:src/partition_TC8234.h **** */
+ 419:src/partition_TC8234.h **** #define NVIC_INIT_ITNS2_VAL      0x00000000
+ 420:src/partition_TC8234.h **** 
+ 421:src/partition_TC8234.h **** 
+ 422:src/partition_TC8234.h **** 
+ 423:src/partition_TC8234.h **** /*
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 11
+
+
+ 424:src/partition_TC8234.h **** // </h>
+ 425:src/partition_TC8234.h **** */
+ 426:src/partition_TC8234.h **** 
+ 427:src/partition_TC8234.h **** 
+ 428:src/partition_TC8234.h **** 
+ 429:src/partition_TC8234.h **** /*
+ 430:src/partition_TC8234.h ****     max 128 SAU regions.
+ 431:src/partition_TC8234.h ****     SAU regions are defined in partition.h
+ 432:src/partition_TC8234.h ****  */
+ 433:src/partition_TC8234.h **** 
+ 434:src/partition_TC8234.h **** #define SAU_INIT_REGION(n) \
+ 435:src/partition_TC8234.h ****     SAU->RNR  =  (n                                     & SAU_RNR_REGION_Msk); \
+ 436:src/partition_TC8234.h ****     SAU->RBAR =  (SAU_INIT_START##n                     & SAU_RBAR_BADDR_Msk); \
+ 437:src/partition_TC8234.h ****     SAU->RLAR =  (SAU_INIT_END##n                       & SAU_RLAR_LADDR_Msk) | \
+ 438:src/partition_TC8234.h ****                 ((SAU_INIT_NSC##n << SAU_RLAR_NSC_Pos)  & SAU_RLAR_NSC_Msk)   | 1U
+ 439:src/partition_TC8234.h **** 
+ 440:src/partition_TC8234.h **** /**
+ 441:src/partition_TC8234.h ****   \brief   Setup a SAU Region
+ 442:src/partition_TC8234.h ****   \details Writes the region information contained in SAU_Region to the
+ 443:src/partition_TC8234.h ****            registers SAU_RNR, SAU_RBAR, and SAU_RLAR
+ 444:src/partition_TC8234.h ****  */
+ 445:src/partition_TC8234.h **** __STATIC_INLINE void TZ_SAU_Setup(void)
+ 446:src/partition_TC8234.h **** {
+ 447:src/partition_TC8234.h **** 
+ 448:src/partition_TC8234.h **** #if defined (__SAU_PRESENT) && (__SAU_PRESENT == 1U)
+ 449:src/partition_TC8234.h **** 
+ 450:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION0) && (SAU_INIT_REGION0 == 1U)
+ 451:src/partition_TC8234.h ****     SAU_INIT_REGION(0);
+  61              		.loc 2 451 0
+  62 000c 254B     		ldr	r3, .L3+8
+  63 000e 0022     		movs	r2, #0
+  64 0010 9A60     		str	r2, [r3, #8]
+  65 0012 DA60     		str	r2, [r3, #12]
+  66 0014 2448     		ldr	r0, .L3+12
+  67 0016 1861     		str	r0, [r3, #16]
+ 452:src/partition_TC8234.h **** #endif
+ 453:src/partition_TC8234.h **** 
+ 454:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION1) && (SAU_INIT_REGION1 == 1U)
+ 455:src/partition_TC8234.h ****     SAU_INIT_REGION(1);
+  68              		.loc 2 455 0
+  69 0018 0120     		movs	r0, #1
+  70 001a 9860     		str	r0, [r3, #8]
+  71 001c 234C     		ldr	r4, .L3+16
+  72 001e DC60     		str	r4, [r3, #12]
+  73 0020 234C     		ldr	r4, .L3+20
+  74 0022 1C61     		str	r4, [r3, #16]
+ 456:src/partition_TC8234.h **** #endif
+ 457:src/partition_TC8234.h **** 
+ 458:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION2) && (SAU_INIT_REGION2 == 1U)
+ 459:src/partition_TC8234.h ****     SAU_INIT_REGION(2);
+  75              		.loc 2 459 0
+  76 0024 0224     		movs	r4, #2
+  77 0026 9C60     		str	r4, [r3, #8]
+  78 0028 224C     		ldr	r4, .L3+24
+  79 002a DC60     		str	r4, [r3, #12]
+  80 002c 224C     		ldr	r4, .L3+28
+  81 002e 1C61     		str	r4, [r3, #16]
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 12
+
+
+ 460:src/partition_TC8234.h **** #endif
+ 461:src/partition_TC8234.h **** 
+ 462:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION3) && (SAU_INIT_REGION3 == 1U)
+ 463:src/partition_TC8234.h ****     SAU_INIT_REGION(3);
+  82              		.loc 2 463 0
+  83 0030 0324     		movs	r4, #3
+  84 0032 9C60     		str	r4, [r3, #8]
+  85 0034 214C     		ldr	r4, .L3+32
+  86 0036 DC60     		str	r4, [r3, #12]
+  87 0038 214C     		ldr	r4, .L3+36
+  88 003a 1C61     		str	r4, [r3, #16]
+ 464:src/partition_TC8234.h **** #endif
+ 465:src/partition_TC8234.h **** 
+ 466:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION4) && (SAU_INIT_REGION4 == 1U)
+ 467:src/partition_TC8234.h ****     SAU_INIT_REGION(4);
+  89              		.loc 2 467 0
+  90 003c 0424     		movs	r4, #4
+  91 003e 9C60     		str	r4, [r3, #8]
+  92 0040 A024     		movs	r4, #160
+  93 0042 E405     		lsls	r4, r4, #23
+  94 0044 DC60     		str	r4, [r3, #12]
+  95 0046 1F4C     		ldr	r4, .L3+40
+  96 0048 1C61     		str	r4, [r3, #16]
+ 468:src/partition_TC8234.h **** #endif
+ 469:src/partition_TC8234.h **** 
+ 470:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION5) && (SAU_INIT_REGION5 == 1U)
+ 471:src/partition_TC8234.h ****     SAU_INIT_REGION(5);
+  97              		.loc 2 471 0
+  98 004a 0524     		movs	r4, #5
+  99 004c 9C60     		str	r4, [r3, #8]
+ 100 004e 1E4C     		ldr	r4, .L3+44
+ 101 0050 DC60     		str	r4, [r3, #12]
+ 102 0052 1E4C     		ldr	r4, .L3+48
+ 103 0054 1C61     		str	r4, [r3, #16]
+ 472:src/partition_TC8234.h **** #endif
+ 473:src/partition_TC8234.h **** 
+ 474:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION6) && (SAU_INIT_REGION6 == 1U)
+ 475:src/partition_TC8234.h ****     SAU_INIT_REGION(6);
+ 476:src/partition_TC8234.h **** #endif
+ 477:src/partition_TC8234.h **** 
+ 478:src/partition_TC8234.h **** #if defined (SAU_INIT_REGION7) && (SAU_INIT_REGION7 == 1U)
+ 479:src/partition_TC8234.h ****     SAU_INIT_REGION(7);
+ 480:src/partition_TC8234.h **** #endif
+ 481:src/partition_TC8234.h **** 
+ 482:src/partition_TC8234.h ****     /* repeat this for all possible SAU regions */
+ 483:src/partition_TC8234.h **** 
+ 484:src/partition_TC8234.h **** 
+ 485:src/partition_TC8234.h **** #if defined (SAU_INIT_CTRL) && (SAU_INIT_CTRL == 1U)
+ 486:src/partition_TC8234.h ****     SAU->CTRL = ((SAU_INIT_CTRL_ENABLE << SAU_CTRL_ENABLE_Pos) & SAU_CTRL_ENABLE_Msk) |
+ 104              		.loc 2 486 0
+ 105 0056 1860     		str	r0, [r3]
+ 487:src/partition_TC8234.h ****                 ((SAU_INIT_CTRL_ALLNS  << SAU_CTRL_ALLNS_Pos)  & SAU_CTRL_ALLNS_Msk)   ;
+ 488:src/partition_TC8234.h **** #endif
+ 489:src/partition_TC8234.h **** 
+ 490:src/partition_TC8234.h **** #endif /* defined (__SAU_PRESENT) && (__SAU_PRESENT == 1U) */
+ 491:src/partition_TC8234.h **** 
+ 492:src/partition_TC8234.h **** #if defined (SCB_CSR_AIRCR_INIT) && (SCB_CSR_AIRCR_INIT == 1U)
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 13
+
+
+ 493:src/partition_TC8234.h ****     SCB->SCR   = (SCB->SCR   & ~(SCB_SCR_SLEEPDEEPS_Msk)) |
+ 106              		.loc 2 493 0
+ 107 0058 0B69     		ldr	r3, [r1, #16]
+ 108 005a 0824     		movs	r4, #8
+ 109 005c A343     		bics	r3, r4
+ 110 005e 0B61     		str	r3, [r1, #16]
+ 494:src/partition_TC8234.h ****                  ((SCB_CSR_DEEPSLEEPS_VAL     << SCB_SCR_SLEEPDEEPS_Pos)     & SCB_SCR_SLEEPDEEPS_M
+ 495:src/partition_TC8234.h **** 
+ 496:src/partition_TC8234.h ****     SCB->AIRCR = (SCB->AIRCR & ~(SCB_AIRCR_SYSRESETREQS_Msk | SCB_AIRCR_BFHFNMINS_Pos |  SCB_AIRCR_
+ 111              		.loc 2 496 0
+ 112 0060 CC68     		ldr	r4, [r1, #12]
+ 497:src/partition_TC8234.h ****                  ((SCB_AIRCR_SYSRESETREQS_VAL << SCB_AIRCR_SYSRESETREQS_Pos) & SCB_AIRCR_SYSRESETRE
+ 498:src/partition_TC8234.h ****                  ((SCB_AIRCR_PRIS_VAL         << SCB_AIRCR_BFHFNMINS_Pos)    & SCB_AIRCR_BFHFNMINS_
+ 113              		.loc 2 498 0
+ 114 0062 1B4B     		ldr	r3, .L3+52
+ 115 0064 2340     		ands	r3, r4
+ 116 0066 44F20004 		movw	r4, #16384
+ 117 006a 2343     		orrs	r3, r4
+ 496:src/partition_TC8234.h ****                  ((SCB_AIRCR_SYSRESETREQS_VAL << SCB_AIRCR_SYSRESETREQS_Pos) & SCB_AIRCR_SYSRESETRE
+ 118              		.loc 2 496 0
+ 119 006c CB60     		str	r3, [r1, #12]
+ 499:src/partition_TC8234.h ****                  ((SCB_AIRCR_BFHFNMINS_VAL    << SCB_AIRCR_PRIS_Pos)         & SCB_AIRCR_PRIS_Msk);
+ 500:src/partition_TC8234.h **** #endif /* defined (SCB_CSR_AIRCR_INIT) && (SCB_CSR_AIRCR_INIT == 1U) */
+ 501:src/partition_TC8234.h **** 
+ 502:src/partition_TC8234.h **** #if defined (SCB_ICSR_INIT) && (SCB_ICSR_INIT == 1U)
+ 503:src/partition_TC8234.h ****     SCB->ICSR  = (SCB->ICSR  & ~(SCB_ICSR_STTNS_Msk)) |
+ 504:src/partition_TC8234.h ****                  ((SCB_ICSR_STTNS_VAL         << SCB_ICSR_STTNS_Pos)         & SCB_ICSR_STTNS_Msk);
+ 505:src/partition_TC8234.h **** #endif /* defined (SCB_ICSR_INIT) && (SCB_ICSR_INIT == 1U) */
+ 506:src/partition_TC8234.h **** 
+ 507:src/partition_TC8234.h **** #if defined (NVIC_INIT_ITNS0) && (NVIC_INIT_ITNS0 == 1U)
+ 508:src/partition_TC8234.h ****     NVIC->ITNS[0] = NVIC_INIT_ITNS0_VAL;
+ 120              		.loc 2 508 0
+ 121 006e 194B     		ldr	r3, .L3+56
+ 122 0070 40F28021 		movw	r1, #640
+ 123 0074 5A50     		str	r2, [r3, r1]
+ 509:src/partition_TC8234.h **** #endif
+ 510:src/partition_TC8234.h **** 
+ 511:src/partition_TC8234.h **** #if defined (NVIC_INIT_ITNS1) && (NVIC_INIT_ITNS1 == 1U)
+ 512:src/partition_TC8234.h ****     NVIC->ITNS[1] = NVIC_INIT_ITNS1_VAL;
+ 124              		.loc 2 512 0
+ 125 0076 0431     		adds	r1, r1, #4
+ 126 0078 5A50     		str	r2, [r3, r1]
+ 513:src/partition_TC8234.h **** #endif
+ 514:src/partition_TC8234.h **** 
+ 515:src/partition_TC8234.h **** #if defined (NVIC_INIT_ITNS2) && (NVIC_INIT_ITNS2 == 1U)
+ 516:src/partition_TC8234.h ****     NVIC->ITNS[2] = NVIC_INIT_ITNS2_VAL;
+ 127              		.loc 2 516 0
+ 128 007a 0431     		adds	r1, r1, #4
+ 129 007c 5A50     		str	r2, [r3, r1]
+ 130              	.LBE9:
+ 131              	.LBE8:
+ 132              	.LBB10:
+ 133              	.LBB11:
+ 517:src/partition_TC8234.h **** #endif
+ 518:src/partition_TC8234.h **** 
+ 519:src/partition_TC8234.h **** 
+ 520:src/partition_TC8234.h ****     /* repeat this for all possible ITNS elements */
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 14
+
+
+ 521:src/partition_TC8234.h **** 
+ 522:src/partition_TC8234.h **** }
+ 523:src/partition_TC8234.h **** 
+ 524:src/partition_TC8234.h **** 
+ 525:src/partition_TC8234.h **** /*
+ 526:src/partition_TC8234.h **** // <h> Peripheral Secure Attribution Configuration
+ 527:src/partition_TC8234.h **** */
+ 528:src/partition_TC8234.h **** 
+ 529:src/partition_TC8234.h **** /*
+ 530:src/partition_TC8234.h ****     PNSSET0
+ 531:src/partition_TC8234.h **** */
+ 532:src/partition_TC8234.h **** /*
+ 533:src/partition_TC8234.h **** // Module 0..31
+ 534:src/partition_TC8234.h **** //   <o.9>  USBH       <0=> Secure <1=> Non-Secure
+ 535:src/partition_TC8234.h **** //   <o.13>  SD0   <0=> Secure <1=> Non-Secure
+ 536:src/partition_TC8234.h **** //   <o.14>  SD1      <0=> Secure <1=> Non-Secure
+ 537:src/partition_TC8234.h **** //   <o.16>  EBI    <0=> Secure <1=> Non-Secure
+ 538:src/partition_TC8234.h **** //   <o.24>  PDMA1      <0=> Secure <1=> Non-Secure
+ 539:src/partition_TC8234.h **** */
+ 540:src/partition_TC8234.h **** #define SCU_INIT_PNSSET0_VAL      0x00000001
+ 541:src/partition_TC8234.h **** /*
+ 542:src/partition_TC8234.h ****     PNSSET1
+ 543:src/partition_TC8234.h **** */
+ 544:src/partition_TC8234.h **** /*
+ 545:src/partition_TC8234.h **** // Module 0..31
+ 546:src/partition_TC8234.h **** //   <o.17>  CRC       <0=> Secure <1=> Non-Secure
+ 547:src/partition_TC8234.h **** //   <o.18>  CRPT   <0=> Secure <1=> Non-Secure
+ 548:src/partition_TC8234.h **** */
+ 549:src/partition_TC8234.h **** #define SCU_INIT_PNSSET1_VAL      0x00000000
+ 550:src/partition_TC8234.h **** /*
+ 551:src/partition_TC8234.h ****     PNSSET2
+ 552:src/partition_TC8234.h **** */
+ 553:src/partition_TC8234.h **** /*
+ 554:src/partition_TC8234.h **** // Module 0..31
+ 555:src/partition_TC8234.h **** //   <o.1>  RTC       <0=> Secure <1=> Non-Secure
+ 556:src/partition_TC8234.h **** //   <o.3>  EADC   <0=> Secure <1=> Non-Secure
+ 557:src/partition_TC8234.h **** //   <o.5>  ACMP0      <0=> Secure <1=> Non-Secure
+ 558:src/partition_TC8234.h **** //   <o.6>  OPA    <0=> Secure <1=> Non-Secure
+ 559:src/partition_TC8234.h **** //   <o.7>  DAC      <0=> Secure <1=> Non-Secure
+ 560:src/partition_TC8234.h **** //   <o.8>  I2S0      <0=> Secure <1=> Non-Secure
+ 561:src/partition_TC8234.h **** //   <o.13>  OTG      <0=> Secure <1=> Non-Secure
+ 562:src/partition_TC8234.h **** //   <o.17>  TMR23      <0=> Secure <1=> Non-Secure
+ 563:src/partition_TC8234.h **** //   <o.24>  PWM0      <0=> Secure <1=> Non-Secure
+ 564:src/partition_TC8234.h **** //   <o.25>  PWM1      <0=> Secure <1=> Non-Secure
+ 565:src/partition_TC8234.h **** //   <o.26>  BPWM0      <0=> Secure <1=> Non-Secure
+ 566:src/partition_TC8234.h **** //   <o.27>  BPWM1      <0=> Secure <1=> Non-Secure
+ 567:src/partition_TC8234.h **** */
+ 568:src/partition_TC8234.h **** #define SCU_INIT_PNSSET2_VAL      0x00000000
+ 569:src/partition_TC8234.h **** /*
+ 570:src/partition_TC8234.h ****     PNSSET3
+ 571:src/partition_TC8234.h **** */
+ 572:src/partition_TC8234.h **** /*
+ 573:src/partition_TC8234.h **** // Module 0..31
+ 574:src/partition_TC8234.h **** //   <o.0>  SPI0       <0=> Secure <1=> Non-Secure
+ 575:src/partition_TC8234.h **** //   <o.1>  SPI1   <0=> Secure <1=> Non-Secure
+ 576:src/partition_TC8234.h **** //   <o.2>  SPI2      <0=> Secure <1=> Non-Secure
+ 577:src/partition_TC8234.h **** //   <o.3>  SPI3    <0=> Secure <1=> Non-Secure
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 15
+
+
+ 578:src/partition_TC8234.h **** //   <o.4>  SPI4      <0=> Secure <1=> Non-Secure
+ 579:src/partition_TC8234.h **** //   <o.5>  SPI5      <0=> Secure <1=> Non-Secure
+ 580:src/partition_TC8234.h **** //   <o.16>  UART0      <0=> Secure <1=> Non-Secure
+ 581:src/partition_TC8234.h **** //   <o.17>  UART1      <0=> Secure <1=> Non-Secure
+ 582:src/partition_TC8234.h **** //   <o.18>  UART2      <0=> Secure <1=> Non-Secure
+ 583:src/partition_TC8234.h **** //   <o.19>  UART3      <0=> Secure <1=> Non-Secure
+ 584:src/partition_TC8234.h **** //   <o.20>  UART4      <0=> Secure <1=> Non-Secure
+ 585:src/partition_TC8234.h **** //   <o.21>  UART5      <0=> Secure <1=> Non-Secure
+ 586:src/partition_TC8234.h **** */
+ 587:src/partition_TC8234.h **** #define SCU_INIT_PNSSET3_VAL      0x00010000
+ 588:src/partition_TC8234.h **** /*
+ 589:src/partition_TC8234.h ****     PNSSET4
+ 590:src/partition_TC8234.h **** */
+ 591:src/partition_TC8234.h **** /*
+ 592:src/partition_TC8234.h **** // Module 0..31
+ 593:src/partition_TC8234.h **** //   <o.0>  I2C0       <0=> Secure <1=> Non-Secure
+ 594:src/partition_TC8234.h **** //   <o.1>  I2C1   <0=> Secure <1=> Non-Secure
+ 595:src/partition_TC8234.h **** //   <o.2>  I2C2      <0=> Secure <1=> Non-Secure
+ 596:src/partition_TC8234.h **** //   <o.16>  SC0      <0=> Secure <1=> Non-Secure
+ 597:src/partition_TC8234.h **** //   <o.17>  SC1      <0=> Secure <1=> Non-Secure
+ 598:src/partition_TC8234.h **** //   <o.18>  SC2      <0=> Secure <1=> Non-Secure
+ 599:src/partition_TC8234.h **** */
+ 600:src/partition_TC8234.h **** #define SCU_INIT_PNSSET4_VAL      0x00000000
+ 601:src/partition_TC8234.h **** /*
+ 602:src/partition_TC8234.h ****     PNSSET5
+ 603:src/partition_TC8234.h **** */
+ 604:src/partition_TC8234.h **** /*
+ 605:src/partition_TC8234.h **** // Module 0..31
+ 606:src/partition_TC8234.h **** //   <o.0>  CAN0       <0=> Secure <1=> Non-Secure
+ 607:src/partition_TC8234.h **** //   <o.16>  QEI0   <0=> Secure <1=> Non-Secure
+ 608:src/partition_TC8234.h **** //   <o.17>  QEI1      <0=> Secure <1=> Non-Secure
+ 609:src/partition_TC8234.h **** //   <o.20>  ECAP0    <0=> Secure <1=> Non-Secure
+ 610:src/partition_TC8234.h **** //   <o.21>  ECAP1      <0=> Secure <1=> Non-Secure
+ 611:src/partition_TC8234.h **** //   <o.23>  DSRC    <0=> Secure <1=> Non-Secure
+ 612:src/partition_TC8234.h **** //   <o.24>  LCD      <0=> Secure <1=> Non-Secure
+ 613:src/partition_TC8234.h **** //   <o.25>  TRNG    <0=> Secure <1=> Non-Secure
+ 614:src/partition_TC8234.h **** */
+ 615:src/partition_TC8234.h **** #define SCU_INIT_PNSSET5_VAL      0x00000000
+ 616:src/partition_TC8234.h **** /*
+ 617:src/partition_TC8234.h ****     PNSSET6
+ 618:src/partition_TC8234.h **** */
+ 619:src/partition_TC8234.h **** /*
+ 620:src/partition_TC8234.h **** // Module 0..31
+ 621:src/partition_TC8234.h **** //   <o.0>  USBD       <0=> Secure <1=> Non-Secure
+ 622:src/partition_TC8234.h **** //   <o.16>  USCI0   <0=> Secure <1=> Non-Secure
+ 623:src/partition_TC8234.h **** //   <o.17>  USCI1      <0=> Secure <1=> Non-Secure
+ 624:src/partition_TC8234.h **** */
+ 625:src/partition_TC8234.h **** #define SCU_INIT_PNSSET6_VAL      0x00000000
+ 626:src/partition_TC8234.h **** /*
+ 627:src/partition_TC8234.h **** // </h>
+ 628:src/partition_TC8234.h **** */
+ 629:src/partition_TC8234.h **** 
+ 630:src/partition_TC8234.h **** 
+ 631:src/partition_TC8234.h **** 
+ 632:src/partition_TC8234.h **** /*
+ 633:src/partition_TC8234.h **** // <h> GPIO Secure Attribution Configuration
+ 634:src/partition_TC8234.h **** */
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 16
+
+
+ 635:src/partition_TC8234.h **** 
+ 636:src/partition_TC8234.h **** /*
+ 637:src/partition_TC8234.h ****     IONSSET
+ 638:src/partition_TC8234.h **** */
+ 639:src/partition_TC8234.h **** /*
+ 640:src/partition_TC8234.h **** // Bit 0..31
+ 641:src/partition_TC8234.h **** //   <o.0>  PA       <0=> Secure <1=> Non-Secure
+ 642:src/partition_TC8234.h **** //   <o.1>  PB   <0=> Secure <1=> Non-Secure
+ 643:src/partition_TC8234.h **** //   <o.2>  PC      <0=> Secure <1=> Non-Secure
+ 644:src/partition_TC8234.h **** //   <o.3>  PD    <0=> Secure <1=> Non-Secure
+ 645:src/partition_TC8234.h **** //   <o.4>  PE      <0=> Secure <1=> Non-Secure
+ 646:src/partition_TC8234.h **** //   <o.5>  PF      <0=> Secure <1=> Non-Secure
+ 647:src/partition_TC8234.h **** //   <o.6>  PG      <0=> Secure <1=> Non-Secure
+ 648:src/partition_TC8234.h **** */
+ 649:src/partition_TC8234.h **** #define SCU_INIT_IONSSET_VAL      0x00000000
+ 650:src/partition_TC8234.h **** /*
+ 651:src/partition_TC8234.h **** // </h>
+ 652:src/partition_TC8234.h **** */
+ 653:src/partition_TC8234.h **** 
+ 654:src/partition_TC8234.h **** 
+ 655:src/partition_TC8234.h **** /*
+ 656:src/partition_TC8234.h **** // <h> SRAM Secure Attribution Configuration
+ 657:src/partition_TC8234.h **** */
+ 658:src/partition_TC8234.h **** 
+ 659:src/partition_TC8234.h **** /*
+ 660:src/partition_TC8234.h ****     SRAMNSSET
+ 661:src/partition_TC8234.h **** */
+ 662:src/partition_TC8234.h **** /*
+ 663:src/partition_TC8234.h **** // Bit 0..31
+ 664:src/partition_TC8234.h **** //   <o.0>  0x00000000 ~ 0x00001FFF        <0=> Secure <1=> Non-Secure
+ 665:src/partition_TC8234.h **** //   <o.1>  0x00002000 ~ 0x00003FFF   <0=> Secure <1=> Non-Secure
+ 666:src/partition_TC8234.h **** //   <o.2>  0x00004000 ~ 0x00005FFF      <0=> Secure <1=> Non-Secure
+ 667:src/partition_TC8234.h **** //   <o.3>  0x00006000 ~ 0x00007FFF    <0=> Secure <1=> Non-Secure
+ 668:src/partition_TC8234.h **** //   <o.4>  0x00008000 ~ 0x00009FFF      <0=> Secure <1=> Non-Secure
+ 669:src/partition_TC8234.h **** //   <o.5>  0x0000A000 ~ 0x0000BFFF      <0=> Secure <1=> Non-Secure
+ 670:src/partition_TC8234.h **** //   <o.6>  0x0000C000 ~ 0x0000DFFF      <0=> Secure <1=> Non-Secure
+ 671:src/partition_TC8234.h **** //   <o.7>  0x0000E000 ~ 0x0000FFFF       <0=> Secure <1=> Non-Secure
+ 672:src/partition_TC8234.h **** //   <o.8>  0x00010000 ~ 0x00011FFF   <0=> Secure <1=> Non-Secure
+ 673:src/partition_TC8234.h **** //   <o.9>  0x00012000 ~ 0x00013FFF      <0=> Secure <1=> Non-Secure
+ 674:src/partition_TC8234.h **** //   <o.10> 0x00014000 ~ 0x00015FFF    <0=> Secure <1=> Non-Secure
+ 675:src/partition_TC8234.h **** //   <o.11> 0x00016000 ~ 0x00017FFF      <0=> Secure <1=> Non-Secure
+ 676:src/partition_TC8234.h **** //   <o.12> 0x00018000 ~ 0x00019FFF      <0=> Secure <1=> Non-Secure
+ 677:src/partition_TC8234.h **** //   <o.13> 0x0001A000 ~ 0x0001BFFF      <0=> Secure <1=> Non-Secure
+ 678:src/partition_TC8234.h **** //   <o.14> 0x0001C000 ~ 0x0001DFFF      <0=> Secure <1=> Non-Secure
+ 679:src/partition_TC8234.h **** //   <o.15> 0x0001E000 ~ 0x0001FFFF      <0=> Secure <1=> Non-Secure
+ 680:src/partition_TC8234.h **** */
+ 681:src/partition_TC8234.h **** #define SCU_INIT_SRAMNSSET_VAL      0x0000FF00
+ 682:src/partition_TC8234.h **** 
+ 683:src/partition_TC8234.h **** /*
+ 684:src/partition_TC8234.h **** // </h>
+ 685:src/partition_TC8234.h **** */
+ 686:src/partition_TC8234.h **** 
+ 687:src/partition_TC8234.h **** 
+ 688:src/partition_TC8234.h **** 
+ 689:src/partition_TC8234.h **** 
+ 690:src/partition_TC8234.h **** 
+ 691:src/partition_TC8234.h **** 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 17
+
+
+ 692:src/partition_TC8234.h **** /**
+ 693:src/partition_TC8234.h ****   \brief   Setup SCU Configuration Unit
+ 694:src/partition_TC8234.h ****   \details
+ 695:src/partition_TC8234.h **** 
+ 696:src/partition_TC8234.h ****  */
+ 697:src/partition_TC8234.h **** __STATIC_INLINE void SCU_Setup(void)
+ 698:src/partition_TC8234.h **** {
+ 699:src/partition_TC8234.h ****     SCU->PNSSET[0] = SCU_INIT_PNSSET0_VAL;
+ 134              		.loc 2 699 0
+ 135 007e 164B     		ldr	r3, .L3+60
+ 136 0080 1860     		str	r0, [r3]
+ 700:src/partition_TC8234.h ****     SCU->PNSSET[1] = SCU_INIT_PNSSET1_VAL;
+ 137              		.loc 2 700 0
+ 138 0082 5A60     		str	r2, [r3, #4]
+ 701:src/partition_TC8234.h ****     SCU->PNSSET[2] = SCU_INIT_PNSSET2_VAL;
+ 139              		.loc 2 701 0
+ 140 0084 9A60     		str	r2, [r3, #8]
+ 702:src/partition_TC8234.h ****     SCU->PNSSET[3] = SCU_INIT_PNSSET3_VAL;
+ 141              		.loc 2 702 0
+ 142 0086 8021     		movs	r1, #128
+ 143 0088 4902     		lsls	r1, r1, #9
+ 144 008a D960     		str	r1, [r3, #12]
+ 703:src/partition_TC8234.h ****     SCU->PNSSET[4] = SCU_INIT_PNSSET4_VAL;
+ 145              		.loc 2 703 0
+ 146 008c 1A61     		str	r2, [r3, #16]
+ 704:src/partition_TC8234.h ****     SCU->PNSSET[5] = SCU_INIT_PNSSET5_VAL;
+ 147              		.loc 2 704 0
+ 148 008e 5A61     		str	r2, [r3, #20]
+ 705:src/partition_TC8234.h ****     SCU->PNSSET[6] = SCU_INIT_PNSSET6_VAL;
+ 149              		.loc 2 705 0
+ 150 0090 9A61     		str	r2, [r3, #24]
+ 706:src/partition_TC8234.h **** 
+ 707:src/partition_TC8234.h ****     SCU->IONSSET = SCU_INIT_IONSSET_VAL;
+ 151              		.loc 2 707 0
+ 152 0092 1A62     		str	r2, [r3, #32]
+ 708:src/partition_TC8234.h ****     SCU->SRAMNSSET = SCU_INIT_SRAMNSSET_VAL;
+ 153              		.loc 2 708 0
+ 154 0094 4FF60072 		movw	r2, #65280
+ 155 0098 5A62     		str	r2, [r3, #36]
+ 156              	.LBE11:
+ 157              	.LBE10:
+  88:src/system_TC8234.c **** #endif
+  89:src/system_TC8234.c **** 
+  90:src/system_TC8234.c **** #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+  91:src/system_TC8234.c ****   TZ_SAU_Setup();
+  92:src/system_TC8234.c ****   SCU_Setup();
+  93:src/system_TC8234.c **** #endif
+  94:src/system_TC8234.c **** 
+  95:src/system_TC8234.c **** #ifdef INIT_SYSCLK_AT_BOOTING
+  96:src/system_TC8234.c ****     
+  97:src/system_TC8234.c **** #endif
+  98:src/system_TC8234.c **** 	
+  99:src/system_TC8234.c **** }
+ 158              		.loc 1 99 0
+ 159              		@ sp needed
+ 160 009a 10BD     		pop	{r4, pc}
+ 161              	.L4:
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 18
+
+
+ 162              		.align	2
+ 163              	.L3:
+ 164 009c 00ED00E0 		.word	-536810240
+ 165 00a0 00000000 		.word	g_pfnVectors
+ 166 00a4 D0ED00E0 		.word	-536810032
+ 167 00a8 03000400 		.word	262147
+ 168 00ac 00000410 		.word	268697600
+ 169 00b0 E1FF0710 		.word	268959713
+ 170 00b4 00FC0020 		.word	536935424
+ 171 00b8 E3FF0020 		.word	536936419
+ 172 00bc 00000130 		.word	805371904
+ 173 00c0 E1FF0130 		.word	805437409
+ 174 00c4 E1FFFF5F 		.word	1610612705
+ 175 00c8 007C8000 		.word	8420352
+ 176 00cc E37F8000 		.word	8421347
+ 177 00d0 F2BFFFFF 		.word	-16398
+ 178 00d4 00E100E0 		.word	-536813312
+ 179 00d8 00F00240 		.word	1073934336
+ 180              		.cfi_endproc
+ 181              	.LFE64:
+ 182              		.size	SystemInit, .-SystemInit
+ 183              		.global	gau32ClkSrcTbl
+ 184              		.section	.rodata
+ 185              		.align	2
+ 186              		.type	gau32ClkSrcTbl, %object
+ 187              		.size	gau32ClkSrcTbl, 32
+ 188              	gau32ClkSrcTbl:
+ 189 0000 001BB700 		.word	12000000
+ 190 0004 00800000 		.word	32768
+ 191 0008 00000000 		.word	0
+ 192 000c 10270000 		.word	10000
+ 193 0010 00000000 		.word	0
+ 194 0014 00000000 		.word	0
+ 195 0018 006CDC02 		.word	48000000
+ 196 001c 001BB700 		.word	12000000
+ 197              		.text
+ 198              	.Letext0:
+ 199              		.file 3 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\machine\\_
+ 200              		.file 4 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\_stdi
+ 201              		.file 5 "src/core_armv8mbl.h"
+ 202              		.file 6 "src/TC8234.h"
+ 203              		.file 7 "src/system_TC8234.h"
+ 204              		.section	.debug_info,"",%progbits
+ 205              	.Ldebug_info0:
+ 206 0000 02070000 		.4byte	0x702
+ 207 0004 0200     		.2byte	0x2
+ 208 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 209 000a 04       		.byte	0x4
+ 210 000b 01       		.uleb128 0x1
+ 211 000c 9A000000 		.4byte	.LASF94
+ 212 0010 0C       		.byte	0xc
+ 213 0011 C0010000 		.4byte	.LASF95
+ 214 0015 BF030000 		.4byte	.LASF96
+ 215 0019 00000000 		.4byte	.Ltext0
+ 216 001d DC000000 		.4byte	.Letext0
+ 217 0021 00000000 		.4byte	.Ldebug_line0
+ 218 0025 02       		.uleb128 0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 19
+
+
+ 219 0026 01       		.byte	0x1
+ 220 0027 06       		.byte	0x6
+ 221 0028 37020000 		.4byte	.LASF0
+ 222 002c 02       		.uleb128 0x2
+ 223 002d 01       		.byte	0x1
+ 224 002e 08       		.byte	0x8
+ 225 002f 05020000 		.4byte	.LASF1
+ 226 0033 02       		.uleb128 0x2
+ 227 0034 02       		.byte	0x2
+ 228 0035 05       		.byte	0x5
+ 229 0036 45000000 		.4byte	.LASF2
+ 230 003a 02       		.uleb128 0x2
+ 231 003b 02       		.byte	0x2
+ 232 003c 07       		.byte	0x7
+ 233 003d EC020000 		.4byte	.LASF3
+ 234 0041 02       		.uleb128 0x2
+ 235 0042 04       		.byte	0x4
+ 236 0043 05       		.byte	0x5
+ 237 0044 9A010000 		.4byte	.LASF4
+ 238 0048 03       		.uleb128 0x3
+ 239 0049 78000000 		.4byte	.LASF12
+ 240 004d 03       		.byte	0x3
+ 241 004e 41       		.byte	0x41
+ 242 004f 53000000 		.4byte	0x53
+ 243 0053 02       		.uleb128 0x2
+ 244 0054 04       		.byte	0x4
+ 245 0055 07       		.byte	0x7
+ 246 0056 4E030000 		.4byte	.LASF5
+ 247 005a 02       		.uleb128 0x2
+ 248 005b 08       		.byte	0x8
+ 249 005c 05       		.byte	0x5
+ 250 005d 67010000 		.4byte	.LASF6
+ 251 0061 02       		.uleb128 0x2
+ 252 0062 08       		.byte	0x8
+ 253 0063 07       		.byte	0x7
+ 254 0064 48020000 		.4byte	.LASF7
+ 255 0068 04       		.uleb128 0x4
+ 256 0069 04       		.byte	0x4
+ 257 006a 05       		.byte	0x5
+ 258 006b 696E7400 		.ascii	"int\000"
+ 259 006f 02       		.uleb128 0x2
+ 260 0070 04       		.byte	0x4
+ 261 0071 07       		.byte	0x7
+ 262 0072 6F020000 		.4byte	.LASF8
+ 263 0076 02       		.uleb128 0x2
+ 264 0077 08       		.byte	0x8
+ 265 0078 04       		.byte	0x4
+ 266 0079 EA010000 		.4byte	.LASF9
+ 267 007d 05       		.uleb128 0x5
+ 268 007e 04       		.byte	0x4
+ 269 007f 02       		.uleb128 0x2
+ 270 0080 04       		.byte	0x4
+ 271 0081 07       		.byte	0x7
+ 272 0082 4F000000 		.4byte	.LASF10
+ 273 0086 02       		.uleb128 0x2
+ 274 0087 01       		.byte	0x1
+ 275 0088 08       		.byte	0x8
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 20
+
+
+ 276 0089 B3020000 		.4byte	.LASF11
+ 277 008d 03       		.uleb128 0x3
+ 278 008e F6010000 		.4byte	.LASF13
+ 279 0092 04       		.byte	0x4
+ 280 0093 30       		.byte	0x30
+ 281 0094 48000000 		.4byte	0x48
+ 282 0098 06       		.uleb128 0x6
+ 283 0099 F004     		.2byte	0x4f0
+ 284 009b 05       		.byte	0x5
+ 285 009c B401     		.2byte	0x1b4
+ 286 009e 71010000 		.4byte	0x171
+ 287 00a2 07       		.uleb128 0x7
+ 288 00a3 2A010000 		.4byte	.LASF14
+ 289 00a7 05       		.byte	0x5
+ 290 00a8 B601     		.2byte	0x1b6
+ 291 00aa 86010000 		.4byte	0x186
+ 292 00ae 02       		.byte	0x2
+ 293 00af 23       		.byte	0x23
+ 294 00b0 00       		.uleb128 0
+ 295 00b1 07       		.uleb128 0x7
+ 296 00b2 12030000 		.4byte	.LASF15
+ 297 00b6 05       		.byte	0x5
+ 298 00b7 B701     		.2byte	0x1b7
+ 299 00b9 8B010000 		.4byte	0x18b
+ 300 00bd 02       		.byte	0x2
+ 301 00be 23       		.byte	0x23
+ 302 00bf 40       		.uleb128 0x40
+ 303 00c0 07       		.uleb128 0x7
+ 304 00c1 83020000 		.4byte	.LASF16
+ 305 00c5 05       		.byte	0x5
+ 306 00c6 B801     		.2byte	0x1b8
+ 307 00c8 9B010000 		.4byte	0x19b
+ 308 00cc 03       		.byte	0x3
+ 309 00cd 23       		.byte	0x23
+ 310 00ce 8001     		.uleb128 0x80
+ 311 00d0 07       		.uleb128 0x7
+ 312 00d1 5E010000 		.4byte	.LASF17
+ 313 00d5 05       		.byte	0x5
+ 314 00d6 B901     		.2byte	0x1b9
+ 315 00d8 8B010000 		.4byte	0x18b
+ 316 00dc 03       		.byte	0x3
+ 317 00dd 23       		.byte	0x23
+ 318 00de C001     		.uleb128 0xc0
+ 319 00e0 07       		.uleb128 0x7
+ 320 00e1 E7020000 		.4byte	.LASF18
+ 321 00e5 05       		.byte	0x5
+ 322 00e6 BA01     		.2byte	0x1ba
+ 323 00e8 A0010000 		.4byte	0x1a0
+ 324 00ec 03       		.byte	0x3
+ 325 00ed 23       		.byte	0x23
+ 326 00ee 8002     		.uleb128 0x100
+ 327 00f0 07       		.uleb128 0x7
+ 328 00f1 26030000 		.4byte	.LASF19
+ 329 00f5 05       		.byte	0x5
+ 330 00f6 BB01     		.2byte	0x1bb
+ 331 00f8 8B010000 		.4byte	0x18b
+ 332 00fc 03       		.byte	0x3
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 21
+
+
+ 333 00fd 23       		.byte	0x23
+ 334 00fe C002     		.uleb128 0x140
+ 335 0100 07       		.uleb128 0x7
+ 336 0101 32020000 		.4byte	.LASF20
+ 337 0105 05       		.byte	0x5
+ 338 0106 BC01     		.2byte	0x1bc
+ 339 0108 A5010000 		.4byte	0x1a5
+ 340 010c 03       		.byte	0x3
+ 341 010d 23       		.byte	0x23
+ 342 010e 8003     		.uleb128 0x180
+ 343 0110 07       		.uleb128 0x7
+ 344 0111 30030000 		.4byte	.LASF21
+ 345 0115 05       		.byte	0x5
+ 346 0116 BD01     		.2byte	0x1bd
+ 347 0118 8B010000 		.4byte	0x18b
+ 348 011c 03       		.byte	0x3
+ 349 011d 23       		.byte	0x23
+ 350 011e C003     		.uleb128 0x1c0
+ 351 0120 07       		.uleb128 0x7
+ 352 0121 0A000000 		.4byte	.LASF22
+ 353 0125 05       		.byte	0x5
+ 354 0126 BE01     		.2byte	0x1be
+ 355 0128 AA010000 		.4byte	0x1aa
+ 356 012c 03       		.byte	0x3
+ 357 012d 23       		.byte	0x23
+ 358 012e 8004     		.uleb128 0x200
+ 359 0130 07       		.uleb128 0x7
+ 360 0131 3A030000 		.4byte	.LASF23
+ 361 0135 05       		.byte	0x5
+ 362 0136 BF01     		.2byte	0x1bf
+ 363 0138 8B010000 		.4byte	0x18b
+ 364 013c 03       		.byte	0x3
+ 365 013d 23       		.byte	0x23
+ 366 013e C004     		.uleb128 0x240
+ 367 0140 07       		.uleb128 0x7
+ 368 0141 0F000000 		.4byte	.LASF24
+ 369 0145 05       		.byte	0x5
+ 370 0146 C001     		.2byte	0x1c0
+ 371 0148 AF010000 		.4byte	0x1af
+ 372 014c 03       		.byte	0x3
+ 373 014d 23       		.byte	0x23
+ 374 014e 8005     		.uleb128 0x280
+ 375 0150 07       		.uleb128 0x7
+ 376 0151 44030000 		.4byte	.LASF25
+ 377 0155 05       		.byte	0x5
+ 378 0156 C101     		.2byte	0x1c1
+ 379 0158 8B010000 		.4byte	0x18b
+ 380 015c 03       		.byte	0x3
+ 381 015d 23       		.byte	0x23
+ 382 015e C005     		.uleb128 0x2c0
+ 383 0160 08       		.uleb128 0x8
+ 384 0161 49505200 		.ascii	"IPR\000"
+ 385 0165 05       		.byte	0x5
+ 386 0166 C201     		.2byte	0x1c2
+ 387 0168 C4010000 		.4byte	0x1c4
+ 388 016c 03       		.byte	0x3
+ 389 016d 23       		.byte	0x23
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 22
+
+
+ 390 016e 8006     		.uleb128 0x300
+ 391 0170 00       		.byte	0
+ 392 0171 09       		.uleb128 0x9
+ 393 0172 81010000 		.4byte	0x181
+ 394 0176 81010000 		.4byte	0x181
+ 395 017a 0A       		.uleb128 0xa
+ 396 017b 7F000000 		.4byte	0x7f
+ 397 017f 0F       		.byte	0xf
+ 398 0180 00       		.byte	0
+ 399 0181 0B       		.uleb128 0xb
+ 400 0182 8D000000 		.4byte	0x8d
+ 401 0186 0B       		.uleb128 0xb
+ 402 0187 71010000 		.4byte	0x171
+ 403 018b 09       		.uleb128 0x9
+ 404 018c 8D000000 		.4byte	0x8d
+ 405 0190 9B010000 		.4byte	0x19b
+ 406 0194 0A       		.uleb128 0xa
+ 407 0195 7F000000 		.4byte	0x7f
+ 408 0199 0F       		.byte	0xf
+ 409 019a 00       		.byte	0
+ 410 019b 0B       		.uleb128 0xb
+ 411 019c 71010000 		.4byte	0x171
+ 412 01a0 0B       		.uleb128 0xb
+ 413 01a1 71010000 		.4byte	0x171
+ 414 01a5 0B       		.uleb128 0xb
+ 415 01a6 71010000 		.4byte	0x171
+ 416 01aa 0B       		.uleb128 0xb
+ 417 01ab 71010000 		.4byte	0x171
+ 418 01af 0B       		.uleb128 0xb
+ 419 01b0 71010000 		.4byte	0x171
+ 420 01b4 09       		.uleb128 0x9
+ 421 01b5 81010000 		.4byte	0x181
+ 422 01b9 C4010000 		.4byte	0x1c4
+ 423 01bd 0A       		.uleb128 0xa
+ 424 01be 7F000000 		.4byte	0x7f
+ 425 01c2 7B       		.byte	0x7b
+ 426 01c3 00       		.byte	0
+ 427 01c4 0B       		.uleb128 0xb
+ 428 01c5 B4010000 		.4byte	0x1b4
+ 429 01c9 0C       		.uleb128 0xc
+ 430 01ca 28020000 		.4byte	.LASF26
+ 431 01ce 05       		.byte	0x5
+ 432 01cf C301     		.2byte	0x1c3
+ 433 01d1 98000000 		.4byte	0x98
+ 434 01d5 0D       		.uleb128 0xd
+ 435 01d6 28       		.byte	0x28
+ 436 01d7 05       		.byte	0x5
+ 437 01d8 D201     		.2byte	0x1d2
+ 438 01da 66020000 		.4byte	0x266
+ 439 01de 07       		.uleb128 0x7
+ 440 01df 94000000 		.4byte	.LASF27
+ 441 01e3 05       		.byte	0x5
+ 442 01e4 D401     		.2byte	0x1d4
+ 443 01e6 66020000 		.4byte	0x266
+ 444 01ea 02       		.byte	0x2
+ 445 01eb 23       		.byte	0x23
+ 446 01ec 00       		.uleb128 0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 23
+
+
+ 447 01ed 07       		.uleb128 0x7
+ 448 01ee 59010000 		.4byte	.LASF28
+ 449 01f2 05       		.byte	0x5
+ 450 01f3 D501     		.2byte	0x1d5
+ 451 01f5 81010000 		.4byte	0x181
+ 452 01f9 02       		.byte	0x2
+ 453 01fa 23       		.byte	0x23
+ 454 01fb 04       		.uleb128 0x4
+ 455 01fc 07       		.uleb128 0x7
+ 456 01fd C4020000 		.4byte	.LASF29
+ 457 0201 05       		.byte	0x5
+ 458 0202 D701     		.2byte	0x1d7
+ 459 0204 81010000 		.4byte	0x181
+ 460 0208 02       		.byte	0x2
+ 461 0209 23       		.byte	0x23
+ 462 020a 08       		.uleb128 0x8
+ 463 020b 07       		.uleb128 0x7
+ 464 020c FF010000 		.4byte	.LASF30
+ 465 0210 05       		.byte	0x5
+ 466 0211 DB01     		.2byte	0x1db
+ 467 0213 81010000 		.4byte	0x181
+ 468 0217 02       		.byte	0x2
+ 469 0218 23       		.byte	0x23
+ 470 0219 0C       		.uleb128 0xc
+ 471 021a 08       		.uleb128 0x8
+ 472 021b 53435200 		.ascii	"SCR\000"
+ 473 021f 05       		.byte	0x5
+ 474 0220 DC01     		.2byte	0x1dc
+ 475 0222 81010000 		.4byte	0x181
+ 476 0226 02       		.byte	0x2
+ 477 0227 23       		.byte	0x23
+ 478 0228 10       		.uleb128 0x10
+ 479 0229 08       		.uleb128 0x8
+ 480 022a 43435200 		.ascii	"CCR\000"
+ 481 022e 05       		.byte	0x5
+ 482 022f DD01     		.2byte	0x1dd
+ 483 0231 81010000 		.4byte	0x181
+ 484 0235 02       		.byte	0x2
+ 485 0236 23       		.byte	0x23
+ 486 0237 14       		.uleb128 0x14
+ 487 0238 07       		.uleb128 0x7
+ 488 0239 1C030000 		.4byte	.LASF31
+ 489 023d 05       		.byte	0x5
+ 490 023e DE01     		.2byte	0x1de
+ 491 0240 8D000000 		.4byte	0x8d
+ 492 0244 02       		.byte	0x2
+ 493 0245 23       		.byte	0x23
+ 494 0246 18       		.uleb128 0x18
+ 495 0247 07       		.uleb128 0x7
+ 496 0248 43020000 		.4byte	.LASF32
+ 497 024c 05       		.byte	0x5
+ 498 024d DF01     		.2byte	0x1df
+ 499 024f 7B020000 		.4byte	0x27b
+ 500 0253 02       		.byte	0x2
+ 501 0254 23       		.byte	0x23
+ 502 0255 1C       		.uleb128 0x1c
+ 503 0256 07       		.uleb128 0x7
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 24
+
+
+ 504 0257 5F020000 		.4byte	.LASF33
+ 505 025b 05       		.byte	0x5
+ 506 025c E001     		.2byte	0x1e0
+ 507 025e 81010000 		.4byte	0x181
+ 508 0262 02       		.byte	0x2
+ 509 0263 23       		.byte	0x23
+ 510 0264 24       		.uleb128 0x24
+ 511 0265 00       		.byte	0
+ 512 0266 0E       		.uleb128 0xe
+ 513 0267 81010000 		.4byte	0x181
+ 514 026b 09       		.uleb128 0x9
+ 515 026c 81010000 		.4byte	0x181
+ 516 0270 7B020000 		.4byte	0x27b
+ 517 0274 0A       		.uleb128 0xa
+ 518 0275 7F000000 		.4byte	0x7f
+ 519 0279 01       		.byte	0x1
+ 520 027a 00       		.byte	0
+ 521 027b 0B       		.uleb128 0xb
+ 522 027c 6B020000 		.4byte	0x26b
+ 523 0280 0C       		.uleb128 0xc
+ 524 0281 2F010000 		.4byte	.LASF34
+ 525 0285 05       		.byte	0x5
+ 526 0286 E101     		.2byte	0x1e1
+ 527 0288 D5010000 		.4byte	0x1d5
+ 528 028c 0D       		.uleb128 0xd
+ 529 028d 14       		.byte	0x14
+ 530 028e 05       		.byte	0x5
+ 531 028f 2704     		.2byte	0x427
+ 532 0291 E1020000 		.4byte	0x2e1
+ 533 0295 07       		.uleb128 0x7
+ 534 0296 23020000 		.4byte	.LASF35
+ 535 029a 05       		.byte	0x5
+ 536 029b 2904     		.2byte	0x429
+ 537 029d 81010000 		.4byte	0x181
+ 538 02a1 02       		.byte	0x2
+ 539 02a2 23       		.byte	0x23
+ 540 02a3 00       		.uleb128 0
+ 541 02a4 07       		.uleb128 0x7
+ 542 02a5 60030000 		.4byte	.LASF36
+ 543 02a9 05       		.byte	0x5
+ 544 02aa 2A04     		.2byte	0x42a
+ 545 02ac 66020000 		.4byte	0x266
+ 546 02b0 02       		.byte	0x2
+ 547 02b1 23       		.byte	0x23
+ 548 02b2 04       		.uleb128 0x4
+ 549 02b3 08       		.uleb128 0x8
+ 550 02b4 524E5200 		.ascii	"RNR\000"
+ 551 02b8 05       		.byte	0x5
+ 552 02b9 2B04     		.2byte	0x42b
+ 553 02bb 81010000 		.4byte	0x181
+ 554 02bf 02       		.byte	0x2
+ 555 02c0 23       		.byte	0x23
+ 556 02c1 08       		.uleb128 0x8
+ 557 02c2 07       		.uleb128 0x7
+ 558 02c3 A3030000 		.4byte	.LASF37
+ 559 02c7 05       		.byte	0x5
+ 560 02c8 2C04     		.2byte	0x42c
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 25
+
+
+ 561 02ca 81010000 		.4byte	0x181
+ 562 02ce 02       		.byte	0x2
+ 563 02cf 23       		.byte	0x23
+ 564 02d0 0C       		.uleb128 0xc
+ 565 02d1 07       		.uleb128 0x7
+ 566 02d2 75030000 		.4byte	.LASF38
+ 567 02d6 05       		.byte	0x5
+ 568 02d7 2D04     		.2byte	0x42d
+ 569 02d9 81010000 		.4byte	0x181
+ 570 02dd 02       		.byte	0x2
+ 571 02de 23       		.byte	0x23
+ 572 02df 10       		.uleb128 0x10
+ 573 02e0 00       		.byte	0
+ 574 02e1 0C       		.uleb128 0xc
+ 575 02e2 65030000 		.4byte	.LASF39
+ 576 02e6 05       		.byte	0x5
+ 577 02e7 2E04     		.2byte	0x42e
+ 578 02e9 8C020000 		.4byte	0x28c
+ 579 02ed 09       		.uleb128 0x9
+ 580 02ee 66020000 		.4byte	0x266
+ 581 02f2 FD020000 		.4byte	0x2fd
+ 582 02f6 0A       		.uleb128 0xa
+ 583 02f7 7F000000 		.4byte	0x7f
+ 584 02fb 00       		.byte	0
+ 585 02fc 00       		.byte	0
+ 586 02fd 06       		.uleb128 0x6
+ 587 02fe 0803     		.2byte	0x308
+ 588 0300 06       		.byte	0x6
+ 589 0301 2440     		.2byte	0x4024
+ 590 0303 FE050000 		.4byte	0x5fe
+ 591 0307 07       		.uleb128 0x7
+ 592 0308 6E030000 		.4byte	.LASF40
+ 593 030c 06       		.byte	0x6
+ 594 030d 3F43     		.2byte	0x433f
+ 595 030f 0E060000 		.4byte	0x60e
+ 596 0313 02       		.byte	0x2
+ 597 0314 23       		.byte	0x23
+ 598 0315 00       		.uleb128 0
+ 599 0316 07       		.uleb128 0x7
+ 600 0317 88030000 		.4byte	.LASF41
+ 601 031b 06       		.byte	0x6
+ 602 031c 4043     		.2byte	0x4340
+ 603 031e 18060000 		.4byte	0x618
+ 604 0322 02       		.byte	0x2
+ 605 0323 23       		.byte	0x23
+ 606 0324 1C       		.uleb128 0x1c
+ 607 0325 07       		.uleb128 0x7
+ 608 0326 3D000000 		.4byte	.LASF42
+ 609 032a 06       		.byte	0x6
+ 610 032b 4143     		.2byte	0x4341
+ 611 032d 81010000 		.4byte	0x181
+ 612 0331 02       		.byte	0x2
+ 613 0332 23       		.byte	0x23
+ 614 0333 20       		.uleb128 0x20
+ 615 0334 07       		.uleb128 0x7
+ 616 0335 00000000 		.4byte	.LASF43
+ 617 0339 06       		.byte	0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 26
+
+
+ 618 033a 4243     		.2byte	0x4342
+ 619 033c 81010000 		.4byte	0x181
+ 620 0340 02       		.byte	0x2
+ 621 0341 23       		.byte	0x23
+ 622 0342 24       		.uleb128 0x24
+ 623 0343 07       		.uleb128 0x7
+ 624 0344 38010000 		.4byte	.LASF44
+ 625 0348 06       		.byte	0x6
+ 626 0349 4343     		.2byte	0x4343
+ 627 034b 66020000 		.4byte	0x266
+ 628 034f 02       		.byte	0x2
+ 629 0350 23       		.byte	0x23
+ 630 0351 28       		.uleb128 0x28
+ 631 0352 07       		.uleb128 0x7
+ 632 0353 7A030000 		.4byte	.LASF45
+ 633 0357 06       		.byte	0x6
+ 634 0358 4443     		.2byte	0x4344
+ 635 035a 81010000 		.4byte	0x181
+ 636 035e 02       		.byte	0x2
+ 637 035f 23       		.byte	0x23
+ 638 0360 2C       		.uleb128 0x2c
+ 639 0361 07       		.uleb128 0x7
+ 640 0362 5E000000 		.4byte	.LASF46
+ 641 0366 06       		.byte	0x6
+ 642 0367 4543     		.2byte	0x4345
+ 643 0369 81010000 		.4byte	0x181
+ 644 036d 02       		.byte	0x2
+ 645 036e 23       		.byte	0x23
+ 646 036f 30       		.uleb128 0x30
+ 647 0370 07       		.uleb128 0x7
+ 648 0371 67000000 		.4byte	.LASF47
+ 649 0375 06       		.byte	0x6
+ 650 0376 4643     		.2byte	0x4346
+ 651 0378 66020000 		.4byte	0x266
+ 652 037c 02       		.byte	0x2
+ 653 037d 23       		.byte	0x23
+ 654 037e 34       		.uleb128 0x34
+ 655 037f 07       		.uleb128 0x7
+ 656 0380 FF020000 		.4byte	.LASF48
+ 657 0384 06       		.byte	0x6
+ 658 0385 4743     		.2byte	0x4347
+ 659 0387 66020000 		.4byte	0x266
+ 660 038b 02       		.byte	0x2
+ 661 038c 23       		.byte	0x23
+ 662 038d 38       		.uleb128 0x38
+ 663 038e 07       		.uleb128 0x7
+ 664 038f 13020000 		.4byte	.LASF49
+ 665 0393 06       		.byte	0x6
+ 666 0394 4843     		.2byte	0x4348
+ 667 0396 66020000 		.4byte	0x266
+ 668 039a 02       		.byte	0x2
+ 669 039b 23       		.byte	0x23
+ 670 039c 3C       		.uleb128 0x3c
+ 671 039d 07       		.uleb128 0x7
+ 672 039e 7C020000 		.4byte	.LASF50
+ 673 03a2 06       		.byte	0x6
+ 674 03a3 4943     		.2byte	0x4349
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 27
+
+
+ 675 03a5 66020000 		.4byte	0x266
+ 676 03a9 02       		.byte	0x2
+ 677 03aa 23       		.byte	0x23
+ 678 03ab 40       		.uleb128 0x40
+ 679 03ac 07       		.uleb128 0x7
+ 680 03ad 14000000 		.4byte	.LASF51
+ 681 03b1 06       		.byte	0x6
+ 682 03b2 4A43     		.2byte	0x434a
+ 683 03b4 66020000 		.4byte	0x266
+ 684 03b8 02       		.byte	0x2
+ 685 03b9 23       		.byte	0x23
+ 686 03ba 44       		.uleb128 0x44
+ 687 03bb 07       		.uleb128 0x7
+ 688 03bc B2030000 		.4byte	.LASF52
+ 689 03c0 06       		.byte	0x6
+ 690 03c1 4B43     		.2byte	0x434b
+ 691 03c3 66020000 		.4byte	0x266
+ 692 03c7 02       		.byte	0x2
+ 693 03c8 23       		.byte	0x23
+ 694 03c9 48       		.uleb128 0x48
+ 695 03ca 07       		.uleb128 0x7
+ 696 03cb F4030000 		.4byte	.LASF53
+ 697 03cf 06       		.byte	0x6
+ 698 03d0 4C43     		.2byte	0x434c
+ 699 03d2 66020000 		.4byte	0x266
+ 700 03d6 02       		.byte	0x2
+ 701 03d7 23       		.byte	0x23
+ 702 03d8 4C       		.uleb128 0x4c
+ 703 03d9 07       		.uleb128 0x7
+ 704 03da 58000000 		.4byte	.LASF54
+ 705 03de 06       		.byte	0x6
+ 706 03df 4D43     		.2byte	0x434d
+ 707 03e1 66020000 		.4byte	0x266
+ 708 03e5 02       		.byte	0x2
+ 709 03e6 23       		.byte	0x23
+ 710 03e7 50       		.uleb128 0x50
+ 711 03e8 07       		.uleb128 0x7
+ 712 03e9 34000000 		.4byte	.LASF55
+ 713 03ed 06       		.byte	0x6
+ 714 03ee 4E43     		.2byte	0x434e
+ 715 03f0 66020000 		.4byte	0x266
+ 716 03f4 02       		.byte	0x2
+ 717 03f5 23       		.byte	0x23
+ 718 03f6 54       		.uleb128 0x54
+ 719 03f7 07       		.uleb128 0x7
+ 720 03f8 75010000 		.4byte	.LASF56
+ 721 03fc 06       		.byte	0x6
+ 722 03fd 4F43     		.2byte	0x434f
+ 723 03ff 66020000 		.4byte	0x266
+ 724 0403 02       		.byte	0x2
+ 725 0404 23       		.byte	0x23
+ 726 0405 58       		.uleb128 0x58
+ 727 0406 07       		.uleb128 0x7
+ 728 0407 70000000 		.4byte	.LASF57
+ 729 040b 06       		.byte	0x6
+ 730 040c 5043     		.2byte	0x4350
+ 731 040e 66020000 		.4byte	0x266
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 28
+
+
+ 732 0412 02       		.byte	0x2
+ 733 0413 23       		.byte	0x23
+ 734 0414 5C       		.uleb128 0x5c
+ 735 0415 07       		.uleb128 0x7
+ 736 0416 06030000 		.4byte	.LASF58
+ 737 041a 06       		.byte	0x6
+ 738 041b 5143     		.2byte	0x4351
+ 739 041d 66020000 		.4byte	0x266
+ 740 0421 02       		.byte	0x2
+ 741 0422 23       		.byte	0x23
+ 742 0423 60       		.uleb128 0x60
+ 743 0424 07       		.uleb128 0x7
+ 744 0425 7C010000 		.4byte	.LASF59
+ 745 0429 06       		.byte	0x6
+ 746 042a 5243     		.2byte	0x4352
+ 747 042c 66020000 		.4byte	0x266
+ 748 0430 02       		.byte	0x2
+ 749 0431 23       		.byte	0x23
+ 750 0432 64       		.uleb128 0x64
+ 751 0433 07       		.uleb128 0x7
+ 752 0434 D4010000 		.4byte	.LASF60
+ 753 0438 06       		.byte	0x6
+ 754 0439 5343     		.2byte	0x4353
+ 755 043b 66020000 		.4byte	0x266
+ 756 043f 02       		.byte	0x2
+ 757 0440 23       		.byte	0x23
+ 758 0441 68       		.uleb128 0x68
+ 759 0442 07       		.uleb128 0x7
+ 760 0443 93020000 		.4byte	.LASF61
+ 761 0447 06       		.byte	0x6
+ 762 0448 5443     		.2byte	0x4354
+ 763 044a 66020000 		.4byte	0x266
+ 764 044e 02       		.byte	0x2
+ 765 044f 23       		.byte	0x23
+ 766 0450 6C       		.uleb128 0x6c
+ 767 0451 07       		.uleb128 0x7
+ 768 0452 1D000000 		.4byte	.LASF62
+ 769 0456 06       		.byte	0x6
+ 770 0457 5543     		.2byte	0x4355
+ 771 0459 66020000 		.4byte	0x266
+ 772 045d 02       		.byte	0x2
+ 773 045e 23       		.byte	0x23
+ 774 045f 70       		.uleb128 0x70
+ 775 0460 07       		.uleb128 0x7
+ 776 0461 A8030000 		.4byte	.LASF63
+ 777 0465 06       		.byte	0x6
+ 778 0466 5643     		.2byte	0x4356
+ 779 0468 66020000 		.4byte	0x266
+ 780 046c 02       		.byte	0x2
+ 781 046d 23       		.byte	0x23
+ 782 046e 74       		.uleb128 0x74
+ 783 046f 07       		.uleb128 0x7
+ 784 0470 E2010000 		.4byte	.LASF64
+ 785 0474 06       		.byte	0x6
+ 786 0475 5743     		.2byte	0x4357
+ 787 0477 66020000 		.4byte	0x266
+ 788 047b 02       		.byte	0x2
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 29
+
+
+ 789 047c 23       		.byte	0x23
+ 790 047d 78       		.uleb128 0x78
+ 791 047e 07       		.uleb128 0x7
+ 792 047f 20010000 		.4byte	.LASF65
+ 793 0483 06       		.byte	0x6
+ 794 0484 5843     		.2byte	0x4358
+ 795 0486 66020000 		.4byte	0x266
+ 796 048a 02       		.byte	0x2
+ 797 048b 23       		.byte	0x23
+ 798 048c 7C       		.uleb128 0x7c
+ 799 048d 07       		.uleb128 0x7
+ 800 048e DA010000 		.4byte	.LASF66
+ 801 0492 06       		.byte	0x6
+ 802 0493 5943     		.2byte	0x4359
+ 803 0495 66020000 		.4byte	0x266
+ 804 0499 03       		.byte	0x3
+ 805 049a 23       		.byte	0x23
+ 806 049b 8001     		.uleb128 0x80
+ 807 049d 07       		.uleb128 0x7
+ 808 049e 8A000000 		.4byte	.LASF67
+ 809 04a2 06       		.byte	0x6
+ 810 04a3 5A43     		.2byte	0x435a
+ 811 04a5 66020000 		.4byte	0x266
+ 812 04a9 03       		.byte	0x3
+ 813 04aa 23       		.byte	0x23
+ 814 04ab 8401     		.uleb128 0x84
+ 815 04ad 07       		.uleb128 0x7
+ 816 04ae B8010000 		.4byte	.LASF68
+ 817 04b2 06       		.byte	0x6
+ 818 04b3 5B43     		.2byte	0x435b
+ 819 04b5 66020000 		.4byte	0x266
+ 820 04b9 03       		.byte	0x3
+ 821 04ba 23       		.byte	0x23
+ 822 04bb 8801     		.uleb128 0x88
+ 823 04bd 07       		.uleb128 0x7
+ 824 04be 65020000 		.4byte	.LASF69
+ 825 04c2 06       		.byte	0x6
+ 826 04c3 5C43     		.2byte	0x435c
+ 827 04c5 66020000 		.4byte	0x266
+ 828 04c9 03       		.byte	0x3
+ 829 04ca 23       		.byte	0x23
+ 830 04cb 8C01     		.uleb128 0x8c
+ 831 04cd 07       		.uleb128 0x7
+ 832 04ce 49010000 		.4byte	.LASF70
+ 833 04d2 06       		.byte	0x6
+ 834 04d3 5D43     		.2byte	0x435d
+ 835 04d5 66020000 		.4byte	0x266
+ 836 04d9 03       		.byte	0x3
+ 837 04da 23       		.byte	0x23
+ 838 04db 9001     		.uleb128 0x90
+ 839 04dd 07       		.uleb128 0x7
+ 840 04de 51010000 		.4byte	.LASF71
+ 841 04e2 06       		.byte	0x6
+ 842 04e3 5E43     		.2byte	0x435e
+ 843 04e5 66020000 		.4byte	0x266
+ 844 04e9 03       		.byte	0x3
+ 845 04ea 23       		.byte	0x23
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 30
+
+
+ 846 04eb 9401     		.uleb128 0x94
+ 847 04ed 07       		.uleb128 0x7
+ 848 04ee A3020000 		.4byte	.LASF72
+ 849 04f2 06       		.byte	0x6
+ 850 04f3 5F43     		.2byte	0x435f
+ 851 04f5 66020000 		.4byte	0x266
+ 852 04f9 03       		.byte	0x3
+ 853 04fa 23       		.byte	0x23
+ 854 04fb 9801     		.uleb128 0x98
+ 855 04fd 07       		.uleb128 0x7
+ 856 04fe 23000000 		.4byte	.LASF73
+ 857 0502 06       		.byte	0x6
+ 858 0503 6043     		.2byte	0x4360
+ 859 0505 66020000 		.4byte	0x266
+ 860 0509 03       		.byte	0x3
+ 861 050a 23       		.byte	0x23
+ 862 050b 9C01     		.uleb128 0x9c
+ 863 050d 07       		.uleb128 0x7
+ 864 050e DF020000 		.4byte	.LASF74
+ 865 0512 06       		.byte	0x6
+ 866 0513 6143     		.2byte	0x4361
+ 867 0515 66020000 		.4byte	0x266
+ 868 0519 03       		.byte	0x3
+ 869 051a 23       		.byte	0x23
+ 870 051b A001     		.uleb128 0xa0
+ 871 051d 07       		.uleb128 0x7
+ 872 051e EC030000 		.4byte	.LASF75
+ 873 0522 06       		.byte	0x6
+ 874 0523 6243     		.2byte	0x4362
+ 875 0525 66020000 		.4byte	0x266
+ 876 0529 03       		.byte	0x3
+ 877 052a 23       		.byte	0x23
+ 878 052b A401     		.uleb128 0xa4
+ 879 052d 07       		.uleb128 0x7
+ 880 052e B9030000 		.4byte	.LASF76
+ 881 0532 06       		.byte	0x6
+ 882 0533 6343     		.2byte	0x4363
+ 883 0535 66020000 		.4byte	0x266
+ 884 0539 03       		.byte	0x3
+ 885 053a 23       		.byte	0x23
+ 886 053b A801     		.uleb128 0xa8
+ 887 053d 07       		.uleb128 0x7
+ 888 053e B0010000 		.4byte	.LASF77
+ 889 0542 06       		.byte	0x6
+ 890 0543 6443     		.2byte	0x4364
+ 891 0545 66020000 		.4byte	0x266
+ 892 0549 03       		.byte	0x3
+ 893 054a 23       		.byte	0x23
+ 894 054b AC01     		.uleb128 0xac
+ 895 054d 07       		.uleb128 0x7
+ 896 054e 82030000 		.4byte	.LASF78
+ 897 0552 06       		.byte	0x6
+ 898 0553 6543     		.2byte	0x4365
+ 899 0555 66020000 		.4byte	0x266
+ 900 0559 03       		.byte	0x3
+ 901 055a 23       		.byte	0x23
+ 902 055b B001     		.uleb128 0xb0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 31
+
+
+ 903 055d 07       		.uleb128 0x7
+ 904 055e 40010000 		.4byte	.LASF79
+ 905 0562 06       		.byte	0x6
+ 906 0563 6643     		.2byte	0x4366
+ 907 0565 66020000 		.4byte	0x266
+ 908 0569 03       		.byte	0x3
+ 909 056a 23       		.byte	0x23
+ 910 056b B401     		.uleb128 0xb4
+ 911 056d 07       		.uleb128 0x7
+ 912 056e 84010000 		.4byte	.LASF80
+ 913 0572 06       		.byte	0x6
+ 914 0573 6743     		.2byte	0x4367
+ 915 0575 66020000 		.4byte	0x266
+ 916 0579 03       		.byte	0x3
+ 917 057a 23       		.byte	0x23
+ 918 057b B801     		.uleb128 0xb8
+ 919 057d 07       		.uleb128 0x7
+ 920 057e 91030000 		.4byte	.LASF81
+ 921 0582 06       		.byte	0x6
+ 922 0583 6843     		.2byte	0x4368
+ 923 0585 32060000 		.4byte	0x632
+ 924 0589 03       		.byte	0x3
+ 925 058a 23       		.byte	0x23
+ 926 058b BC01     		.uleb128 0xbc
+ 927 058d 07       		.uleb128 0x7
+ 928 058e 83000000 		.4byte	.LASF82
+ 929 0592 06       		.byte	0x6
+ 930 0593 6943     		.2byte	0x4369
+ 931 0595 81010000 		.4byte	0x181
+ 932 0599 03       		.byte	0x3
+ 933 059a 23       		.byte	0x23
+ 934 059b 8004     		.uleb128 0x200
+ 935 059d 07       		.uleb128 0x7
+ 936 059e FC030000 		.4byte	.LASF83
+ 937 05a2 06       		.byte	0x6
+ 938 05a3 6A43     		.2byte	0x436a
+ 939 05a5 81010000 		.4byte	0x181
+ 940 05a9 03       		.byte	0x3
+ 941 05aa 23       		.byte	0x23
+ 942 05ab 8404     		.uleb128 0x204
+ 943 05ad 07       		.uleb128 0x7
+ 944 05ae 2D000000 		.4byte	.LASF84
+ 945 05b2 06       		.byte	0x6
+ 946 05b3 6B43     		.2byte	0x436b
+ 947 05b5 81010000 		.4byte	0x181
+ 948 05b9 03       		.byte	0x3
+ 949 05ba 23       		.byte	0x23
+ 950 05bb 8804     		.uleb128 0x208
+ 951 05bd 07       		.uleb128 0x7
+ 952 05be 1C020000 		.4byte	.LASF85
+ 953 05c2 06       		.byte	0x6
+ 954 05c3 6C43     		.2byte	0x436c
+ 955 05c5 81010000 		.4byte	0x181
+ 956 05c9 03       		.byte	0x3
+ 957 05ca 23       		.byte	0x23
+ 958 05cb 8C04     		.uleb128 0x20c
+ 959 05cd 07       		.uleb128 0x7
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 32
+
+
+ 960 05ce 9A030000 		.4byte	.LASF86
+ 961 05d2 06       		.byte	0x6
+ 962 05d3 6D43     		.2byte	0x436d
+ 963 05d5 4C060000 		.4byte	0x64c
+ 964 05d9 03       		.byte	0x3
+ 965 05da 23       		.byte	0x23
+ 966 05db 9004     		.uleb128 0x210
+ 967 05dd 08       		.uleb128 0x8
+ 968 05de 42424500 		.ascii	"BBE\000"
+ 969 05e2 06       		.byte	0x6
+ 970 05e3 6E43     		.2byte	0x436e
+ 971 05e5 81010000 		.4byte	0x181
+ 972 05e9 03       		.byte	0x3
+ 973 05ea 23       		.byte	0x23
+ 974 05eb 8006     		.uleb128 0x300
+ 975 05ed 07       		.uleb128 0x7
+ 976 05ee 9B020000 		.4byte	.LASF87
+ 977 05f2 06       		.byte	0x6
+ 978 05f3 6F43     		.2byte	0x436f
+ 979 05f5 81010000 		.4byte	0x181
+ 980 05f9 03       		.byte	0x3
+ 981 05fa 23       		.byte	0x23
+ 982 05fb 8406     		.uleb128 0x304
+ 983 05fd 00       		.byte	0
+ 984 05fe 09       		.uleb128 0x9
+ 985 05ff 81010000 		.4byte	0x181
+ 986 0603 0E060000 		.4byte	0x60e
+ 987 0607 0A       		.uleb128 0xa
+ 988 0608 7F000000 		.4byte	0x7f
+ 989 060c 06       		.byte	0x6
+ 990 060d 00       		.byte	0
+ 991 060e 0B       		.uleb128 0xb
+ 992 060f FE050000 		.4byte	0x5fe
+ 993 0613 0B       		.uleb128 0xb
+ 994 0614 ED020000 		.4byte	0x2ed
+ 995 0618 0E       		.uleb128 0xe
+ 996 0619 13060000 		.4byte	0x613
+ 997 061d 09       		.uleb128 0x9
+ 998 061e 66020000 		.4byte	0x266
+ 999 0622 2D060000 		.4byte	0x62d
+ 1000 0626 0A       		.uleb128 0xa
+ 1001 0627 7F000000 		.4byte	0x7f
+ 1002 062b 50       		.byte	0x50
+ 1003 062c 00       		.byte	0
+ 1004 062d 0B       		.uleb128 0xb
+ 1005 062e 1D060000 		.4byte	0x61d
+ 1006 0632 0E       		.uleb128 0xe
+ 1007 0633 2D060000 		.4byte	0x62d
+ 1008 0637 09       		.uleb128 0x9
+ 1009 0638 66020000 		.4byte	0x266
+ 1010 063c 47060000 		.4byte	0x647
+ 1011 0640 0A       		.uleb128 0xa
+ 1012 0641 7F000000 		.4byte	0x7f
+ 1013 0645 3B       		.byte	0x3b
+ 1014 0646 00       		.byte	0
+ 1015 0647 0B       		.uleb128 0xb
+ 1016 0648 37060000 		.4byte	0x637
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 33
+
+
+ 1017 064c 0E       		.uleb128 0xe
+ 1018 064d 47060000 		.4byte	0x647
+ 1019 0651 0C       		.uleb128 0xc
+ 1020 0652 0C030000 		.4byte	.LASF88
+ 1021 0656 06       		.byte	0x6
+ 1022 0657 7143     		.2byte	0x4371
+ 1023 0659 FD020000 		.4byte	0x2fd
+ 1024 065d 0F       		.uleb128 0xf
+ 1025 065e A9020000 		.4byte	.LASF89
+ 1026 0662 02       		.byte	0x2
+ 1027 0663 B902     		.2byte	0x2b9
+ 1028 0665 01       		.byte	0x1
+ 1029 0666 03       		.byte	0x3
+ 1030 0667 10       		.uleb128 0x10
+ 1031 0668 01       		.byte	0x1
+ 1032 0669 C9020000 		.4byte	.LASF97
+ 1033 066d 01       		.byte	0x1
+ 1034 066e 2A       		.byte	0x2a
+ 1035 066f 01       		.byte	0x1
+ 1036 0670 00000000 		.4byte	.LFB63
+ 1037 0674 02000000 		.4byte	.LFE63
+ 1038 0678 02       		.byte	0x2
+ 1039 0679 7D       		.byte	0x7d
+ 1040 067a 00       		.sleb128 0
+ 1041 067b 01       		.byte	0x1
+ 1042 067c 0F       		.uleb128 0xf
+ 1043 067d 04040000 		.4byte	.LASF90
+ 1044 0681 02       		.byte	0x2
+ 1045 0682 BD01     		.2byte	0x1bd
+ 1046 0684 01       		.byte	0x1
+ 1047 0685 03       		.byte	0x3
+ 1048 0686 11       		.uleb128 0x11
+ 1049 0687 01       		.byte	0x1
+ 1050 0688 88020000 		.4byte	.LASF98
+ 1051 068c 01       		.byte	0x1
+ 1052 068d 54       		.byte	0x54
+ 1053 068e 01       		.byte	0x1
+ 1054 068f 04000000 		.4byte	.LFB64
+ 1055 0693 DC000000 		.4byte	.LFE64
+ 1056 0697 00000000 		.4byte	.LLST0
+ 1057 069b 01       		.byte	0x1
+ 1058 069c BF060000 		.4byte	0x6bf
+ 1059 06a0 12       		.uleb128 0x12
+ 1060 06a1 7C060000 		.4byte	0x67c
+ 1061 06a5 0C000000 		.4byte	.LBB8
+ 1062 06a9 7E000000 		.4byte	.LBE8
+ 1063 06ad 01       		.byte	0x1
+ 1064 06ae 5B       		.byte	0x5b
+ 1065 06af 12       		.uleb128 0x12
+ 1066 06b0 5D060000 		.4byte	0x65d
+ 1067 06b4 7E000000 		.4byte	.LBB10
+ 1068 06b8 9A000000 		.4byte	.LBE10
+ 1069 06bc 01       		.byte	0x1
+ 1070 06bd 5C       		.byte	0x5c
+ 1071 06be 00       		.byte	0
+ 1072 06bf 13       		.uleb128 0x13
+ 1073 06c0 B8020000 		.4byte	.LASF91
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 34
+
+
+ 1074 06c4 07       		.byte	0x7
+ 1075 06c5 2E       		.byte	0x2e
+ 1076 06c6 8D000000 		.4byte	0x8d
+ 1077 06ca 01       		.byte	0x1
+ 1078 06cb 01       		.byte	0x1
+ 1079 06cc 13       		.uleb128 0x13
+ 1080 06cd A3010000 		.4byte	.LASF92
+ 1081 06d1 01       		.byte	0x1
+ 1082 06d2 15       		.byte	0x15
+ 1083 06d3 7D000000 		.4byte	0x7d
+ 1084 06d7 01       		.byte	0x1
+ 1085 06d8 01       		.byte	0x1
+ 1086 06d9 09       		.uleb128 0x9
+ 1087 06da E9060000 		.4byte	0x6e9
+ 1088 06de E9060000 		.4byte	0x6e9
+ 1089 06e2 0A       		.uleb128 0xa
+ 1090 06e3 7F000000 		.4byte	0x7f
+ 1091 06e7 07       		.byte	0x7
+ 1092 06e8 00       		.byte	0
+ 1093 06e9 0E       		.uleb128 0xe
+ 1094 06ea 8D000000 		.4byte	0x8d
+ 1095 06ee 14       		.uleb128 0x14
+ 1096 06ef 8B010000 		.4byte	.LASF93
+ 1097 06f3 01       		.byte	0x1
+ 1098 06f4 1D       		.byte	0x1d
+ 1099 06f5 00070000 		.4byte	0x700
+ 1100 06f9 01       		.byte	0x1
+ 1101 06fa 05       		.byte	0x5
+ 1102 06fb 03       		.byte	0x3
+ 1103 06fc 00000000 		.4byte	gau32ClkSrcTbl
+ 1104 0700 0E       		.uleb128 0xe
+ 1105 0701 D9060000 		.4byte	0x6d9
+ 1106 0705 00       		.byte	0
+ 1107              		.section	.debug_abbrev,"",%progbits
+ 1108              	.Ldebug_abbrev0:
+ 1109 0000 01       		.uleb128 0x1
+ 1110 0001 11       		.uleb128 0x11
+ 1111 0002 01       		.byte	0x1
+ 1112 0003 25       		.uleb128 0x25
+ 1113 0004 0E       		.uleb128 0xe
+ 1114 0005 13       		.uleb128 0x13
+ 1115 0006 0B       		.uleb128 0xb
+ 1116 0007 03       		.uleb128 0x3
+ 1117 0008 0E       		.uleb128 0xe
+ 1118 0009 1B       		.uleb128 0x1b
+ 1119 000a 0E       		.uleb128 0xe
+ 1120 000b 11       		.uleb128 0x11
+ 1121 000c 01       		.uleb128 0x1
+ 1122 000d 12       		.uleb128 0x12
+ 1123 000e 01       		.uleb128 0x1
+ 1124 000f 10       		.uleb128 0x10
+ 1125 0010 06       		.uleb128 0x6
+ 1126 0011 00       		.byte	0
+ 1127 0012 00       		.byte	0
+ 1128 0013 02       		.uleb128 0x2
+ 1129 0014 24       		.uleb128 0x24
+ 1130 0015 00       		.byte	0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 35
+
+
+ 1131 0016 0B       		.uleb128 0xb
+ 1132 0017 0B       		.uleb128 0xb
+ 1133 0018 3E       		.uleb128 0x3e
+ 1134 0019 0B       		.uleb128 0xb
+ 1135 001a 03       		.uleb128 0x3
+ 1136 001b 0E       		.uleb128 0xe
+ 1137 001c 00       		.byte	0
+ 1138 001d 00       		.byte	0
+ 1139 001e 03       		.uleb128 0x3
+ 1140 001f 16       		.uleb128 0x16
+ 1141 0020 00       		.byte	0
+ 1142 0021 03       		.uleb128 0x3
+ 1143 0022 0E       		.uleb128 0xe
+ 1144 0023 3A       		.uleb128 0x3a
+ 1145 0024 0B       		.uleb128 0xb
+ 1146 0025 3B       		.uleb128 0x3b
+ 1147 0026 0B       		.uleb128 0xb
+ 1148 0027 49       		.uleb128 0x49
+ 1149 0028 13       		.uleb128 0x13
+ 1150 0029 00       		.byte	0
+ 1151 002a 00       		.byte	0
+ 1152 002b 04       		.uleb128 0x4
+ 1153 002c 24       		.uleb128 0x24
+ 1154 002d 00       		.byte	0
+ 1155 002e 0B       		.uleb128 0xb
+ 1156 002f 0B       		.uleb128 0xb
+ 1157 0030 3E       		.uleb128 0x3e
+ 1158 0031 0B       		.uleb128 0xb
+ 1159 0032 03       		.uleb128 0x3
+ 1160 0033 08       		.uleb128 0x8
+ 1161 0034 00       		.byte	0
+ 1162 0035 00       		.byte	0
+ 1163 0036 05       		.uleb128 0x5
+ 1164 0037 0F       		.uleb128 0xf
+ 1165 0038 00       		.byte	0
+ 1166 0039 0B       		.uleb128 0xb
+ 1167 003a 0B       		.uleb128 0xb
+ 1168 003b 00       		.byte	0
+ 1169 003c 00       		.byte	0
+ 1170 003d 06       		.uleb128 0x6
+ 1171 003e 13       		.uleb128 0x13
+ 1172 003f 01       		.byte	0x1
+ 1173 0040 0B       		.uleb128 0xb
+ 1174 0041 05       		.uleb128 0x5
+ 1175 0042 3A       		.uleb128 0x3a
+ 1176 0043 0B       		.uleb128 0xb
+ 1177 0044 3B       		.uleb128 0x3b
+ 1178 0045 05       		.uleb128 0x5
+ 1179 0046 01       		.uleb128 0x1
+ 1180 0047 13       		.uleb128 0x13
+ 1181 0048 00       		.byte	0
+ 1182 0049 00       		.byte	0
+ 1183 004a 07       		.uleb128 0x7
+ 1184 004b 0D       		.uleb128 0xd
+ 1185 004c 00       		.byte	0
+ 1186 004d 03       		.uleb128 0x3
+ 1187 004e 0E       		.uleb128 0xe
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 36
+
+
+ 1188 004f 3A       		.uleb128 0x3a
+ 1189 0050 0B       		.uleb128 0xb
+ 1190 0051 3B       		.uleb128 0x3b
+ 1191 0052 05       		.uleb128 0x5
+ 1192 0053 49       		.uleb128 0x49
+ 1193 0054 13       		.uleb128 0x13
+ 1194 0055 38       		.uleb128 0x38
+ 1195 0056 0A       		.uleb128 0xa
+ 1196 0057 00       		.byte	0
+ 1197 0058 00       		.byte	0
+ 1198 0059 08       		.uleb128 0x8
+ 1199 005a 0D       		.uleb128 0xd
+ 1200 005b 00       		.byte	0
+ 1201 005c 03       		.uleb128 0x3
+ 1202 005d 08       		.uleb128 0x8
+ 1203 005e 3A       		.uleb128 0x3a
+ 1204 005f 0B       		.uleb128 0xb
+ 1205 0060 3B       		.uleb128 0x3b
+ 1206 0061 05       		.uleb128 0x5
+ 1207 0062 49       		.uleb128 0x49
+ 1208 0063 13       		.uleb128 0x13
+ 1209 0064 38       		.uleb128 0x38
+ 1210 0065 0A       		.uleb128 0xa
+ 1211 0066 00       		.byte	0
+ 1212 0067 00       		.byte	0
+ 1213 0068 09       		.uleb128 0x9
+ 1214 0069 01       		.uleb128 0x1
+ 1215 006a 01       		.byte	0x1
+ 1216 006b 49       		.uleb128 0x49
+ 1217 006c 13       		.uleb128 0x13
+ 1218 006d 01       		.uleb128 0x1
+ 1219 006e 13       		.uleb128 0x13
+ 1220 006f 00       		.byte	0
+ 1221 0070 00       		.byte	0
+ 1222 0071 0A       		.uleb128 0xa
+ 1223 0072 21       		.uleb128 0x21
+ 1224 0073 00       		.byte	0
+ 1225 0074 49       		.uleb128 0x49
+ 1226 0075 13       		.uleb128 0x13
+ 1227 0076 2F       		.uleb128 0x2f
+ 1228 0077 0B       		.uleb128 0xb
+ 1229 0078 00       		.byte	0
+ 1230 0079 00       		.byte	0
+ 1231 007a 0B       		.uleb128 0xb
+ 1232 007b 35       		.uleb128 0x35
+ 1233 007c 00       		.byte	0
+ 1234 007d 49       		.uleb128 0x49
+ 1235 007e 13       		.uleb128 0x13
+ 1236 007f 00       		.byte	0
+ 1237 0080 00       		.byte	0
+ 1238 0081 0C       		.uleb128 0xc
+ 1239 0082 16       		.uleb128 0x16
+ 1240 0083 00       		.byte	0
+ 1241 0084 03       		.uleb128 0x3
+ 1242 0085 0E       		.uleb128 0xe
+ 1243 0086 3A       		.uleb128 0x3a
+ 1244 0087 0B       		.uleb128 0xb
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 37
+
+
+ 1245 0088 3B       		.uleb128 0x3b
+ 1246 0089 05       		.uleb128 0x5
+ 1247 008a 49       		.uleb128 0x49
+ 1248 008b 13       		.uleb128 0x13
+ 1249 008c 00       		.byte	0
+ 1250 008d 00       		.byte	0
+ 1251 008e 0D       		.uleb128 0xd
+ 1252 008f 13       		.uleb128 0x13
+ 1253 0090 01       		.byte	0x1
+ 1254 0091 0B       		.uleb128 0xb
+ 1255 0092 0B       		.uleb128 0xb
+ 1256 0093 3A       		.uleb128 0x3a
+ 1257 0094 0B       		.uleb128 0xb
+ 1258 0095 3B       		.uleb128 0x3b
+ 1259 0096 05       		.uleb128 0x5
+ 1260 0097 01       		.uleb128 0x1
+ 1261 0098 13       		.uleb128 0x13
+ 1262 0099 00       		.byte	0
+ 1263 009a 00       		.byte	0
+ 1264 009b 0E       		.uleb128 0xe
+ 1265 009c 26       		.uleb128 0x26
+ 1266 009d 00       		.byte	0
+ 1267 009e 49       		.uleb128 0x49
+ 1268 009f 13       		.uleb128 0x13
+ 1269 00a0 00       		.byte	0
+ 1270 00a1 00       		.byte	0
+ 1271 00a2 0F       		.uleb128 0xf
+ 1272 00a3 2E       		.uleb128 0x2e
+ 1273 00a4 00       		.byte	0
+ 1274 00a5 03       		.uleb128 0x3
+ 1275 00a6 0E       		.uleb128 0xe
+ 1276 00a7 3A       		.uleb128 0x3a
+ 1277 00a8 0B       		.uleb128 0xb
+ 1278 00a9 3B       		.uleb128 0x3b
+ 1279 00aa 05       		.uleb128 0x5
+ 1280 00ab 27       		.uleb128 0x27
+ 1281 00ac 0C       		.uleb128 0xc
+ 1282 00ad 20       		.uleb128 0x20
+ 1283 00ae 0B       		.uleb128 0xb
+ 1284 00af 00       		.byte	0
+ 1285 00b0 00       		.byte	0
+ 1286 00b1 10       		.uleb128 0x10
+ 1287 00b2 2E       		.uleb128 0x2e
+ 1288 00b3 00       		.byte	0
+ 1289 00b4 3F       		.uleb128 0x3f
+ 1290 00b5 0C       		.uleb128 0xc
+ 1291 00b6 03       		.uleb128 0x3
+ 1292 00b7 0E       		.uleb128 0xe
+ 1293 00b8 3A       		.uleb128 0x3a
+ 1294 00b9 0B       		.uleb128 0xb
+ 1295 00ba 3B       		.uleb128 0x3b
+ 1296 00bb 0B       		.uleb128 0xb
+ 1297 00bc 27       		.uleb128 0x27
+ 1298 00bd 0C       		.uleb128 0xc
+ 1299 00be 11       		.uleb128 0x11
+ 1300 00bf 01       		.uleb128 0x1
+ 1301 00c0 12       		.uleb128 0x12
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 38
+
+
+ 1302 00c1 01       		.uleb128 0x1
+ 1303 00c2 40       		.uleb128 0x40
+ 1304 00c3 0A       		.uleb128 0xa
+ 1305 00c4 9742     		.uleb128 0x2117
+ 1306 00c6 0C       		.uleb128 0xc
+ 1307 00c7 00       		.byte	0
+ 1308 00c8 00       		.byte	0
+ 1309 00c9 11       		.uleb128 0x11
+ 1310 00ca 2E       		.uleb128 0x2e
+ 1311 00cb 01       		.byte	0x1
+ 1312 00cc 3F       		.uleb128 0x3f
+ 1313 00cd 0C       		.uleb128 0xc
+ 1314 00ce 03       		.uleb128 0x3
+ 1315 00cf 0E       		.uleb128 0xe
+ 1316 00d0 3A       		.uleb128 0x3a
+ 1317 00d1 0B       		.uleb128 0xb
+ 1318 00d2 3B       		.uleb128 0x3b
+ 1319 00d3 0B       		.uleb128 0xb
+ 1320 00d4 27       		.uleb128 0x27
+ 1321 00d5 0C       		.uleb128 0xc
+ 1322 00d6 11       		.uleb128 0x11
+ 1323 00d7 01       		.uleb128 0x1
+ 1324 00d8 12       		.uleb128 0x12
+ 1325 00d9 01       		.uleb128 0x1
+ 1326 00da 40       		.uleb128 0x40
+ 1327 00db 06       		.uleb128 0x6
+ 1328 00dc 9742     		.uleb128 0x2117
+ 1329 00de 0C       		.uleb128 0xc
+ 1330 00df 01       		.uleb128 0x1
+ 1331 00e0 13       		.uleb128 0x13
+ 1332 00e1 00       		.byte	0
+ 1333 00e2 00       		.byte	0
+ 1334 00e3 12       		.uleb128 0x12
+ 1335 00e4 1D       		.uleb128 0x1d
+ 1336 00e5 00       		.byte	0
+ 1337 00e6 31       		.uleb128 0x31
+ 1338 00e7 13       		.uleb128 0x13
+ 1339 00e8 11       		.uleb128 0x11
+ 1340 00e9 01       		.uleb128 0x1
+ 1341 00ea 12       		.uleb128 0x12
+ 1342 00eb 01       		.uleb128 0x1
+ 1343 00ec 58       		.uleb128 0x58
+ 1344 00ed 0B       		.uleb128 0xb
+ 1345 00ee 59       		.uleb128 0x59
+ 1346 00ef 0B       		.uleb128 0xb
+ 1347 00f0 00       		.byte	0
+ 1348 00f1 00       		.byte	0
+ 1349 00f2 13       		.uleb128 0x13
+ 1350 00f3 34       		.uleb128 0x34
+ 1351 00f4 00       		.byte	0
+ 1352 00f5 03       		.uleb128 0x3
+ 1353 00f6 0E       		.uleb128 0xe
+ 1354 00f7 3A       		.uleb128 0x3a
+ 1355 00f8 0B       		.uleb128 0xb
+ 1356 00f9 3B       		.uleb128 0x3b
+ 1357 00fa 0B       		.uleb128 0xb
+ 1358 00fb 49       		.uleb128 0x49
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 39
+
+
+ 1359 00fc 13       		.uleb128 0x13
+ 1360 00fd 3F       		.uleb128 0x3f
+ 1361 00fe 0C       		.uleb128 0xc
+ 1362 00ff 3C       		.uleb128 0x3c
+ 1363 0100 0C       		.uleb128 0xc
+ 1364 0101 00       		.byte	0
+ 1365 0102 00       		.byte	0
+ 1366 0103 14       		.uleb128 0x14
+ 1367 0104 34       		.uleb128 0x34
+ 1368 0105 00       		.byte	0
+ 1369 0106 03       		.uleb128 0x3
+ 1370 0107 0E       		.uleb128 0xe
+ 1371 0108 3A       		.uleb128 0x3a
+ 1372 0109 0B       		.uleb128 0xb
+ 1373 010a 3B       		.uleb128 0x3b
+ 1374 010b 0B       		.uleb128 0xb
+ 1375 010c 49       		.uleb128 0x49
+ 1376 010d 13       		.uleb128 0x13
+ 1377 010e 3F       		.uleb128 0x3f
+ 1378 010f 0C       		.uleb128 0xc
+ 1379 0110 02       		.uleb128 0x2
+ 1380 0111 0A       		.uleb128 0xa
+ 1381 0112 00       		.byte	0
+ 1382 0113 00       		.byte	0
+ 1383 0114 00       		.byte	0
+ 1384              		.section	.debug_loc,"",%progbits
+ 1385              	.Ldebug_loc0:
+ 1386              	.LLST0:
+ 1387 0000 04000000 		.4byte	.LFB64-.Ltext0
+ 1388 0004 06000000 		.4byte	.LCFI0-.Ltext0
+ 1389 0008 0200     		.2byte	0x2
+ 1390 000a 7D       		.byte	0x7d
+ 1391 000b 00       		.sleb128 0
+ 1392 000c 06000000 		.4byte	.LCFI0-.Ltext0
+ 1393 0010 DC000000 		.4byte	.LFE64-.Ltext0
+ 1394 0014 0200     		.2byte	0x2
+ 1395 0016 7D       		.byte	0x7d
+ 1396 0017 08       		.sleb128 8
+ 1397 0018 00000000 		.4byte	0
+ 1398 001c 00000000 		.4byte	0
+ 1399              		.section	.debug_aranges,"",%progbits
+ 1400 0000 1C000000 		.4byte	0x1c
+ 1401 0004 0200     		.2byte	0x2
+ 1402 0006 00000000 		.4byte	.Ldebug_info0
+ 1403 000a 04       		.byte	0x4
+ 1404 000b 00       		.byte	0
+ 1405 000c 0000     		.2byte	0
+ 1406 000e 0000     		.2byte	0
+ 1407 0010 00000000 		.4byte	.Ltext0
+ 1408 0014 DC000000 		.4byte	.Letext0-.Ltext0
+ 1409 0018 00000000 		.4byte	0
+ 1410 001c 00000000 		.4byte	0
+ 1411              		.section	.debug_line,"",%progbits
+ 1412              	.Ldebug_line0:
+ 1413 0000 76010000 		.section	.debug_str,"MS",%progbits,1
+ 1413      02003101 
+ 1413      00000201 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 40
+
+
+ 1413      FB0E0D00 
+ 1413      01010101 
+ 1414              	.LASF43:
+ 1415 0000 5352414D 		.ascii	"SRAMNSSET\000"
+ 1415      4E535345 
+ 1415      5400
+ 1416              	.LASF22:
+ 1417 000a 49414252 		.ascii	"IABR\000"
+ 1417      00
+ 1418              	.LASF24:
+ 1419 000f 49544E53 		.ascii	"ITNS\000"
+ 1419      00
+ 1420              	.LASF51:
+ 1421 0014 4750494F 		.ascii	"GPIOVSRC\000"
+ 1421      56535243 
+ 1421      00
+ 1422              	.LASF62:
+ 1423 001d 53443156 		.ascii	"SD1VA\000"
+ 1423      4100
+ 1424              	.LASF73:
+ 1425 0023 464C4153 		.ascii	"FLASHVSRC\000"
+ 1425      48565352 
+ 1425      4300
+ 1426              	.LASF84:
+ 1427 002d 4E534D56 		.ascii	"NSMVAL\000"
+ 1427      414C00
+ 1428              	.LASF55:
+ 1429 0034 55534248 		.ascii	"USBHVSRC\000"
+ 1429      56535243 
+ 1429      00
+ 1430              	.LASF42:
+ 1431 003d 494F4E53 		.ascii	"IONSSET\000"
+ 1431      53455400 
+ 1432              	.LASF2:
+ 1433 0045 73686F72 		.ascii	"short int\000"
+ 1433      7420696E 
+ 1433      7400
+ 1434              	.LASF10:
+ 1435 004f 73697A65 		.ascii	"sizetype\000"
+ 1435      74797065 
+ 1435      00
+ 1436              	.LASF54:
+ 1437 0058 45424956 		.ascii	"EBIVA\000"
+ 1437      4100
+ 1438              	.LASF46:
+ 1439 005e 5356494E 		.ascii	"SVINTSTS\000"
+ 1439      54535453 
+ 1439      00
+ 1440              	.LASF47:
+ 1441 0067 41504230 		.ascii	"APB0VSRC\000"
+ 1441      56535243 
+ 1441      00
+ 1442              	.LASF57:
+ 1443 0070 43524356 		.ascii	"CRCVSRC\000"
+ 1443      53524300 
+ 1444              	.LASF12:
+ 1445 0078 5F5F7569 		.ascii	"__uint32_t\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 41
+
+
+ 1445      6E743332 
+ 1445      5F7400
+ 1446              	.LASF82:
+ 1447 0083 4E534D43 		.ascii	"NSMCTL\000"
+ 1447      544C00
+ 1448              	.LASF67:
+ 1449 008a 5352414D 		.ascii	"SRAM0VSRC\000"
+ 1449      30565352 
+ 1449      4300
+ 1450              	.LASF27:
+ 1451 0094 43505549 		.ascii	"CPUID\000"
+ 1451      4400
+ 1452              	.LASF94:
+ 1453 009a 474E5520 		.ascii	"GNU C11 5.4.1 20160919 (release) [ARM/embedded-5-br"
+ 1453      43313120 
+ 1453      352E342E 
+ 1453      31203230 
+ 1453      31363039 
+ 1454 00cd 616E6368 		.ascii	"anch revision 240496] -mthumb -mapcs-frame -march=a"
+ 1454      20726576 
+ 1454      6973696F 
+ 1454      6E203234 
+ 1454      30343936 
+ 1455 0100 726D7638 		.ascii	"rmv8-m.base -mcmse -gdwarf-2 -O\000"
+ 1455      2D6D2E62 
+ 1455      61736520 
+ 1455      2D6D636D 
+ 1455      7365202D 
+ 1456              	.LASF65:
+ 1457 0120 50444D41 		.ascii	"PDMA1VSRC\000"
+ 1457      31565352 
+ 1457      4300
+ 1458              	.LASF14:
+ 1459 012a 49534552 		.ascii	"ISER\000"
+ 1459      00
+ 1460              	.LASF34:
+ 1461 012f 5343425F 		.ascii	"SCB_Type\000"
+ 1461      54797065 
+ 1461      00
+ 1462              	.LASF44:
+ 1463 0138 464E5341 		.ascii	"FNSADDR\000"
+ 1463      44445200 
+ 1464              	.LASF79:
+ 1465 0140 43525054 		.ascii	"CRPTVSRC\000"
+ 1465      56535243 
+ 1465      00
+ 1466              	.LASF70:
+ 1467 0149 5352414D 		.ascii	"SRAM1VA\000"
+ 1467      31564100 
+ 1468              	.LASF71:
+ 1469 0151 464D4356 		.ascii	"FMCVSRC\000"
+ 1469      53524300 
+ 1470              	.LASF28:
+ 1471 0159 49435352 		.ascii	"ICSR\000"
+ 1471      00
+ 1472              	.LASF17:
+ 1473 015e 52534552 		.ascii	"RSERVED1\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 42
+
+
+ 1473      56454431 
+ 1473      00
+ 1474              	.LASF6:
+ 1475 0167 6C6F6E67 		.ascii	"long long int\000"
+ 1475      206C6F6E 
+ 1475      6720696E 
+ 1475      7400
+ 1476              	.LASF56:
+ 1477 0175 55534248 		.ascii	"USBHVA\000"
+ 1477      564100
+ 1478              	.LASF59:
+ 1479 017c 53443056 		.ascii	"SD0VSRC\000"
+ 1479      53524300 
+ 1480              	.LASF80:
+ 1481 0184 43525054 		.ascii	"CRPTVA\000"
+ 1481      564100
+ 1482              	.LASF93:
+ 1483 018b 67617533 		.ascii	"gau32ClkSrcTbl\000"
+ 1483      32436C6B 
+ 1483      53726354 
+ 1483      626C00
+ 1484              	.LASF4:
+ 1485 019a 6C6F6E67 		.ascii	"long int\000"
+ 1485      20696E74 
+ 1485      00
+ 1486              	.LASF92:
+ 1487 01a3 675F7066 		.ascii	"g_pfnVectors\000"
+ 1487      6E566563 
+ 1487      746F7273 
+ 1487      00
+ 1488              	.LASF77:
+ 1489 01b0 53595356 		.ascii	"SYSVSRC\000"
+ 1489      53524300 
+ 1490              	.LASF68:
+ 1491 01b8 5352414D 		.ascii	"SRAM0VA\000"
+ 1491      30564100 
+ 1492              	.LASF95:
+ 1493 01c0 7372632F 		.ascii	"src/system_TC8234.c\000"
+ 1493      73797374 
+ 1493      656D5F54 
+ 1493      43383233 
+ 1493      342E6300 
+ 1494              	.LASF60:
+ 1495 01d4 53443056 		.ascii	"SD0VA\000"
+ 1495      4100
+ 1496              	.LASF66:
+ 1497 01da 50444D41 		.ascii	"PDMA1VA\000"
+ 1497      31564100 
+ 1498              	.LASF64:
+ 1499 01e2 50444D41 		.ascii	"PDMA0VA\000"
+ 1499      30564100 
+ 1500              	.LASF9:
+ 1501 01ea 6C6F6E67 		.ascii	"long double\000"
+ 1501      20646F75 
+ 1501      626C6500 
+ 1502              	.LASF13:
+ 1503 01f6 75696E74 		.ascii	"uint32_t\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 43
+
+
+ 1503      33325F74 
+ 1503      00
+ 1504              	.LASF30:
+ 1505 01ff 41495243 		.ascii	"AIRCR\000"
+ 1505      5200
+ 1506              	.LASF1:
+ 1507 0205 756E7369 		.ascii	"unsigned char\000"
+ 1507      676E6564 
+ 1507      20636861 
+ 1507      7200
+ 1508              	.LASF49:
+ 1509 0213 41504231 		.ascii	"APB1VSRC\000"
+ 1509      56535243 
+ 1509      00
+ 1510              	.LASF85:
+ 1511 021c 4E534D53 		.ascii	"NSMSTS\000"
+ 1511      545300
+ 1512              	.LASF35:
+ 1513 0223 4354524C 		.ascii	"CTRL\000"
+ 1513      00
+ 1514              	.LASF26:
+ 1515 0228 4E564943 		.ascii	"NVIC_Type\000"
+ 1515      5F547970 
+ 1515      6500
+ 1516              	.LASF20:
+ 1517 0232 49435052 		.ascii	"ICPR\000"
+ 1517      00
+ 1518              	.LASF0:
+ 1519 0237 7369676E 		.ascii	"signed char\000"
+ 1519      65642063 
+ 1519      68617200 
+ 1520              	.LASF32:
+ 1521 0243 53485052 		.ascii	"SHPR\000"
+ 1521      00
+ 1522              	.LASF7:
+ 1523 0248 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1523      206C6F6E 
+ 1523      6720756E 
+ 1523      7369676E 
+ 1523      65642069 
+ 1524              	.LASF33:
+ 1525 025f 53484353 		.ascii	"SHCSR\000"
+ 1525      5200
+ 1526              	.LASF69:
+ 1527 0265 5352414D 		.ascii	"SRAM1VSRC\000"
+ 1527      31565352 
+ 1527      4300
+ 1528              	.LASF8:
+ 1529 026f 756E7369 		.ascii	"unsigned int\000"
+ 1529      676E6564 
+ 1529      20696E74 
+ 1529      00
+ 1530              	.LASF50:
+ 1531 027c 41504231 		.ascii	"APB1VA\000"
+ 1531      564100
+ 1532              	.LASF16:
+ 1533 0283 49434552 		.ascii	"ICER\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 44
+
+
+ 1533      00
+ 1534              	.LASF98:
+ 1535 0288 53797374 		.ascii	"SystemInit\000"
+ 1535      656D496E 
+ 1535      697400
+ 1536              	.LASF61:
+ 1537 0293 53443156 		.ascii	"SD1VSRC\000"
+ 1537      53524300 
+ 1538              	.LASF87:
+ 1539 029b 49444155 		.ascii	"IDAUANS\000"
+ 1539      414E5300 
+ 1540              	.LASF72:
+ 1541 02a3 464D4356 		.ascii	"FMCVA\000"
+ 1541      4100
+ 1542              	.LASF89:
+ 1543 02a9 5343555F 		.ascii	"SCU_Setup\000"
+ 1543      53657475 
+ 1543      7000
+ 1544              	.LASF11:
+ 1545 02b3 63686172 		.ascii	"char\000"
+ 1545      00
+ 1546              	.LASF91:
+ 1547 02b8 4379636C 		.ascii	"CyclesPerUs\000"
+ 1547      65735065 
+ 1547      72557300 
+ 1548              	.LASF29:
+ 1549 02c4 56544F52 		.ascii	"VTOR\000"
+ 1549      00
+ 1550              	.LASF97:
+ 1551 02c9 53797374 		.ascii	"SystemCoreClockUpdate\000"
+ 1551      656D436F 
+ 1551      7265436C 
+ 1551      6F636B55 
+ 1551      70646174 
+ 1552              	.LASF74:
+ 1553 02df 464C4153 		.ascii	"FLASHVA\000"
+ 1553      48564100 
+ 1554              	.LASF18:
+ 1555 02e7 49535052 		.ascii	"ISPR\000"
+ 1555      00
+ 1556              	.LASF3:
+ 1557 02ec 73686F72 		.ascii	"short unsigned int\000"
+ 1557      7420756E 
+ 1557      7369676E 
+ 1557      65642069 
+ 1557      6E7400
+ 1558              	.LASF48:
+ 1559 02ff 41504230 		.ascii	"APB0VA\000"
+ 1559      564100
+ 1560              	.LASF58:
+ 1561 0306 43524356 		.ascii	"CRCVA\000"
+ 1561      4100
+ 1562              	.LASF88:
+ 1563 030c 5343555F 		.ascii	"SCU_T\000"
+ 1563      5400
+ 1564              	.LASF15:
+ 1565 0312 52455345 		.ascii	"RESERVED0\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 45
+
+
+ 1565      52564544 
+ 1565      3000
+ 1566              	.LASF31:
+ 1567 031c 52455345 		.ascii	"RESERVED1\000"
+ 1567      52564544 
+ 1567      3100
+ 1568              	.LASF19:
+ 1569 0326 52455345 		.ascii	"RESERVED2\000"
+ 1569      52564544 
+ 1569      3200
+ 1570              	.LASF21:
+ 1571 0330 52455345 		.ascii	"RESERVED3\000"
+ 1571      52564544 
+ 1571      3300
+ 1572              	.LASF23:
+ 1573 033a 52455345 		.ascii	"RESERVED4\000"
+ 1573      52564544 
+ 1573      3400
+ 1574              	.LASF25:
+ 1575 0344 52455345 		.ascii	"RESERVED5\000"
+ 1575      52564544 
+ 1575      3500
+ 1576              	.LASF5:
+ 1577 034e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1577      20756E73 
+ 1577      69676E65 
+ 1577      6420696E 
+ 1577      7400
+ 1578              	.LASF36:
+ 1579 0360 54595045 		.ascii	"TYPE\000"
+ 1579      00
+ 1580              	.LASF39:
+ 1581 0365 5341555F 		.ascii	"SAU_Type\000"
+ 1581      54797065 
+ 1581      00
+ 1582              	.LASF40:
+ 1583 036e 504E5353 		.ascii	"PNSSET\000"
+ 1583      455400
+ 1584              	.LASF38:
+ 1585 0375 524C4152 		.ascii	"RLAR\000"
+ 1585      00
+ 1586              	.LASF45:
+ 1587 037a 5356494F 		.ascii	"SVIOIEN\000"
+ 1587      49454E00 
+ 1588              	.LASF78:
+ 1589 0382 53595356 		.ascii	"SYSVA\000"
+ 1589      4100
+ 1590              	.LASF41:
+ 1591 0388 52455345 		.ascii	"RESERVE0\000"
+ 1591      52564530 
+ 1591      00
+ 1592              	.LASF81:
+ 1593 0391 52455345 		.ascii	"RESERVE1\000"
+ 1593      52564531 
+ 1593      00
+ 1594              	.LASF86:
+ 1595 039a 52455345 		.ascii	"RESERVE2\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 46
+
+
+ 1595      52564532 
+ 1595      00
+ 1596              	.LASF37:
+ 1597 03a3 52424152 		.ascii	"RBAR\000"
+ 1597      00
+ 1598              	.LASF63:
+ 1599 03a8 50444D41 		.ascii	"PDMA0VSRC\000"
+ 1599      30565352 
+ 1599      4300
+ 1600              	.LASF52:
+ 1601 03b2 4750494F 		.ascii	"GPIOVA\000"
+ 1601      564100
+ 1602              	.LASF76:
+ 1603 03b9 53435556 		.ascii	"SCUVA\000"
+ 1603      4100
+ 1604              	.LASF96:
+ 1605 03bf 433A5C55 		.ascii	"C:\\Users\\CCMA\\workspace\\TrustZoneSecureGccUv\000"
+ 1605      73657273 
+ 1605      5C43434D 
+ 1605      415C776F 
+ 1605      726B7370 
+ 1606              	.LASF75:
+ 1607 03ec 53435556 		.ascii	"SCUVSRC\000"
+ 1607      53524300 
+ 1608              	.LASF53:
+ 1609 03f4 45424956 		.ascii	"EBIVSRC\000"
+ 1609      53524300 
+ 1610              	.LASF83:
+ 1611 03fc 4E534D4C 		.ascii	"NSMLOAD\000"
+ 1611      4F414400 
+ 1612              	.LASF90:
+ 1613 0404 545A5F53 		.ascii	"TZ_SAU_Setup\000"
+ 1613      41555F53 
+ 1613      65747570 
+ 1613      00
+ 1614              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160919 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s 			page 47
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 system_TC8234.c
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:19     .text:00000000 $t
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:24     .text:00000000 SystemCoreClockUpdate
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:43     .text:00000004 SystemInit
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:164    .text:0000009c $d
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:188    .rodata:00000000 gau32ClkSrcTbl
+C:\Users\CCMA\AppData\Local\Temp\ccj2Trpx.s:185    .rodata:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+g_pfnVectors
