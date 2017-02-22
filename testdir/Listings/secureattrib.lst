@@ -1,0 +1,935 @@
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.arch armv8-m.base
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 6
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SecureAttrib.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	idau_ref
+  20              		.bss
+  21              		.align	2
+  22              		.type	idau_ref, %object
+  23              		.size	idau_ref, 760
+  24              	idau_ref:
+  25 0000 00000000 		.space	760
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  26              		.text
+  27              		.align	2
+  28              		.global	SecureAttrib
+  29              		.code	16
+  30              		.thumb_func
+  31              		.type	SecureAttrib, %function
+  32              	SecureAttrib:
+  33              	.LFB70:
+  34              		.file 1 "src/SecureAttrib.c"
+   1:src/SecureAttrib.c **** /*-------------------------------------------------------------------------------------------------
+   2:src/SecureAttrib.c **** /*                                                                                                 
+   3:src/SecureAttrib.c **** /* Copyright (c) Nuvoton Technology Corp. All rights reserved.                                     
+   4:src/SecureAttrib.c **** /*                                                                                                 
+   5:src/SecureAttrib.c **** /*-------------------------------------------------------------------------------------------------
+   6:src/SecureAttrib.c **** #include <stdio.h>
+   7:src/SecureAttrib.c **** #include <arm_cmse.h>
+   8:src/SecureAttrib.c **** #include "TC8234.h"
+   9:src/SecureAttrib.c **** 
+  10:src/SecureAttrib.c **** //#define FOR_SIMULATION
+  11:src/SecureAttrib.c **** #ifdef FOR_SIMULATION
+  12:src/SecureAttrib.c **** #define DbgPrintf(...)
+  13:src/SecureAttrib.c **** #else
+  14:src/SecureAttrib.c **** #define DbgPrintf printf
+  15:src/SecureAttrib.c **** #endif
+  16:src/SecureAttrib.c **** 
+  17:src/SecureAttrib.c **** #if 0 // Bit definition of TT return data
+  18:src/SecureAttrib.c **** typedef union
+  19:src/SecureAttrib.c **** {
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 2
+
+
+  20:src/SecureAttrib.c ****     struct cmse_address_info
+  21:src/SecureAttrib.c ****     {
+  22:src/SecureAttrib.c ****         unsigned mpu_region: 8;            /*bit 31-24*/
+  23:src/SecureAttrib.c ****         unsigned sau_region: 8;            /*bit 23-16*/
+  24:src/SecureAttrib.c ****         unsigned mpu_region_valid: 1;      /*bit 15-15*/
+  25:src/SecureAttrib.c ****         unsigned sau_region_valid: 1;      /*bit 14-14*/
+  26:src/SecureAttrib.c ****         unsigned read_ok: 1;               /*bit 13-13*/
+  27:src/SecureAttrib.c ****         unsigned readwrite_ok: 1;          /*bit 12-12*/
+  28:src/SecureAttrib.c ****         unsigned nonsecure_read_ok: 1;     /*bit 11-11*/
+  29:src/SecureAttrib.c ****         unsigned nonsecure_readwrite_ok: 1; /*bit 10-10*/
+  30:src/SecureAttrib.c ****         unsigned secure: 1;                /*bit 09-09*/
+  31:src/SecureAttrib.c ****         unsigned idau_region_valid: 1;     /*bit 08-08*/
+  32:src/SecureAttrib.c ****         unsigned idau_region: 8;           /*bit 07-00*/
+  33:src/SecureAttrib.c ****     } flags;
+  34:src/SecureAttrib.c ****     unsigned value;
+  35:src/SecureAttrib.c **** } cmse_address_info_t;
+  36:src/SecureAttrib.c **** #endif
+  37:src/SecureAttrib.c **** 
+  38:src/SecureAttrib.c **** /* Golden pattern for IDAU based on DTS IDAU memory map */
+  39:src/SecureAttrib.c **** cmse_address_info_t idau_ref[190] =
+  40:src/SecureAttrib.c **** {
+  41:src/SecureAttrib.c **** #if 0
+  42:src/SecureAttrib.c ****     /* NA, NA, NA, NA, sr, sw, nsr, nsw, ns, NA, region */
+  43:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0},
+  44:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 16},
+  45:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1},
+  46:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 2},
+  47:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 17},
+  48:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 3},
+  49:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 4},
+  50:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 5},
+  51:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 6},
+  52:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 7},
+  53:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 8},
+  54:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 9},
+  55:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 10},
+  56:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 11},
+  57:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 12},
+  58:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 13},
+  59:src/SecureAttrib.c ****     {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 99},
+  60:src/SecureAttrib.c **** #endif
+  61:src/SecureAttrib.c **** };
+  62:src/SecureAttrib.c **** 
+  63:src/SecureAttrib.c **** void SecureAttrib(void)
+  64:src/SecureAttrib.c **** {
+  35              		.loc 1 64 0
+  36              		.cfi_startproc
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 1, uses_anonymous_args = 0
+  39 0000 80B5     		push	{r7, lr}
+  40              	.LCFI0:
+  41              		.cfi_def_cfa_offset 8
+  42              		.cfi_offset 7, -8
+  43              		.cfi_offset 14, -4
+  44 0002 00AF     		add	r7, sp, #0
+  45              	.LCFI1:
+  46              		.cfi_def_cfa_register 7
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 3
+
+
+  65:src/SecureAttrib.c **** #if 0
+  66:src/SecureAttrib.c ****     uint32_t u32Addr, u32PageSize;
+  67:src/SecureAttrib.c ****     cmse_address_info_t info;
+  68:src/SecureAttrib.c ****     int32_t idau, sau;
+  69:src/SecureAttrib.c ****     int32_t i, i32Err;
+  70:src/SecureAttrib.c **** 
+  71:src/SecureAttrib.c ****     i32Err = 0;
+  72:src/SecureAttrib.c ****     i = 0;
+  73:src/SecureAttrib.c ****     idau = -1;
+  74:src/SecureAttrib.c ****     sau = -1;
+  75:src/SecureAttrib.c ****     u32PageSize = 0x400;
+  76:src/SecureAttrib.c ****     for(u32Addr = 0; u32Addr < 0xFFFFEFFFul; u32Addr += u32PageSize)
+  77:src/SecureAttrib.c ****     {
+  78:src/SecureAttrib.c ****         info = cmse_TT((void *)u32Addr);
+  79:src/SecureAttrib.c **** 
+  80:src/SecureAttrib.c ****         if(info.flags.sau_region_valid && 1)
+  81:src/SecureAttrib.c ****         {
+  82:src/SecureAttrib.c ****             if(sau != info.flags.sau_region)
+  83:src/SecureAttrib.c ****             {
+  84:src/SecureAttrib.c ****                 //printf("[0x%08x] sau %d\n", u32Addr, info.flags.sau_region);
+  85:src/SecureAttrib.c ****                 printf("[0x%08x] sau %02d Secure=%d Secure(R:%d W:%d) Non-secure(R:%d W:%d)\n", u32
+  86:src/SecureAttrib.c ****                        info.flags.sau_region, info.flags.secure, info.flags.read_ok, info.flags.rea
+  87:src/SecureAttrib.c ****                        info.flags.nonsecure_read_ok, info.flags.nonsecure_readwrite_ok);
+  88:src/SecureAttrib.c **** 
+  89:src/SecureAttrib.c ****                 sau = info.flags.sau_region;
+  90:src/SecureAttrib.c ****             }
+  91:src/SecureAttrib.c ****         }
+  92:src/SecureAttrib.c **** 
+  93:src/SecureAttrib.c ****         if(info.flags.idau_region_valid && 0)
+  94:src/SecureAttrib.c ****         {
+  95:src/SecureAttrib.c ****             if(idau != info.flags.idau_region)
+  96:src/SecureAttrib.c ****             {
+  97:src/SecureAttrib.c ****                 printf("[0x%08x] idau %02d Secure=%d Secure(R:%d W:%d) Non-secure(R:%d W:%d)\n", u3
+  98:src/SecureAttrib.c ****                        info.flags.idau_region, info.flags.secure, info.flags.read_ok, info.flags.re
+  99:src/SecureAttrib.c ****                        info.flags.nonsecure_read_ok, info.flags.nonsecure_readwrite_ok);
+ 100:src/SecureAttrib.c ****                 idau = info.flags.idau_region;
+ 101:src/SecureAttrib.c ****             }
+ 102:src/SecureAttrib.c ****         }
+ 103:src/SecureAttrib.c ****     }
+ 104:src/SecureAttrib.c **** 
+ 105:src/SecureAttrib.c **** 
+ 106:src/SecureAttrib.c ****     for(u32Addr = 0; u32Addr < 0xFFFFEFFFul; u32Addr += u32PageSize)
+ 107:src/SecureAttrib.c ****     {
+ 108:src/SecureAttrib.c ****         info = cmse_TT((void *)u32Addr);
+ 109:src/SecureAttrib.c **** 
+ 110:src/SecureAttrib.c ****         if(info.flags.sau_region_valid && 0)
+ 111:src/SecureAttrib.c ****         {
+ 112:src/SecureAttrib.c ****             if(sau != info.flags.sau_region)
+ 113:src/SecureAttrib.c ****             {
+ 114:src/SecureAttrib.c ****                 //printf("[0x%08x] sau %d\n", u32Addr, info.flags.sau_region);
+ 115:src/SecureAttrib.c ****                 printf("[0x%08x] sau %02d Secure=%d Secure(R:%d W:%d) Non-secure(R:%d W:%d)\n", u32
+ 116:src/SecureAttrib.c ****                        info.flags.sau_region, info.flags.secure, info.flags.read_ok, info.flags.rea
+ 117:src/SecureAttrib.c ****                        info.flags.nonsecure_read_ok, info.flags.nonsecure_readwrite_ok);
+ 118:src/SecureAttrib.c **** 
+ 119:src/SecureAttrib.c ****                 sau = info.flags.sau_region;
+ 120:src/SecureAttrib.c ****             }
+ 121:src/SecureAttrib.c ****         }
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 4
+
+
+ 122:src/SecureAttrib.c **** 
+ 123:src/SecureAttrib.c ****         if(info.flags.idau_region_valid && 1)
+ 124:src/SecureAttrib.c ****         {
+ 125:src/SecureAttrib.c ****             if(idau != info.flags.idau_region)
+ 126:src/SecureAttrib.c ****             {
+ 127:src/SecureAttrib.c ****                 printf("[0x%08x] idau %02d Secure=%d Secure(R:%d W:%d) Non-secure(R:%d W:%d)\n", u3
+ 128:src/SecureAttrib.c ****                        info.flags.idau_region, info.flags.secure, info.flags.read_ok, info.flags.re
+ 129:src/SecureAttrib.c ****                        info.flags.nonsecure_read_ok, info.flags.nonsecure_readwrite_ok);
+ 130:src/SecureAttrib.c ****                 idau = info.flags.idau_region;
+ 131:src/SecureAttrib.c ****             }
+ 132:src/SecureAttrib.c ****         }
+ 133:src/SecureAttrib.c ****     }
+ 134:src/SecureAttrib.c **** 
+ 135:src/SecureAttrib.c **** 
+ 136:src/SecureAttrib.c **** 
+ 137:src/SecureAttrib.c **** lexit:
+ 138:src/SecureAttrib.c **** 
+ 139:src/SecureAttrib.c ****     DbgPrintf("Secure Attribution Scan Done!\n");
+ 140:src/SecureAttrib.c **** 
+ 141:src/SecureAttrib.c ****     return ;
+ 142:src/SecureAttrib.c **** #endif
+ 143:src/SecureAttrib.c **** }
+  47              		.loc 1 143 0
+  48 0004 C046     		nop
+  49 0006 BD46     		mov	sp, r7
+  50              		@ sp needed
+  51 0008 80BD     		pop	{r7, pc}
+  52              		.cfi_endproc
+  53              	.LFE70:
+  54              		.size	SecureAttrib, .-SecureAttrib
+  55              	.Letext0:
+  56              		.file 2 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\machine\\_
+  57              		.file 3 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\arm-none-eabi\\include\\sys\\_stdi
+  58              		.file 4 "c:\\program files\\gnu tools arm embedded\\5.4 2016q3\\lib\\gcc\\arm-none-eabi\\5.4.1\\in
+  59              		.file 5 "src/system_TC8234.h"
+  60 000a C046     		.section	.debug_info,"",%progbits
+  61              	.Ldebug_info0:
+  62 0000 CA010000 		.4byte	0x1ca
+  63 0004 0200     		.2byte	0x2
+  64 0006 00000000 		.4byte	.Ldebug_abbrev0
+  65 000a 04       		.byte	0x4
+  66 000b 01       		.uleb128 0x1
+  67 000c 1F000000 		.4byte	.LASF30
+  68 0010 0C       		.byte	0xc
+  69 0011 9C010000 		.4byte	.LASF31
+  70 0015 E2000000 		.4byte	.LASF32
+  71 0019 00000000 		.4byte	.Ltext0
+  72 001d 0A000000 		.4byte	.Letext0
+  73 0021 00000000 		.4byte	.Ldebug_line0
+  74 0025 02       		.uleb128 0x2
+  75 0026 01       		.byte	0x1
+  76 0027 06       		.byte	0x6
+  77 0028 3D020000 		.4byte	.LASF0
+  78 002c 02       		.uleb128 0x2
+  79 002d 01       		.byte	0x1
+  80 002e 08       		.byte	0x8
+  81 002f 26010000 		.4byte	.LASF1
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 5
+
+
+  82 0033 02       		.uleb128 0x2
+  83 0034 02       		.byte	0x2
+  84 0035 05       		.byte	0x5
+  85 0036 01020000 		.4byte	.LASF2
+  86 003a 02       		.uleb128 0x2
+  87 003b 02       		.byte	0x2
+  88 003c 07       		.byte	0x7
+  89 003d 4E010000 		.4byte	.LASF3
+  90 0041 02       		.uleb128 0x2
+  91 0042 04       		.byte	0x4
+  92 0043 05       		.byte	0x5
+  93 0044 28020000 		.4byte	.LASF4
+  94 0048 03       		.uleb128 0x3
+  95 0049 7E010000 		.4byte	.LASF12
+  96 004d 02       		.byte	0x2
+  97 004e 41       		.byte	0x41
+  98 004f 53000000 		.4byte	0x53
+  99 0053 02       		.uleb128 0x2
+ 100 0054 04       		.byte	0x4
+ 101 0055 07       		.byte	0x7
+ 102 0056 3C010000 		.4byte	.LASF5
+ 103 005a 02       		.uleb128 0x2
+ 104 005b 08       		.byte	0x8
+ 105 005c 05       		.byte	0x5
+ 106 005d ED010000 		.4byte	.LASF6
+ 107 0061 02       		.uleb128 0x2
+ 108 0062 08       		.byte	0x8
+ 109 0063 07       		.byte	0x7
+ 110 0064 0F010000 		.4byte	.LASF7
+ 111 0068 04       		.uleb128 0x4
+ 112 0069 04       		.byte	0x4
+ 113 006a 05       		.byte	0x5
+ 114 006b 696E7400 		.ascii	"int\000"
+ 115 006f 02       		.uleb128 0x2
+ 116 0070 04       		.byte	0x4
+ 117 0071 07       		.byte	0x7
+ 118 0072 89010000 		.4byte	.LASF8
+ 119 0076 02       		.uleb128 0x2
+ 120 0077 08       		.byte	0x8
+ 121 0078 04       		.byte	0x4
+ 122 0079 31020000 		.4byte	.LASF9
+ 123 007d 02       		.uleb128 0x2
+ 124 007e 04       		.byte	0x4
+ 125 007f 07       		.byte	0x7
+ 126 0080 CC010000 		.4byte	.LASF10
+ 127 0084 02       		.uleb128 0x2
+ 128 0085 01       		.byte	0x1
+ 129 0086 08       		.byte	0x8
+ 130 0087 AF010000 		.4byte	.LASF11
+ 131 008b 03       		.uleb128 0x3
+ 132 008c 1F020000 		.4byte	.LASF13
+ 133 0090 03       		.byte	0x3
+ 134 0091 30       		.byte	0x30
+ 135 0092 48000000 		.4byte	0x48
+ 136 0096 05       		.uleb128 0x5
+ 137 0097 6C010000 		.4byte	.LASF33
+ 138 009b 04       		.byte	0x4
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 6
+
+
+ 139 009c 04       		.byte	0x4
+ 140 009d 4A       		.byte	0x4a
+ 141 009e 5E010000 		.4byte	0x15e
+ 142 00a2 06       		.uleb128 0x6
+ 143 00a3 61010000 		.4byte	.LASF14
+ 144 00a7 04       		.byte	0x4
+ 145 00a8 4B       		.byte	0x4b
+ 146 00a9 6F000000 		.4byte	0x6f
+ 147 00ad 04       		.byte	0x4
+ 148 00ae 08       		.byte	0x8
+ 149 00af 18       		.byte	0x18
+ 150 00b0 02       		.byte	0x2
+ 151 00b1 23       		.byte	0x23
+ 152 00b2 00       		.uleb128 0
+ 153 00b3 06       		.uleb128 0x6
+ 154 00b4 E2010000 		.4byte	.LASF15
+ 155 00b8 04       		.byte	0x4
+ 156 00b9 4D       		.byte	0x4d
+ 157 00ba 6F000000 		.4byte	0x6f
+ 158 00be 04       		.byte	0x4
+ 159 00bf 08       		.byte	0x8
+ 160 00c0 10       		.byte	0x10
+ 161 00c1 02       		.byte	0x2
+ 162 00c2 23       		.byte	0x23
+ 163 00c3 00       		.uleb128 0
+ 164 00c4 06       		.uleb128 0x6
+ 165 00c5 BB010000 		.4byte	.LASF16
+ 166 00c9 04       		.byte	0x4
+ 167 00ca 51       		.byte	0x51
+ 168 00cb 6F000000 		.4byte	0x6f
+ 169 00cf 04       		.byte	0x4
+ 170 00d0 01       		.byte	0x1
+ 171 00d1 0F       		.byte	0xf
+ 172 00d2 02       		.byte	0x2
+ 173 00d3 23       		.byte	0x23
+ 174 00d4 00       		.uleb128 0
+ 175 00d5 06       		.uleb128 0x6
+ 176 00d6 69020000 		.4byte	.LASF17
+ 177 00da 04       		.byte	0x4
+ 178 00db 53       		.byte	0x53
+ 179 00dc 6F000000 		.4byte	0x6f
+ 180 00e0 04       		.byte	0x4
+ 181 00e1 01       		.byte	0x1
+ 182 00e2 0E       		.byte	0xe
+ 183 00e3 02       		.byte	0x2
+ 184 00e4 23       		.byte	0x23
+ 185 00e5 00       		.uleb128 0
+ 186 00e6 06       		.uleb128 0x6
+ 187 00e7 34010000 		.4byte	.LASF18
+ 188 00eb 04       		.byte	0x4
+ 189 00ec 57       		.byte	0x57
+ 190 00ed 6F000000 		.4byte	0x6f
+ 191 00f1 04       		.byte	0x4
+ 192 00f2 01       		.byte	0x1
+ 193 00f3 0D       		.byte	0xd
+ 194 00f4 02       		.byte	0x2
+ 195 00f5 23       		.byte	0x23
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 7
+
+
+ 196 00f6 00       		.uleb128 0
+ 197 00f7 06       		.uleb128 0x6
+ 198 00f8 D5010000 		.4byte	.LASF19
+ 199 00fc 04       		.byte	0x4
+ 200 00fd 58       		.byte	0x58
+ 201 00fe 6F000000 		.4byte	0x6f
+ 202 0102 04       		.byte	0x4
+ 203 0103 01       		.byte	0x1
+ 204 0104 0C       		.byte	0xc
+ 205 0105 02       		.byte	0x2
+ 206 0106 23       		.byte	0x23
+ 207 0107 00       		.uleb128 0
+ 208 0108 06       		.uleb128 0x6
+ 209 0109 00000000 		.4byte	.LASF20
+ 210 010d 04       		.byte	0x4
+ 211 010e 5A       		.byte	0x5a
+ 212 010f 6F000000 		.4byte	0x6f
+ 213 0113 04       		.byte	0x4
+ 214 0114 01       		.byte	0x1
+ 215 0115 0B       		.byte	0xb
+ 216 0116 02       		.byte	0x2
+ 217 0117 23       		.byte	0x23
+ 218 0118 00       		.uleb128 0
+ 219 0119 06       		.uleb128 0x6
+ 220 011a 52020000 		.4byte	.LASF21
+ 221 011e 04       		.byte	0x4
+ 222 011f 5B       		.byte	0x5b
+ 223 0120 6F000000 		.4byte	0x6f
+ 224 0124 04       		.byte	0x4
+ 225 0125 01       		.byte	0x1
+ 226 0126 0A       		.byte	0xa
+ 227 0127 02       		.byte	0x2
+ 228 0128 23       		.byte	0x23
+ 229 0129 00       		.uleb128 0
+ 230 012a 06       		.uleb128 0x6
+ 231 012b B4010000 		.4byte	.LASF22
+ 232 012f 04       		.byte	0x4
+ 233 0130 5C       		.byte	0x5c
+ 234 0131 6F000000 		.4byte	0x6f
+ 235 0135 04       		.byte	0x4
+ 236 0136 01       		.byte	0x1
+ 237 0137 09       		.byte	0x9
+ 238 0138 02       		.byte	0x2
+ 239 0139 23       		.byte	0x23
+ 240 013a 00       		.uleb128 0
+ 241 013b 06       		.uleb128 0x6
+ 242 013c C4000000 		.4byte	.LASF23
+ 243 0140 04       		.byte	0x4
+ 244 0141 5D       		.byte	0x5d
+ 245 0142 6F000000 		.4byte	0x6f
+ 246 0146 04       		.byte	0x4
+ 247 0147 01       		.byte	0x1
+ 248 0148 08       		.byte	0x8
+ 249 0149 02       		.byte	0x2
+ 250 014a 23       		.byte	0x23
+ 251 014b 00       		.uleb128 0
+ 252 014c 06       		.uleb128 0x6
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 8
+
+
+ 253 014d D6000000 		.4byte	.LASF24
+ 254 0151 04       		.byte	0x4
+ 255 0152 5E       		.byte	0x5e
+ 256 0153 6F000000 		.4byte	0x6f
+ 257 0157 04       		.byte	0x4
+ 258 0158 08       		.byte	0x8
+ 259 0159 00       		.byte	0
+ 260 015a 02       		.byte	0x2
+ 261 015b 23       		.byte	0x23
+ 262 015c 00       		.uleb128 0
+ 263 015d 00       		.byte	0
+ 264 015e 07       		.uleb128 0x7
+ 265 015f 04       		.byte	0x4
+ 266 0160 04       		.byte	0x4
+ 267 0161 49       		.byte	0x49
+ 268 0162 7D010000 		.4byte	0x17d
+ 269 0166 08       		.uleb128 0x8
+ 270 0167 96010000 		.4byte	.LASF25
+ 271 016b 04       		.byte	0x4
+ 272 016c 62       		.byte	0x62
+ 273 016d 96000000 		.4byte	0x96
+ 274 0171 08       		.uleb128 0x8
+ 275 0172 FB010000 		.4byte	.LASF26
+ 276 0176 04       		.byte	0x4
+ 277 0177 63       		.byte	0x63
+ 278 0178 6F000000 		.4byte	0x6f
+ 279 017c 00       		.byte	0
+ 280 017d 03       		.uleb128 0x3
+ 281 017e 0B020000 		.4byte	.LASF27
+ 282 0182 04       		.byte	0x4
+ 283 0183 64       		.byte	0x64
+ 284 0184 5E010000 		.4byte	0x15e
+ 285 0188 09       		.uleb128 0x9
+ 286 0189 01       		.byte	0x1
+ 287 018a 12000000 		.4byte	.LASF34
+ 288 018e 01       		.byte	0x1
+ 289 018f 3F       		.byte	0x3f
+ 290 0190 01       		.byte	0x1
+ 291 0191 00000000 		.4byte	.LFB70
+ 292 0195 0A000000 		.4byte	.LFE70
+ 293 0199 00000000 		.4byte	.LLST0
+ 294 019d 01       		.byte	0x1
+ 295 019e 0A       		.uleb128 0xa
+ 296 019f B8000000 		.4byte	.LASF28
+ 297 01a3 05       		.byte	0x5
+ 298 01a4 2E       		.byte	0x2e
+ 299 01a5 8B000000 		.4byte	0x8b
+ 300 01a9 01       		.byte	0x1
+ 301 01aa 01       		.byte	0x1
+ 302 01ab 0B       		.uleb128 0xb
+ 303 01ac 7D010000 		.4byte	0x17d
+ 304 01b0 BB010000 		.4byte	0x1bb
+ 305 01b4 0C       		.uleb128 0xc
+ 306 01b5 7D000000 		.4byte	0x7d
+ 307 01b9 BD       		.byte	0xbd
+ 308 01ba 00       		.byte	0
+ 309 01bb 0D       		.uleb128 0xd
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 9
+
+
+ 310 01bc 49020000 		.4byte	.LASF29
+ 311 01c0 01       		.byte	0x1
+ 312 01c1 27       		.byte	0x27
+ 313 01c2 AB010000 		.4byte	0x1ab
+ 314 01c6 01       		.byte	0x1
+ 315 01c7 05       		.byte	0x5
+ 316 01c8 03       		.byte	0x3
+ 317 01c9 00000000 		.4byte	idau_ref
+ 318 01cd 00       		.byte	0
+ 319              		.section	.debug_abbrev,"",%progbits
+ 320              	.Ldebug_abbrev0:
+ 321 0000 01       		.uleb128 0x1
+ 322 0001 11       		.uleb128 0x11
+ 323 0002 01       		.byte	0x1
+ 324 0003 25       		.uleb128 0x25
+ 325 0004 0E       		.uleb128 0xe
+ 326 0005 13       		.uleb128 0x13
+ 327 0006 0B       		.uleb128 0xb
+ 328 0007 03       		.uleb128 0x3
+ 329 0008 0E       		.uleb128 0xe
+ 330 0009 1B       		.uleb128 0x1b
+ 331 000a 0E       		.uleb128 0xe
+ 332 000b 11       		.uleb128 0x11
+ 333 000c 01       		.uleb128 0x1
+ 334 000d 12       		.uleb128 0x12
+ 335 000e 01       		.uleb128 0x1
+ 336 000f 10       		.uleb128 0x10
+ 337 0010 06       		.uleb128 0x6
+ 338 0011 00       		.byte	0
+ 339 0012 00       		.byte	0
+ 340 0013 02       		.uleb128 0x2
+ 341 0014 24       		.uleb128 0x24
+ 342 0015 00       		.byte	0
+ 343 0016 0B       		.uleb128 0xb
+ 344 0017 0B       		.uleb128 0xb
+ 345 0018 3E       		.uleb128 0x3e
+ 346 0019 0B       		.uleb128 0xb
+ 347 001a 03       		.uleb128 0x3
+ 348 001b 0E       		.uleb128 0xe
+ 349 001c 00       		.byte	0
+ 350 001d 00       		.byte	0
+ 351 001e 03       		.uleb128 0x3
+ 352 001f 16       		.uleb128 0x16
+ 353 0020 00       		.byte	0
+ 354 0021 03       		.uleb128 0x3
+ 355 0022 0E       		.uleb128 0xe
+ 356 0023 3A       		.uleb128 0x3a
+ 357 0024 0B       		.uleb128 0xb
+ 358 0025 3B       		.uleb128 0x3b
+ 359 0026 0B       		.uleb128 0xb
+ 360 0027 49       		.uleb128 0x49
+ 361 0028 13       		.uleb128 0x13
+ 362 0029 00       		.byte	0
+ 363 002a 00       		.byte	0
+ 364 002b 04       		.uleb128 0x4
+ 365 002c 24       		.uleb128 0x24
+ 366 002d 00       		.byte	0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 10
+
+
+ 367 002e 0B       		.uleb128 0xb
+ 368 002f 0B       		.uleb128 0xb
+ 369 0030 3E       		.uleb128 0x3e
+ 370 0031 0B       		.uleb128 0xb
+ 371 0032 03       		.uleb128 0x3
+ 372 0033 08       		.uleb128 0x8
+ 373 0034 00       		.byte	0
+ 374 0035 00       		.byte	0
+ 375 0036 05       		.uleb128 0x5
+ 376 0037 13       		.uleb128 0x13
+ 377 0038 01       		.byte	0x1
+ 378 0039 03       		.uleb128 0x3
+ 379 003a 0E       		.uleb128 0xe
+ 380 003b 0B       		.uleb128 0xb
+ 381 003c 0B       		.uleb128 0xb
+ 382 003d 3A       		.uleb128 0x3a
+ 383 003e 0B       		.uleb128 0xb
+ 384 003f 3B       		.uleb128 0x3b
+ 385 0040 0B       		.uleb128 0xb
+ 386 0041 01       		.uleb128 0x1
+ 387 0042 13       		.uleb128 0x13
+ 388 0043 00       		.byte	0
+ 389 0044 00       		.byte	0
+ 390 0045 06       		.uleb128 0x6
+ 391 0046 0D       		.uleb128 0xd
+ 392 0047 00       		.byte	0
+ 393 0048 03       		.uleb128 0x3
+ 394 0049 0E       		.uleb128 0xe
+ 395 004a 3A       		.uleb128 0x3a
+ 396 004b 0B       		.uleb128 0xb
+ 397 004c 3B       		.uleb128 0x3b
+ 398 004d 0B       		.uleb128 0xb
+ 399 004e 49       		.uleb128 0x49
+ 400 004f 13       		.uleb128 0x13
+ 401 0050 0B       		.uleb128 0xb
+ 402 0051 0B       		.uleb128 0xb
+ 403 0052 0D       		.uleb128 0xd
+ 404 0053 0B       		.uleb128 0xb
+ 405 0054 0C       		.uleb128 0xc
+ 406 0055 0B       		.uleb128 0xb
+ 407 0056 38       		.uleb128 0x38
+ 408 0057 0A       		.uleb128 0xa
+ 409 0058 00       		.byte	0
+ 410 0059 00       		.byte	0
+ 411 005a 07       		.uleb128 0x7
+ 412 005b 17       		.uleb128 0x17
+ 413 005c 01       		.byte	0x1
+ 414 005d 0B       		.uleb128 0xb
+ 415 005e 0B       		.uleb128 0xb
+ 416 005f 3A       		.uleb128 0x3a
+ 417 0060 0B       		.uleb128 0xb
+ 418 0061 3B       		.uleb128 0x3b
+ 419 0062 0B       		.uleb128 0xb
+ 420 0063 01       		.uleb128 0x1
+ 421 0064 13       		.uleb128 0x13
+ 422 0065 00       		.byte	0
+ 423 0066 00       		.byte	0
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 11
+
+
+ 424 0067 08       		.uleb128 0x8
+ 425 0068 0D       		.uleb128 0xd
+ 426 0069 00       		.byte	0
+ 427 006a 03       		.uleb128 0x3
+ 428 006b 0E       		.uleb128 0xe
+ 429 006c 3A       		.uleb128 0x3a
+ 430 006d 0B       		.uleb128 0xb
+ 431 006e 3B       		.uleb128 0x3b
+ 432 006f 0B       		.uleb128 0xb
+ 433 0070 49       		.uleb128 0x49
+ 434 0071 13       		.uleb128 0x13
+ 435 0072 00       		.byte	0
+ 436 0073 00       		.byte	0
+ 437 0074 09       		.uleb128 0x9
+ 438 0075 2E       		.uleb128 0x2e
+ 439 0076 00       		.byte	0
+ 440 0077 3F       		.uleb128 0x3f
+ 441 0078 0C       		.uleb128 0xc
+ 442 0079 03       		.uleb128 0x3
+ 443 007a 0E       		.uleb128 0xe
+ 444 007b 3A       		.uleb128 0x3a
+ 445 007c 0B       		.uleb128 0xb
+ 446 007d 3B       		.uleb128 0x3b
+ 447 007e 0B       		.uleb128 0xb
+ 448 007f 27       		.uleb128 0x27
+ 449 0080 0C       		.uleb128 0xc
+ 450 0081 11       		.uleb128 0x11
+ 451 0082 01       		.uleb128 0x1
+ 452 0083 12       		.uleb128 0x12
+ 453 0084 01       		.uleb128 0x1
+ 454 0085 40       		.uleb128 0x40
+ 455 0086 06       		.uleb128 0x6
+ 456 0087 9742     		.uleb128 0x2117
+ 457 0089 0C       		.uleb128 0xc
+ 458 008a 00       		.byte	0
+ 459 008b 00       		.byte	0
+ 460 008c 0A       		.uleb128 0xa
+ 461 008d 34       		.uleb128 0x34
+ 462 008e 00       		.byte	0
+ 463 008f 03       		.uleb128 0x3
+ 464 0090 0E       		.uleb128 0xe
+ 465 0091 3A       		.uleb128 0x3a
+ 466 0092 0B       		.uleb128 0xb
+ 467 0093 3B       		.uleb128 0x3b
+ 468 0094 0B       		.uleb128 0xb
+ 469 0095 49       		.uleb128 0x49
+ 470 0096 13       		.uleb128 0x13
+ 471 0097 3F       		.uleb128 0x3f
+ 472 0098 0C       		.uleb128 0xc
+ 473 0099 3C       		.uleb128 0x3c
+ 474 009a 0C       		.uleb128 0xc
+ 475 009b 00       		.byte	0
+ 476 009c 00       		.byte	0
+ 477 009d 0B       		.uleb128 0xb
+ 478 009e 01       		.uleb128 0x1
+ 479 009f 01       		.byte	0x1
+ 480 00a0 49       		.uleb128 0x49
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 12
+
+
+ 481 00a1 13       		.uleb128 0x13
+ 482 00a2 01       		.uleb128 0x1
+ 483 00a3 13       		.uleb128 0x13
+ 484 00a4 00       		.byte	0
+ 485 00a5 00       		.byte	0
+ 486 00a6 0C       		.uleb128 0xc
+ 487 00a7 21       		.uleb128 0x21
+ 488 00a8 00       		.byte	0
+ 489 00a9 49       		.uleb128 0x49
+ 490 00aa 13       		.uleb128 0x13
+ 491 00ab 2F       		.uleb128 0x2f
+ 492 00ac 0B       		.uleb128 0xb
+ 493 00ad 00       		.byte	0
+ 494 00ae 00       		.byte	0
+ 495 00af 0D       		.uleb128 0xd
+ 496 00b0 34       		.uleb128 0x34
+ 497 00b1 00       		.byte	0
+ 498 00b2 03       		.uleb128 0x3
+ 499 00b3 0E       		.uleb128 0xe
+ 500 00b4 3A       		.uleb128 0x3a
+ 501 00b5 0B       		.uleb128 0xb
+ 502 00b6 3B       		.uleb128 0x3b
+ 503 00b7 0B       		.uleb128 0xb
+ 504 00b8 49       		.uleb128 0x49
+ 505 00b9 13       		.uleb128 0x13
+ 506 00ba 3F       		.uleb128 0x3f
+ 507 00bb 0C       		.uleb128 0xc
+ 508 00bc 02       		.uleb128 0x2
+ 509 00bd 0A       		.uleb128 0xa
+ 510 00be 00       		.byte	0
+ 511 00bf 00       		.byte	0
+ 512 00c0 00       		.byte	0
+ 513              		.section	.debug_loc,"",%progbits
+ 514              	.Ldebug_loc0:
+ 515              	.LLST0:
+ 516 0000 00000000 		.4byte	.LFB70-.Ltext0
+ 517 0004 02000000 		.4byte	.LCFI0-.Ltext0
+ 518 0008 0200     		.2byte	0x2
+ 519 000a 7D       		.byte	0x7d
+ 520 000b 00       		.sleb128 0
+ 521 000c 02000000 		.4byte	.LCFI0-.Ltext0
+ 522 0010 04000000 		.4byte	.LCFI1-.Ltext0
+ 523 0014 0200     		.2byte	0x2
+ 524 0016 7D       		.byte	0x7d
+ 525 0017 08       		.sleb128 8
+ 526 0018 04000000 		.4byte	.LCFI1-.Ltext0
+ 527 001c 0A000000 		.4byte	.LFE70-.Ltext0
+ 528 0020 0200     		.2byte	0x2
+ 529 0022 77       		.byte	0x77
+ 530 0023 08       		.sleb128 8
+ 531 0024 00000000 		.4byte	0
+ 532 0028 00000000 		.4byte	0
+ 533              		.section	.debug_aranges,"",%progbits
+ 534 0000 1C000000 		.4byte	0x1c
+ 535 0004 0200     		.2byte	0x2
+ 536 0006 00000000 		.4byte	.Ldebug_info0
+ 537 000a 04       		.byte	0x4
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 13
+
+
+ 538 000b 00       		.byte	0
+ 539 000c 0000     		.2byte	0
+ 540 000e 0000     		.2byte	0
+ 541 0010 00000000 		.4byte	.Ltext0
+ 542 0014 0A000000 		.4byte	.Letext0-.Ltext0
+ 543 0018 00000000 		.4byte	0
+ 544 001c 00000000 		.4byte	0
+ 545              		.section	.debug_line,"",%progbits
+ 546              	.Ldebug_line0:
+ 547 0000 79010000 		.section	.debug_str,"MS",%progbits,1
+ 547      02006001 
+ 547      00000201 
+ 547      FB0E0D00 
+ 547      01010101 
+ 548              	.LASF20:
+ 549 0000 6E6F6E73 		.ascii	"nonsecure_read_ok\000"
+ 549      65637572 
+ 549      655F7265 
+ 549      61645F6F 
+ 549      6B00
+ 550              	.LASF34:
+ 551 0012 53656375 		.ascii	"SecureAttrib\000"
+ 551      72654174 
+ 551      74726962 
+ 551      00
+ 552              	.LASF30:
+ 553 001f 474E5520 		.ascii	"GNU C11 5.4.1 20160919 (release) [ARM/embedded-5-br"
+ 553      43313120 
+ 553      352E342E 
+ 553      31203230 
+ 553      31363039 
+ 554 0052 616E6368 		.ascii	"anch revision 240496] -mthumb -mapcs-frame -mthumb-"
+ 554      20726576 
+ 554      6973696F 
+ 554      6E203234 
+ 554      30343936 
+ 555 0085 696E7465 		.ascii	"interwork -march=armv8-m.base -mcmse -gdwarf-2 -O0\000"
+ 555      72776F72 
+ 555      6B202D6D 
+ 555      61726368 
+ 555      3D61726D 
+ 556              	.LASF28:
+ 557 00b8 4379636C 		.ascii	"CyclesPerUs\000"
+ 557      65735065 
+ 557      72557300 
+ 558              	.LASF23:
+ 559 00c4 69646175 		.ascii	"idau_region_valid\000"
+ 559      5F726567 
+ 559      696F6E5F 
+ 559      76616C69 
+ 559      6400
+ 560              	.LASF24:
+ 561 00d6 69646175 		.ascii	"idau_region\000"
+ 561      5F726567 
+ 561      696F6E00 
+ 562              	.LASF32:
+ 563 00e2 433A5C55 		.ascii	"C:\\Users\\CCMA\\workspace\\TrustZoneSecureGccUv\000"
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 14
+
+
+ 563      73657273 
+ 563      5C43434D 
+ 563      415C776F 
+ 563      726B7370 
+ 564              	.LASF7:
+ 565 010f 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 565      206C6F6E 
+ 565      6720756E 
+ 565      7369676E 
+ 565      65642069 
+ 566              	.LASF1:
+ 567 0126 756E7369 		.ascii	"unsigned char\000"
+ 567      676E6564 
+ 567      20636861 
+ 567      7200
+ 568              	.LASF18:
+ 569 0134 72656164 		.ascii	"read_ok\000"
+ 569      5F6F6B00 
+ 570              	.LASF5:
+ 571 013c 6C6F6E67 		.ascii	"long unsigned int\000"
+ 571      20756E73 
+ 571      69676E65 
+ 571      6420696E 
+ 571      7400
+ 572              	.LASF3:
+ 573 014e 73686F72 		.ascii	"short unsigned int\000"
+ 573      7420756E 
+ 573      7369676E 
+ 573      65642069 
+ 573      6E7400
+ 574              	.LASF14:
+ 575 0161 6D70755F 		.ascii	"mpu_region\000"
+ 575      72656769 
+ 575      6F6E00
+ 576              	.LASF33:
+ 577 016c 636D7365 		.ascii	"cmse_address_info\000"
+ 577      5F616464 
+ 577      72657373 
+ 577      5F696E66 
+ 577      6F00
+ 578              	.LASF12:
+ 579 017e 5F5F7569 		.ascii	"__uint32_t\000"
+ 579      6E743332 
+ 579      5F7400
+ 580              	.LASF8:
+ 581 0189 756E7369 		.ascii	"unsigned int\000"
+ 581      676E6564 
+ 581      20696E74 
+ 581      00
+ 582              	.LASF25:
+ 583 0196 666C6167 		.ascii	"flags\000"
+ 583      7300
+ 584              	.LASF31:
+ 585 019c 7372632F 		.ascii	"src/SecureAttrib.c\000"
+ 585      53656375 
+ 585      72654174 
+ 585      74726962 
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 15
+
+
+ 585      2E6300
+ 586              	.LASF11:
+ 587 01af 63686172 		.ascii	"char\000"
+ 587      00
+ 588              	.LASF22:
+ 589 01b4 73656375 		.ascii	"secure\000"
+ 589      726500
+ 590              	.LASF16:
+ 591 01bb 6D70755F 		.ascii	"mpu_region_valid\000"
+ 591      72656769 
+ 591      6F6E5F76 
+ 591      616C6964 
+ 591      00
+ 592              	.LASF10:
+ 593 01cc 73697A65 		.ascii	"sizetype\000"
+ 593      74797065 
+ 593      00
+ 594              	.LASF19:
+ 595 01d5 72656164 		.ascii	"readwrite_ok\000"
+ 595      77726974 
+ 595      655F6F6B 
+ 595      00
+ 596              	.LASF15:
+ 597 01e2 7361755F 		.ascii	"sau_region\000"
+ 597      72656769 
+ 597      6F6E00
+ 598              	.LASF6:
+ 599 01ed 6C6F6E67 		.ascii	"long long int\000"
+ 599      206C6F6E 
+ 599      6720696E 
+ 599      7400
+ 600              	.LASF26:
+ 601 01fb 76616C75 		.ascii	"value\000"
+ 601      6500
+ 602              	.LASF2:
+ 603 0201 73686F72 		.ascii	"short int\000"
+ 603      7420696E 
+ 603      7400
+ 604              	.LASF27:
+ 605 020b 636D7365 		.ascii	"cmse_address_info_t\000"
+ 605      5F616464 
+ 605      72657373 
+ 605      5F696E66 
+ 605      6F5F7400 
+ 606              	.LASF13:
+ 607 021f 75696E74 		.ascii	"uint32_t\000"
+ 607      33325F74 
+ 607      00
+ 608              	.LASF4:
+ 609 0228 6C6F6E67 		.ascii	"long int\000"
+ 609      20696E74 
+ 609      00
+ 610              	.LASF9:
+ 611 0231 6C6F6E67 		.ascii	"long double\000"
+ 611      20646F75 
+ 611      626C6500 
+ 612              	.LASF0:
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 16
+
+
+ 613 023d 7369676E 		.ascii	"signed char\000"
+ 613      65642063 
+ 613      68617200 
+ 614              	.LASF29:
+ 615 0249 69646175 		.ascii	"idau_ref\000"
+ 615      5F726566 
+ 615      00
+ 616              	.LASF21:
+ 617 0252 6E6F6E73 		.ascii	"nonsecure_readwrite_ok\000"
+ 617      65637572 
+ 617      655F7265 
+ 617      61647772 
+ 617      6974655F 
+ 618              	.LASF17:
+ 619 0269 7361755F 		.ascii	"sau_region_valid\000"
+ 619      72656769 
+ 619      6F6E5F76 
+ 619      616C6964 
+ 619      00
+ 620              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160919 (release) [ARM/embedded-5-bran
+ARM GAS  C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 SecureAttrib.c
+C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s:24     .bss:00000000 idau_ref
+C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s:21     .bss:00000000 $d
+C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s:27     .text:00000000 $t
+C:\Users\CCMA\AppData\Local\Temp\ccJwKDSH.s:32     .text:00000000 SecureAttrib
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS

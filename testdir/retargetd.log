@@ -1,0 +1,322 @@
+
+retarget.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <stackDump>:
+   0:	b580      	push	{r7, lr}
+   2:	b082      	sub	sp, #8
+   4:	af00      	add	r7, sp, #0
+   6:	6078      	str	r0, [r7, #4]
+   8:	687b      	ldr	r3, [r7, #4]
+   a:	681a      	ldr	r2, [r3, #0]
+   c:	4b20      	ldr	r3, [pc, #128]	; (90 <stackDump+0x90>)
+   e:	0011      	movs	r1, r2
+  10:	0018      	movs	r0, r3
+  12:	f7ff fffe 	bl	0 <printf>
+  16:	687b      	ldr	r3, [r7, #4]
+  18:	3304      	adds	r3, #4
+  1a:	681a      	ldr	r2, [r3, #0]
+  1c:	4b1d      	ldr	r3, [pc, #116]	; (94 <stackDump+0x94>)
+  1e:	0011      	movs	r1, r2
+  20:	0018      	movs	r0, r3
+  22:	f7ff fffe 	bl	0 <printf>
+  26:	687b      	ldr	r3, [r7, #4]
+  28:	3308      	adds	r3, #8
+  2a:	681a      	ldr	r2, [r3, #0]
+  2c:	4b1a      	ldr	r3, [pc, #104]	; (98 <stackDump+0x98>)
+  2e:	0011      	movs	r1, r2
+  30:	0018      	movs	r0, r3
+  32:	f7ff fffe 	bl	0 <printf>
+  36:	687b      	ldr	r3, [r7, #4]
+  38:	330c      	adds	r3, #12
+  3a:	681a      	ldr	r2, [r3, #0]
+  3c:	4b17      	ldr	r3, [pc, #92]	; (9c <stackDump+0x9c>)
+  3e:	0011      	movs	r1, r2
+  40:	0018      	movs	r0, r3
+  42:	f7ff fffe 	bl	0 <printf>
+  46:	687b      	ldr	r3, [r7, #4]
+  48:	3310      	adds	r3, #16
+  4a:	681a      	ldr	r2, [r3, #0]
+  4c:	4b14      	ldr	r3, [pc, #80]	; (a0 <stackDump+0xa0>)
+  4e:	0011      	movs	r1, r2
+  50:	0018      	movs	r0, r3
+  52:	f7ff fffe 	bl	0 <printf>
+  56:	687b      	ldr	r3, [r7, #4]
+  58:	3314      	adds	r3, #20
+  5a:	681a      	ldr	r2, [r3, #0]
+  5c:	4b11      	ldr	r3, [pc, #68]	; (a4 <stackDump+0xa4>)
+  5e:	0011      	movs	r1, r2
+  60:	0018      	movs	r0, r3
+  62:	f7ff fffe 	bl	0 <printf>
+  66:	687b      	ldr	r3, [r7, #4]
+  68:	3318      	adds	r3, #24
+  6a:	681a      	ldr	r2, [r3, #0]
+  6c:	4b0e      	ldr	r3, [pc, #56]	; (a8 <stackDump+0xa8>)
+  6e:	0011      	movs	r1, r2
+  70:	0018      	movs	r0, r3
+  72:	f7ff fffe 	bl	0 <printf>
+  76:	687b      	ldr	r3, [r7, #4]
+  78:	331c      	adds	r3, #28
+  7a:	681a      	ldr	r2, [r3, #0]
+  7c:	4b0b      	ldr	r3, [pc, #44]	; (ac <stackDump+0xac>)
+  7e:	0011      	movs	r1, r2
+  80:	0018      	movs	r0, r3
+  82:	f7ff fffe 	bl	0 <printf>
+  86:	46c0      	nop			; (mov r8, r8)
+  88:	46bd      	mov	sp, r7
+  8a:	b002      	add	sp, #8
+  8c:	bd80      	pop	{r7, pc}
+  8e:	46c0      	nop			; (mov r8, r8)
+  90:	00000000 	.word	0x00000000
+  94:	0000000c 	.word	0x0000000c
+  98:	00000018 	.word	0x00000018
+  9c:	00000024 	.word	0x00000024
+  a0:	00000030 	.word	0x00000030
+  a4:	0000003c 	.word	0x0000003c
+  a8:	00000048 	.word	0x00000048
+  ac:	00000054 	.word	0x00000054
+
+000000b0 <Hard_Fault_Handler>:
+  b0:	b580      	push	{r7, lr}
+  b2:	b082      	sub	sp, #8
+  b4:	af00      	add	r7, sp, #0
+  b6:	6078      	str	r0, [r7, #4]
+  b8:	4b04      	ldr	r3, [pc, #16]	; (cc <Hard_Fault_Handler+0x1c>)
+  ba:	0018      	movs	r0, r3
+  bc:	f7ff fffe 	bl	0 <puts>
+  c0:	687b      	ldr	r3, [r7, #4]
+  c2:	0018      	movs	r0, r3
+  c4:	f7ff ff9c 	bl	0 <stackDump>
+  c8:	e7fe      	b.n	c8 <Hard_Fault_Handler+0x18>
+  ca:	46c0      	nop			; (mov r8, r8)
+  cc:	00000060 	.word	0x00000060
+
+000000d0 <SendChar_ToUART>:
+  d0:	b580      	push	{r7, lr}
+  d2:	b082      	sub	sp, #8
+  d4:	af00      	add	r7, sp, #0
+  d6:	6078      	str	r0, [r7, #4]
+  d8:	46c0      	nop			; (mov r8, r8)
+  da:	4b0e      	ldr	r3, [pc, #56]	; (114 <SendChar_ToUART+0x44>)
+  dc:	699a      	ldr	r2, [r3, #24]
+  de:	2380      	movs	r3, #128	; 0x80
+  e0:	041b      	lsls	r3, r3, #16
+  e2:	4013      	ands	r3, r2
+  e4:	2b00      	cmp	r3, #0
+  e6:	d1f8      	bne.n	da <SendChar_ToUART+0xa>
+  e8:	4b0a      	ldr	r3, [pc, #40]	; (114 <SendChar_ToUART+0x44>)
+  ea:	687a      	ldr	r2, [r7, #4]
+  ec:	601a      	str	r2, [r3, #0]
+  ee:	687b      	ldr	r3, [r7, #4]
+  f0:	2b0a      	cmp	r3, #10
+  f2:	d10a      	bne.n	10a <SendChar_ToUART+0x3a>
+  f4:	46c0      	nop			; (mov r8, r8)
+  f6:	4b07      	ldr	r3, [pc, #28]	; (114 <SendChar_ToUART+0x44>)
+  f8:	699a      	ldr	r2, [r3, #24]
+  fa:	2380      	movs	r3, #128	; 0x80
+  fc:	041b      	lsls	r3, r3, #16
+  fe:	4013      	ands	r3, r2
+ 100:	2b00      	cmp	r3, #0
+ 102:	d1f8      	bne.n	f6 <SendChar_ToUART+0x26>
+ 104:	4b03      	ldr	r3, [pc, #12]	; (114 <SendChar_ToUART+0x44>)
+ 106:	220d      	movs	r2, #13
+ 108:	601a      	str	r2, [r3, #0]
+ 10a:	46c0      	nop			; (mov r8, r8)
+ 10c:	46bd      	mov	sp, r7
+ 10e:	b002      	add	sp, #8
+ 110:	bd80      	pop	{r7, pc}
+ 112:	46c0      	nop			; (mov r8, r8)
+ 114:	50070000 	.word	0x50070000
+
+00000118 <_write>:
+ 118:	b580      	push	{r7, lr}
+ 11a:	b086      	sub	sp, #24
+ 11c:	af00      	add	r7, sp, #0
+ 11e:	60f8      	str	r0, [r7, #12]
+ 120:	60b9      	str	r1, [r7, #8]
+ 122:	607a      	str	r2, [r7, #4]
+ 124:	2300      	movs	r3, #0
+ 126:	617b      	str	r3, [r7, #20]
+ 128:	e009      	b.n	13e <_write+0x26>
+ 12a:	68bb      	ldr	r3, [r7, #8]
+ 12c:	1c5a      	adds	r2, r3, #1
+ 12e:	60ba      	str	r2, [r7, #8]
+ 130:	781b      	ldrb	r3, [r3, #0]
+ 132:	0018      	movs	r0, r3
+ 134:	f7ff fffe 	bl	d0 <SendChar_ToUART>
+ 138:	697b      	ldr	r3, [r7, #20]
+ 13a:	3301      	adds	r3, #1
+ 13c:	617b      	str	r3, [r7, #20]
+ 13e:	697a      	ldr	r2, [r7, #20]
+ 140:	687b      	ldr	r3, [r7, #4]
+ 142:	429a      	cmp	r2, r3
+ 144:	dbf1      	blt.n	12a <_write+0x12>
+ 146:	687b      	ldr	r3, [r7, #4]
+ 148:	0018      	movs	r0, r3
+ 14a:	46bd      	mov	sp, r7
+ 14c:	b006      	add	sp, #24
+ 14e:	bd80      	pop	{r7, pc}
+
+00000150 <_read>:
+ 150:	b580      	push	{r7, lr}
+ 152:	b086      	sub	sp, #24
+ 154:	af00      	add	r7, sp, #0
+ 156:	60f8      	str	r0, [r7, #12]
+ 158:	60b9      	str	r1, [r7, #8]
+ 15a:	607a      	str	r2, [r7, #4]
+ 15c:	687b      	ldr	r3, [r7, #4]
+ 15e:	b90b      	cbnz	r3, 164 <_read+0x14>
+ 160:	2300      	movs	r3, #0
+ 162:	e028      	b.n	1b6 <_read+0x66>
+ 164:	46c0      	nop			; (mov r8, r8)
+ 166:	4b16      	ldr	r3, [pc, #88]	; (1c0 <_read+0x70>)
+ 168:	699b      	ldr	r3, [r3, #24]
+ 16a:	f244 0200 	movw	r2, #16384	; 0x4000
+ 16e:	4013      	ands	r3, r2
+ 170:	2b00      	cmp	r3, #0
+ 172:	d1f8      	bne.n	166 <_read+0x16>
+ 174:	68bb      	ldr	r3, [r7, #8]
+ 176:	1c5a      	adds	r2, r3, #1
+ 178:	60ba      	str	r2, [r7, #8]
+ 17a:	4a11      	ldr	r2, [pc, #68]	; (1c0 <_read+0x70>)
+ 17c:	6812      	ldr	r2, [r2, #0]
+ 17e:	b2d2      	uxtb	r2, r2
+ 180:	701a      	strb	r2, [r3, #0]
+ 182:	2301      	movs	r3, #1
+ 184:	617b      	str	r3, [r7, #20]
+ 186:	e00f      	b.n	1a8 <_read+0x58>
+ 188:	4b0d      	ldr	r3, [pc, #52]	; (1c0 <_read+0x70>)
+ 18a:	699b      	ldr	r3, [r3, #24]
+ 18c:	f244 0200 	movw	r2, #16384	; 0x4000
+ 190:	4013      	ands	r3, r2
+ 192:	b973      	cbnz	r3, 1b2 <_read+0x62>
+ 194:	68bb      	ldr	r3, [r7, #8]
+ 196:	1c5a      	adds	r2, r3, #1
+ 198:	60ba      	str	r2, [r7, #8]
+ 19a:	4a09      	ldr	r2, [pc, #36]	; (1c0 <_read+0x70>)
+ 19c:	6812      	ldr	r2, [r2, #0]
+ 19e:	b2d2      	uxtb	r2, r2
+ 1a0:	701a      	strb	r2, [r3, #0]
+ 1a2:	697b      	ldr	r3, [r7, #20]
+ 1a4:	3301      	adds	r3, #1
+ 1a6:	617b      	str	r3, [r7, #20]
+ 1a8:	697a      	ldr	r2, [r7, #20]
+ 1aa:	687b      	ldr	r3, [r7, #4]
+ 1ac:	429a      	cmp	r2, r3
+ 1ae:	dbeb      	blt.n	188 <_read+0x38>
+ 1b0:	e000      	b.n	1b4 <_read+0x64>
+ 1b2:	46c0      	nop			; (mov r8, r8)
+ 1b4:	697b      	ldr	r3, [r7, #20]
+ 1b6:	0018      	movs	r0, r3
+ 1b8:	46bd      	mov	sp, r7
+ 1ba:	b006      	add	sp, #24
+ 1bc:	bd80      	pop	{r7, pc}
+ 1be:	46c0      	nop			; (mov r8, r8)
+ 1c0:	50070000 	.word	0x50070000
+
+000001c4 <SendChar>:
+ 1c4:	b580      	push	{r7, lr}
+ 1c6:	b082      	sub	sp, #8
+ 1c8:	af00      	add	r7, sp, #0
+ 1ca:	6078      	str	r0, [r7, #4]
+ 1cc:	687b      	ldr	r3, [r7, #4]
+ 1ce:	0018      	movs	r0, r3
+ 1d0:	f7ff fffe 	bl	d0 <SendChar_ToUART>
+ 1d4:	46c0      	nop			; (mov r8, r8)
+ 1d6:	46bd      	mov	sp, r7
+ 1d8:	b002      	add	sp, #8
+ 1da:	bd80      	pop	{r7, pc}
+
+000001dc <GetChar>:
+ 1dc:	b580      	push	{r7, lr}
+ 1de:	af00      	add	r7, sp, #0
+ 1e0:	4b06      	ldr	r3, [pc, #24]	; (1fc <GetChar+0x20>)
+ 1e2:	699b      	ldr	r3, [r3, #24]
+ 1e4:	f244 0200 	movw	r2, #16384	; 0x4000
+ 1e8:	4013      	ands	r3, r2
+ 1ea:	2b00      	cmp	r3, #0
+ 1ec:	d1f8      	bne.n	1e0 <GetChar+0x4>
+ 1ee:	4b03      	ldr	r3, [pc, #12]	; (1fc <GetChar+0x20>)
+ 1f0:	681b      	ldr	r3, [r3, #0]
+ 1f2:	b2db      	uxtb	r3, r3
+ 1f4:	0018      	movs	r0, r3
+ 1f6:	46bd      	mov	sp, r7
+ 1f8:	bd80      	pop	{r7, pc}
+ 1fa:	46c0      	nop			; (mov r8, r8)
+ 1fc:	50070000 	.word	0x50070000
+
+00000200 <kbhit>:
+ 200:	b580      	push	{r7, lr}
+ 202:	af00      	add	r7, sp, #0
+ 204:	4b05      	ldr	r3, [pc, #20]	; (21c <kbhit+0x1c>)
+ 206:	699b      	ldr	r3, [r3, #24]
+ 208:	f244 0200 	movw	r2, #16384	; 0x4000
+ 20c:	4013      	ands	r3, r2
+ 20e:	1e5a      	subs	r2, r3, #1
+ 210:	4193      	sbcs	r3, r2
+ 212:	b2db      	uxtb	r3, r3
+ 214:	0018      	movs	r0, r3
+ 216:	46bd      	mov	sp, r7
+ 218:	bd80      	pop	{r7, pc}
+ 21a:	46c0      	nop			; (mov r8, r8)
+ 21c:	50070000 	.word	0x50070000
+
+00000220 <IsDebugFifoEmpty>:
+ 220:	b580      	push	{r7, lr}
+ 222:	af00      	add	r7, sp, #0
+ 224:	4b05      	ldr	r3, [pc, #20]	; (23c <IsDebugFifoEmpty+0x1c>)
+ 226:	699a      	ldr	r2, [r3, #24]
+ 228:	2380      	movs	r3, #128	; 0x80
+ 22a:	055b      	lsls	r3, r3, #21
+ 22c:	4013      	ands	r3, r2
+ 22e:	1e5a      	subs	r2, r3, #1
+ 230:	4193      	sbcs	r3, r2
+ 232:	b2db      	uxtb	r3, r3
+ 234:	0018      	movs	r0, r3
+ 236:	46bd      	mov	sp, r7
+ 238:	bd80      	pop	{r7, pc}
+ 23a:	46c0      	nop			; (mov r8, r8)
+ 23c:	50070000 	.word	0x50070000
+
+00000240 <_ttywrch>:
+ 240:	b580      	push	{r7, lr}
+ 242:	b082      	sub	sp, #8
+ 244:	af00      	add	r7, sp, #0
+ 246:	6078      	str	r0, [r7, #4]
+ 248:	687b      	ldr	r3, [r7, #4]
+ 24a:	0018      	movs	r0, r3
+ 24c:	f7ff fffe 	bl	1c4 <SendChar>
+ 250:	46c0      	nop			; (mov r8, r8)
+ 252:	46bd      	mov	sp, r7
+ 254:	b002      	add	sp, #8
+ 256:	bd80      	pop	{r7, pc}
+
+00000258 <fputc>:
+ 258:	b580      	push	{r7, lr}
+ 25a:	b082      	sub	sp, #8
+ 25c:	af00      	add	r7, sp, #0
+ 25e:	6078      	str	r0, [r7, #4]
+ 260:	6039      	str	r1, [r7, #0]
+ 262:	687b      	ldr	r3, [r7, #4]
+ 264:	0018      	movs	r0, r3
+ 266:	f7ff fffe 	bl	1c4 <SendChar>
+ 26a:	687b      	ldr	r3, [r7, #4]
+ 26c:	0018      	movs	r0, r3
+ 26e:	46bd      	mov	sp, r7
+ 270:	b002      	add	sp, #8
+ 272:	bd80      	pop	{r7, pc}
+
+00000274 <fgetc>:
+ 274:	b580      	push	{r7, lr}
+ 276:	b082      	sub	sp, #8
+ 278:	af00      	add	r7, sp, #0
+ 27a:	6078      	str	r0, [r7, #4]
+ 27c:	f7ff fffe 	bl	1dc <GetChar>
+ 280:	0003      	movs	r3, r0
+ 282:	0018      	movs	r0, r3
+ 284:	46bd      	mov	sp, r7
+ 286:	b002      	add	sp, #8
+ 288:	bd80      	pop	{r7, pc}
+ 28a:	46c0      	nop			; (mov r8, r8)
