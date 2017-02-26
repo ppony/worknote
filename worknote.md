@@ -249,40 +249,26 @@ teamviewer
     停止載入網頁	Esc 鍵
 
 office	
-    windows system variable:
+    windows system variable: 
+    windows commmand line: set
+        set /?   -- list help
+        set x=   -- delete x
+        set x=11 -- set x to 11
+        echo %x% -- display x
     1937 NB, acer travelmate 8481g. 
     close all command windows and reopen to enable the effects
-    C:\Program Files\GnuWin32\bin;
-    C:\Program Files\GNU Tools ARM Embedded\5.4 2016q3\bin;
-    C:\ProgramData\Oracle\Java\javapath;%SystemRoot%\system32;%SystemRoot%;
-    %SystemRoot%\System32\Wbem;%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\;
-    c:\Program Files\Microsoft SQL Server\90\Tools\binn\;
-    C:\Program Files\Windows Kits\8.1\Windows Performance Toolkit\;
-    C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;
-    C:\CooCox\CoIDE\gcc\bin;
-    C:\CooCox\CoIDE_V2Beta\gcc\bin;
-    C:\CooCox\CoIDE_V2Beta\bin;
-    C:\Program Files\TortoiseSVN\bin;
-    C:\Program Files\TortoiseGit\bin;
-    C:\keil\520s\ARM\ARMCC\bin;
-    %CDSROOT%\tools\pcb\bin;
-    %CDSROOT%\tools\fet\bin;
-    %CDSROOT%\tools\specctra\bin;
-    %CDSROOT%\tools\PSpice;
-    %CDSROOT%\tools\PSpice\Library;
-    %CDSROOT%\tools\Capture;
-    %CDSROOT%\tools\bin;
-    C:\Program Files\Java\jre1.8.0_91\bin
 
     outlook archive
     C:\Users\CCMA\Documents\Outlook Files
 
     windows file explorer
+
     Alt + Up – Switches to the parent folder in the hierarchy
     Alt P – Toggles the Preview pane
     Alt+Enter – Opens Properties for the selected object
 
     windows command line
+
     devmgmt.msc
     appwiz.cpl
 
@@ -465,6 +451,7 @@ FW release note
     (yung) jtrace/ulink performance  
 
     ##cyyu
+    can refer to Coocox's eclipse implementation
     * (cyyu) eclipse on v8m option with my 2 project, GDB test, eclipse burn bin file directly or elf fromelf to bin file and burn??
     (cyyu) openOCD confidential commands shows to ME10    
     (cyyu) pinconfig auto permutation, ask JC about the algorithm, location first? or don't care?
@@ -543,11 +530,13 @@ FW release note
         sublime 讀檔二進位轉換 edit config0 is possible?
         sublime search but can jump to result directly, need to mouse click
         command windows paste & copy, file browswer that can keep previous setting
-        01937 office word lite
+        019
+        37 office word lite
         01937 can't new txt file by right key mouse 
         01937 use AndroidAP, PC also use, PCANY WHERE , delete wormhole
         如何快速reget windows 工作快取
-        linux server as NAS and github server
+        linux ser
+        ver as NAS and github server
         TruethCrypt like tool for photo, 檔案徹底格式化, image temp icon delete        
         simple chinese system of my PC
         weekly report word file format of bullitin one key fixing
@@ -560,6 +549,7 @@ FW release note
         notepad++ add hyperlink to note, sync with ubuntu PC, google keep manage/GitHub, can .HTA FILE do this??
         notepad++ indent, when press enter on a title
         windows wormhole with ubuntu ??
+   
         x555l 
             ubuntu display blink 
             win10 64bit installation for multi os
@@ -763,7 +753,8 @@ FW release note
         * core_armv8mbl.h et al include file can come from gcc built-in?        
         * keil local variable can't be watched, must move to global? char s[] (be optimized by compiler? volatile?)
         * build newlib code on windows platform, project sample retarget, and debug
-        * GCC share library/ dynamic linking --static .so,  practice debug with --static
+        * GCC share librar
+        y/ dynamic linking --static .so,  practice debug with --static
         why KEIL MicroLib no need HEAP for printf??
         #pragma message
         trace newlib code after preprocessor to strip DEFUN
