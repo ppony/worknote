@@ -67,14 +67,7 @@ google keep
     使用 dd 來建立一個大檔案：
     dd if=/dev/zero of=/root/dd_10mb_file bs=1M count=10
 
-
-
-
     sudo apt install screen
-
-    ctrl+a d
-    screen -r 
-    screen -ls
 
     gcc -I newlib/libc/include -I newlib/libc/machine/arm -D__ARM_ARCH_6M__ -M -E newlib/libc/sys/arm/syscalls.c 
     syscalls.o: newlib/libc/sys/arm/syscalls.c /usr/include/stdc-predef.h \
@@ -239,6 +232,9 @@ teamviewer
 
     install perforce
     perforce linux super username:super, pass:most general
+
+    synergy
+    sudo dpkg -i synergy-1.4.18-r2250-Linux-x86_64.deb
 
 >>google chrome
     在網頁上水平捲動	按住 Shift 鍵並滾動滑鼠滾輪
@@ -501,10 +497,6 @@ FW release note
     >> 幼兒園, 學區, 防盜監控, dna preserve, 清冷氣, NAS, 防網路霸凌 reverse search engine, 效能促進公司, 買體重機
     >> 二進制比對工具, not only implement tool but find fit tool (like project management) 
     >> 電腦工作環境整理, clean disk, 如何切出自己工作, 電腦報廢
-
-其中 Two-wire ICP / Writer目前傳輸過程就沒有加密, 所以本來就是曝險的. (但未來twICP也可能加入通道保密機制, 那這個功能對Two-wire ICP 也是需要的)
-SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所以加這個 function 會更為安全
-
    
     ##git 
         [p4merge](https://git-scm.com/book/zh-tw/v1/Git-%E5%AE%A2%E8%A3%BD%E5%8C%96-Git-%E9%85%8D%E7%BD%AE#格式化與空格)
@@ -558,12 +550,71 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
             ubuntu display blink 
             win10 64bit installation for multi os
             ssh to x555l remote    
-        
-    >>unix        
+
+    ##screen
+        history share howto ?
+        shutdown screen preserve 
+
+        % screen -ls
+        % screen -r
+        C-a d
+        C-a ? 線上求助畫面
+        C-a c 或 C-a C-c 開啟新的視窗，並同時切換到這個新的視窗
+
+        C-a n 或 C-a C-n 或 C-a (space) 切換到下一個視窗（0->1 1->2 ...）
+
+        C-a p 或 C-a C-p 切換到上一個視窗（1->0 2->1 ...）
+
+        C-a C-a 切換到上一個顯示過的視窗（不是照順序切換）
+
+        C-a 0 切換到第 0 個視窗
+
+        C-a (1..9) 切換到第 (1..9) 個視窗
+
+        C-a w 或 C-a C-w 會列出目前所開啟的視窗
+
+        C-a K 關閉所有的視窗並退出 screen
+
+        C-a ' 或 C-a " 會出現 "Switch to window:" 字樣，輸入號碼後就可切到該視窗
+
+        單一視窗使用中的指令
+
+        C-a C 清除目前的視窗內容
+
+        C-a d 或 C-a C-d 脫離（detach）目前的 screen 
+
+        C-a D D 強力脫離，除了放到背景執行外，並自動 logout
+        C-a "   see window list and select
+
+        give screen session a name
+        screen -S foo
+        then you can recover by 
+        screen -r foo
+
+        C-a A - rename a window
+        C-a ' name - jump to name'window
+
+        C-a [ or C-a Esc will enter copy mode
+        Esc or Enter twice will return from that mode
+        C-a ] can paste the copied data 
+
+        split
+            C-a S or C-a V
+            C-a tab
+            C-a Q (keep only this) or C-a X (leave this)
+
+    ##unix        
         set & share 環境變數 for multi terminal 
         system programming   
         制作路徑變數方便切路徑, cd $libnano
         solved
+            sudo apt-get install xclip
+            cat txt | xclip
+            xclip -o 
+            cat txt | xclip -selection clipboard
+            C-S-v
+            env | grep ARMGCC | xclip -selection clipboard
+
             Use Ctrl + Left and Ctrl + Right to move between the various parts of line
 
             clip < c:/Users/CCMA/.ssh/id_rsa.pub
@@ -742,7 +793,54 @@ SWD 目前有經過一些軟體端 public key system 做通道加密保護, 所�
         keil axf.c will get LOAD region of elf file to specify where KEIL load to?	
         
             
-    >>newlib 
+    >>newlib
+        issue
+            > flash write_image erase tz_gcc.elf 0x0
+            auto erase enabled
+            Device ID: 0x00945330
+            Device Name: M4d53VD3AE
+            bank base = 0x00000000, size = 0x00012000
+            Nuvoton NuMicro: Sector Erase ... (0 to 8)
+            Nuvoton NuMicro: Flash Write ...
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            NuMicro.cpu: target state: halted
+            target halted due to breakpoint, current mode: Thread 
+            xPSR: 0x61000000 pc: 0x2000002e msp: 0x20000448
+            Device ID: 0x00945330
+            Device Name: M453VD3AE
+            bank base = 0x0001f000, size = 0x00000000
+            Device ID: 0x00945330
+            Device Name: M453VD3AE
+            bank base = 0x00100000, size = 0x00001000
+            Device ID: 0x00945330
+            Device Name: M453VD3AE
+            bank base = 0x00300000, size = 0x00000008
+            no flash bank found for address 3f800
+            wrote 18432 bytes from file tz_gcc.elf in 5.632781s (3.196 KiB/s)
+ 
         trustzoneGCCUv .S file can't be build 
         有什麼工具可以 disassemble 一小段機械碼
         armv8m page 216, B{<c>}{<q>} <label>, gnu assembler of WK7, mvn  r3, #0xFF, asm("ldr r3, =JMPADDR");
