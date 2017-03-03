@@ -66,6 +66,7 @@ google keep
 
     使用 dd 來建立一個大檔案：
     dd if=/dev/zero of=/root/dd_10mb_file bs=1M count=10
+    dd if=/dev/sda of=mbr bs=512 count=1
 
     sudo apt install screen
 
@@ -159,6 +160,7 @@ teamviewer
     Command+Option+X: 导出HTML
     Ctrl+Alt+C: HTML标记拷贝至剪贴板
 
+    Hexviewer
 
 
 >>ubuntu 16.04
@@ -407,47 +409,63 @@ FW release note
      
 >>Fri會議
     >> 測試和文件相關工作, should be take care by engineer ?
-    >> (tu) NuGang totally phased out?  isplink, offline cert testing    
     >> (各 ip 出 pin 對 chip 的影響是 "內部" layout 不好 lay?) sGPIO 為何不要每一根都有 sGPIO 能力? 成本? (sGPIO 設計原意是什麼?)
     ISPTool FW to BSP
     why so many training by HR
     TC8234 nugang board item ignore, nulink gang?      
 
-    (cy0) XOM can'eet set breakpoint    
     If mp version chip is ready, need to support shuttle? (Terry check)
     
-    M2351 shuttle version PDID
 
 #Thur會議       
+    weekly report 早一點給
+    priority - customer first, chip first.
+    every task needs schedule, not percentage.
+    task need how long? reasonable?
     * make tz printf work, test functions , incorporate with Zale next week
-    * Confirm need 2nd? Can mbed compiler support? <- chris will follow up, no clear answer, develop 1st first, but second seems can't avoid
-    6596 to 6600 fw upgrade will hang up?
+    rebuild 6600, m2351 into beta site stage
+    TC8237是4/26 T/O
 
     ##ccli    
+    softpack
+    - see psio
+        checkpointer of excel will see in every excel file not only psio
     - special part 
         - NUC123SD4SN5 (hank)
-        - nuc121 special part number (hank)
+        - nuc121 special part number (ok)
     * ycc m2351 which ib should be generate, CCLI M480??
     kprom lock, hw bp of M480 will be disable??
-    chlin55 NUCMD TOOL
     TODO
         TC8226 offline download SRAM, sram is 16KB, page size 4KB, current stack use 11.x KB, mbed 3.5KB, if to write serial number need one page buffer and not enough space
         need uninstall while install different version ICPTool
-        checkpointer of excel will see in every excel file not only psio
     
     ##ycc
-    burn code mode of m2351, solid?
-    * 6600a2 how about IAR?
-    * composite device IAD
+    (cy0) XOM can'eet set breakpoint    
+    8051 UCID
+    m2351 shuttle will goto mbed    
+    burn code mode of m2351, solid?    
+    ** scrlock mkrom give ID , kprom status, boundary, no config0
+    * 6600a2 version -rebuild??
+        (fixed) 1. Sample code:LCD_NS_Secure進debug mode會超出Range --> v6600a2未看到此問題
+        (fixed) 2. Keil Tool產生出來的.bin檔，如何用ICP Tool去燒? --> (1). 存成Hex file (2). ICP Tool裡面有個NuMergeFile.exe,可以將兩個檔案合併成一個bin file
+        3. 當安全區域鎖定後，config的頁面是空白的--> 老蔣回: UI的一些連動, 防呆, 以及妳提到的拿掉Configuration Tab 之後再一併處理
+        4. KEIL開兩個Project, Secure and Non_Secure，勾選All Region Lock在Non_Secure發現config的值是沒寫進去的-->All Region Lock, 有被寫進去, 但沒有active, 重新上下電後, 就會active.這個老蔣會再跟designer確認
+            won't take effect, icpen 收掉 scrlock 有效, all region 不會, 需要 resets
+            connect 4次 load 4 algo, delay time longer
+        5. ICP Tool & KEIL都會出現安裝錯誤，未包入Nu_Link_USB_Driver 1.2.exe
+        6. ICP 用"選檔"的方式，File data的APROM and APROM_NS與上面路徑的檔案不match
+        7. ICP tool憑證導出時在Secure key路徑會有誤
     iar 2nd develop    
-    (ycc) mbed 閃退, walter question, outlook <- 之前測是 win10 64bits (self test ok). wright said "VM 簡中企業版 win10 64bits" may has problem
     (ycc) TC8234 driver for MP version 
     (ycc) user manual m2351 
     
-    * (yung) nuconsole document
+    ##ychsu
+    ** sd card m4 ice interface
+    * (yung) nuconsole document, put on SVN
+    iar migrate to vs2015
     (yung) jtrace/ulink performance  
 
-    how do eclipse do semihosting? combine with Newlib.
+    ##cyyu
     * (cyyu) eclipse on v8m option with my 2 project, GDB test, eclipse burn bin file directly or elf fromelf to bin file and burn??
     (cyyu) openOCD confidential commands shows to ME10    
     (cyyu) pinconfig auto permutation, ask JC about the algorithm, location first? or don't care?
@@ -455,10 +473,10 @@ FW release note
     (cyyu) Zale 發現問題點是使用win10 內建的 unzip 軟體去解壓 7-zip 壓縮出來的 .zip file 會有問題, 換成 7-zip 軟體解壓就 ok.    
 
     ##cctu
-    * when is nuc505/nuc472 upload?      
+    * nuc505/nuc472 
     * all in one
-    * secure boot isp m480 need to go with nulink certain version? if we have v2.02?
-    * ispbridge of JCLiu
+    * 6sec problem
+    ispbridge of JCLiu
     (cctu) code排版
     (cctu) ICP tool 起始畫面 auto select
     (cctu) upload nubridge by jcs2
@@ -490,9 +508,9 @@ FW release note
     	Test DAPLink script
 
     
->> CCMa     
+##CCMa     
     pyOCD as isp/icp tool on linux
-    FPGA occupy location
+    FPGA occupy location    
     C:\Users\CCMA\Documents\Outlook Files
     >> 幼兒園, 學區, 防盜監控, dna preserve, 清冷氣, NAS, 防網路霸凌 reverse search engine, 效能促進公司, 買體重機
     >> 二進制比對工具, not only implement tool but find fit tool (like project management) 
@@ -520,25 +538,23 @@ FW release note
             git cat-file -p 'tree id'
                 list tree file
                 
-    >>efficient        
+    ##efficient        
         note7 chrome 手機模式瀏覽
         markdown insert http link but can't display on website default, need to delete all the indent 
+        sublime find跳轉後回到上一位置
         sublime 讀檔二進位轉換 edit config0 is possible?
-        sublime how to collapse & unfold yaml format
         sublime search but can jump to result directly, need to mouse click
         command windows paste & copy, file browswer that can keep previous setting
+        01937 office word lite
         01937 can't new txt file by right key mouse 
         01937 use AndroidAP, PC also use, PCANY WHERE , delete wormhole
         如何快速reget windows 工作快取
         linux server as NAS and github server
-        TruethCrypt like tool for photo, 檔案徹底格式化, image temp icon delete
-        use sublime to read code
+        TruethCrypt like tool for photo, 檔案徹底格式化, image temp icon delete        
         simple chinese system of my PC
-        update this note to GitHub
-        word file format of bullitin one key fixing
-        weekly reports word/pdf files keyword search
+        weekly report word file format of bullitin one key fixing
         which search engine can escape special character like '-' of "-Wa"
-        how to index to saving files, e.g. index to icptool by yung in pt30 extension
+        how to index files, e.g. index to icptool by yung in pt30 extension
         crontab backup working notes
         notepad++ text cloud index(no classify) 結合平日生活&learning
         notepad++ define your own language??
@@ -607,6 +623,7 @@ FW release note
         set & share 環境變數 for multi terminal 
         system programming   
         制作路徑變數方便切路徑, cd $libnano
+
         solved
             sudo apt-get install xclip
             cat txt | xclip
@@ -674,16 +691,13 @@ FW release note
             [dmtsai@study ~]$ work="/cluster/server/work/taiwan_2015/003/"
             [dmtsai@study ~]$ cd $work
 
-            [dmtsai@study ~]$ myname="$name its me"
-            [dmtsai@study ~]$ echo $myname
-            VBird its me
-            [dmtsai@study ~]$ myname='$name its me'
-            [dmtsai@study ~]$ echo $myname
-            $name its me
-
             [dmtsai@study ~]$ cd /lib/modules/`uname -r`/kernel
        
             indent -st -i2 test.c <- -st means write file, -i2 means indent format
+
+    ###gdb
+        how to print stack pointer?            
+
     >>vim  
         how to auto set tags in vim, ctags -R can't recursive add sub directory also do 'ctags' in subdir, and set tags+=subdir
         ctags can't resolve local variable
@@ -718,6 +732,8 @@ FW release note
             set this in ~/.vimrc, tell vim to look for tags file, from current dir up to $HOME
             
         solved 
+            gf  open in the same window ("goto file")
+    
             to delete all lines containing "profile"
             :g/profile/d
             :g!/profile/d  <- to delete all lines NOT containing "profile"
@@ -757,11 +773,6 @@ FW release note
              delete marks
              delm a-z0-9
 
-             一個超好用的開檔編輯command
-             gf
-            會開啟游標所在word為檔名的檔案。
-            在 開include檔時很有用。
-
             列出目前所有開啟的file:
             files
 
@@ -793,6 +804,7 @@ FW release note
         keil axf.c will get LOAD region of elf file to specify where KEIL load to?	
         
             
+<<<<<<< HEAD
     >>newlib
         issue
             > flash write_image erase tz_gcc.elf 0x0
@@ -843,12 +855,19 @@ FW release note
  
         trustzoneGCCUv .S file can't be build 
         有什麼工具可以 disassemble 一小段機械碼
+=======
+    ###newlib 
+        establish eclipse project, semihosting
+        * It seems current GCC can’t generate NSC segment on 0x2000fc00, so change to put in flash (say 0x3f800)
+>>>>>>> f2d689eedd6357b10b35325d7460b1416c2d17dc
         armv8m page 216, B{<c>}{<q>} <label>, gnu assembler of WK7, mvn  r3, #0xFF, asm("ldr r3, =JMPADDR");
         what's this mean? M32(0x3001FFF0) = 0xe7fee7ff;
             branch to 0xE7FF and stay in 0xE7FE
             0x3001FFF0 E7FF     B 0x3001FFF2
             0x3001FFF2 E7FE     B 0x3001FFF2
-        getchar 有時terminal send 一個a, 二次getchar () 呼叫都抓到a
+        有什麼工具可以 disassemble 一小段機械碼
+            echo "0: e7ff" | xxd -r > disbin1
+            arm-elf-objdump -D -b binary -marm disbin1
         $ ./configure --target=arm-none-eabi --enable-newlib-nano-malloc --enable-newlib-reent-small --enable-newlib-nano-formatted-io --disable-newlib-multithread --disable-newlib-supplied-syscalls
         newlib build problem modification
             Error: lo register required
@@ -856,7 +875,6 @@ FW release note
             C:\git\newlib-2.5.0\newlib\libc\sys\arm\trap.S  @SUB     ip, sp, ip      @ extra stack required for function
         * gitm2351 bsp tz enable DEBUG_ENABLE_SEMIHOST __attribute__((weak)) weak symbol hardfault process fail
         * core_armv8mbl.h et al include file can come from gcc built-in?        
-        * It seems current GCC can’t generate NSC segment on 0x2000fc00, so change to put in flash (say 0x3f800)
         * keil local variable can't be watched, must move to global? char s[] (be optimized by compiler? volatile?)
         * build newlib code on windows platform, project sample retarget, and debug
         * GCC share library/ dynamic linking --static .so,  practice debug with --static
@@ -875,7 +893,9 @@ FW release note
         _reent - libc/include/sys/reent.h strct _reent{ union struct {}_reent}
         __STDC__ of gcc        
         一堆 ifdef endif 要怎麼看
-        note
+        note        
+
+
             check version
             arm-none-eabi-gcc -v
             make -v
@@ -1014,7 +1034,9 @@ FW release note
     regular expression
     TYPE array[n] <- array is a pointer (where is it?) array point to a buffer length TYPE*n (where is it location? stack?)
 
-    callback 使用時機 (記得有create thread, and init.d??)
+inadvertently
+    impeccable
+    callbac
     Linux就該這麼學
     computer science from buttom up
     Linux System Programming
@@ -1168,7 +1190,9 @@ ICPTool customize
 
 
 eng
-    squelch, git push.default 
+    inadvertently
+    impeccable
+    squelch
 
 
 wise    
@@ -1213,7 +1237,22 @@ token.’’
             z = a < b && b < c ? d : e
         a = b = c        the same as        b = c; a = b;
 
+        put external declarations into include files
 
+        Only the four C operators &&, ||, ?:, and , specify an order of evaluation
+
+        All other C operators evaluate their operands in undefined order
+        y[i] = x[i++];
+         
+        Commas that separate function arguments are not comma operators. For example, x and y are fetched in undefined order
+        in f(x,y), but not in g((x,y)). In the latter example, g has one argument. The value of that argument is determined by
+        evaluating x, discarding its value, and then evaluating y
+
+        !10 is zero
+        ˜10 is –11 (11...110101), at least on a 2’s complement
+         machine
+
+        10||12 is also 1, because 10 is nonzero. Moreover, 12 is not even evaluated in the latter expression, nor is f() in 10||f()
     //keil
     -c -mthumb -gdwarf-2 -MD -w -O -mapcs-frame -mthumb-interwork -I ../../../../Library/CMSIS/Include -I ../../../../Library/Device/Nuvoton/TC8234/Include 
     -I ../../../../Library/StdDriver/inc -I ../Secure -IC:/temp/v8m/TC8234_BSP/SampleCode/TrustZoneGCC/Template/Secure/RTE -IC:/keil/520s/ARM/PACK/ARM/CMSIS/5.0.0-Beta4/Device/ARM/ARMv8MBL/Include 
@@ -1226,7 +1265,9 @@ token.’’
     'Building file: ../src/stm32f4xx_hal_msp.c'
     'Invoking: Cross ARM C Compiler'
     arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 
-    -DDEBUG -DUSE_FULL_ASSERT -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F407xx -DUSE_HAL_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4-hal" 
+    inadver tently
+impeccable-DDEBUG -
+    xx -DUSE_HAL_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4-hal" 
     -std=gnu11 -Wno-missing-prototypes -Wno-missing-declarations -MMD -MP -MF"src/stm32f4xx_hal_msp.d" -MT"src/stm32f4xx_hal_msp.d" -c -o "src/stm32f4xx_hal_msp.o" "../src/stm32f4xx_hal_msp.c"
     'Finished building: ../src/stm32f4xx_hal_msp.c'
     ' '
@@ -1234,8 +1275,10 @@ token.’’
     'Invoking: Cross ARM C++ Linker'
     arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"stm32ya.map" --specs=nano.specs -o "stm32ya.elf"  ./system/src/stm32f4-hal/stm32f4xx_hal.o ./system/src/stm32f4-hal/stm32f4xx_hal_cortex.o ./system/src/stm32f4-hal/stm32f4xx_hal_flash.o ./system/src/stm32f4-hal/stm32f4xx_hal_gpio.o ./system/src/stm32f4-hal/stm32f4xx_hal_iwdg.o ./system/src/stm32f4-hal/stm32f4xx_hal_pwr.o ./system/src/stm32f4-hal/stm32f4xx_hal_rcc.o  ./system/src/newlib/_cxx.o ./system/src/newlib/_exit.o ./system/src/newlib/_sbrk.o ./system/src/newlib/_startup.o ./system/src/newlib/_syscalls.o ./system/src/newlib/assert.o  ./system/src/diag/Trace.o ./system/src/diag/trace_impl.o  ./system/src/cortexm/_initialize_hardware.o ./system/src/cortexm/_reset_hardware.o ./system/src/cortexm/exception_handlers.o  ./system/src/cmsis/system_stm32f4xx.o ./system/src/cmsis/vectors_stm32f407xx.o  ./src/BlinkLed.o ./src/Timer.o ./src/_initialize_hardware.o ./src/_write.o ./src/main.o ./src/stm32f4xx_hal_msp.o   
 
+inadvertently
+    impeccable
 
-    <nulink>
+    <n
         app_config 和 dialog 都 include lua.h 及 appconfig.h.  
         因為 CCTu 用不到lua.h
         把 lua.h 放到 appconfig.h include
@@ -1606,7 +1649,9 @@ token.’’
         STEP 3
             Look at the symbols to the left of the identifier. If it is not one of our symbols above (say, something like "int"), just say it. Otherwise, translate it into English using that table above. Keep going left until you run out of symbols *OR* hit a *left* parenthesis "("
 
-        Illegal combinations include:
+inadvertently
+    impeccable
+        Ill
             []() - cannot have an array of functions
             ()() - cannot have a function that returns a function
             ()[] - cannot have a function that returns an array
