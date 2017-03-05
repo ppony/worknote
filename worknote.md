@@ -517,6 +517,7 @@ FW release note
     >> 電腦工作環境整理, clean disk, 如何切出自己工作, 電腦報廢
    
     ##git 
+        TD commit some unwanted file, how to let them become untracked again?
         TD how to know each commit's change by git command line?
         TD practice 圖解git, remote push/pull
         TD gerrit ppt
@@ -547,7 +548,11 @@ FW release note
                 list tree ids
             git cat-file -p 'tree id'
                 list tree file
-                
+            
+            git config -l
+            core.editor
+            
+
     ##efficient        
         note7 chrome 手機模式瀏覽
         markdown insert http link but can't display on website default, need to delete all the indent 
