@@ -1,0 +1,171 @@
+
+
+# test
+# --------------
+# Please enter the commit message for your changes. Everything below
+# this paragraph is ignored, and an empty message aborts the commit.
+# Just close the window to accept your message.
+diff --git a/worknote.md b/worknote.md
+index 04b0c90..28340d7 100644
+--- a/worknote.md
++++ b/worknote.md
+@@ -1,8 +1,149 @@
+ 
++google keep
++    sudo apt install gitk
++    gitk --all
+ 
+-dadsf
++    git add -u 則可以僅將「更新」或「刪除」的檔案變更寫入到「索引檔」中
++
++    直接在檔案系統中刪除一個檔案，這只是從「工作目錄」中刪除而已，並沒有更新到索引檔
++    git rm filename 的時候，除了更新索引檔之外，連工作目錄下的檔案也會一併被刪除
++    git rm --cached a.txt 你只想刪除索引檔中的該檔，又要保留工作目錄下的實體檔案
++
++    clean working dir
++    git clean -n  = see what will be cleaned
++    git clean -f -d = force to clean dir and files
++
++    show HEAD
++    git rev-parse HEAD
++    git show-ref --head  <<remember this will do
++    cat .git/HEAD
++            ref: refs/heads/terry
++    cat .git/refs/heads/terry
++
++    git branch -a
++    git remote -v
++    git fetch
++
++    lshw
++
++
++    set env variable permanant
++    $ vi ~/.bash_proflle
++    export PATH=${PATH}:${HOME}/bin
++
++    set -x
++
++    $ type set
++    set is a special shell builtin
++    Since set is a shell builtin, it is documented in the documentation of your shell.
++
++    sudo apt install autoconf
++
++    find . -name config.cache | sed -n 3p
++        under newlib dir / how to vim that file directly? 
++        vim can't edit the input pipe file name directly
++    vim $(find . -name config.cache | sed -n 3p)
++        can do in this way
++
++    grep xxx -r * | nl
++
++    94  /home/cm/work/newlib-nano-1.0_/libgloss/arm/syscalls.c:_sbrk (int incr)        
++    grep _sbrk -riw ~/work/newlib-nano-1.0_/ | sed -n 94p | awk 'BEGIN {FS=":"} {print $1}'
++    /home/cm/work/newlib-nano-1.0_/libgloss/arm/syscalls.c
++
++
++    build
++    reent , stdio
++    cm@cm-X555LD:~/work/newlib-nano-1.0_/libgloss/libnosys$ gcc -c *.c -I../../newlib/libc/include/sys -I../../newlib/libc/include/
++
++    ld *.o ../reent/*.o ../../../libgloss/libnosys/*.o -o a.out
++
++
++    ubuntu chinese language support
++
++
++    ssh-keygen
++
++    使用 dd 來建立一個大檔案：
++    dd if=/dev/zero of=/root/dd_10mb_file bs=1M count=10
++
++
++
++
++    sudo apt install screen
++
++    ctrl+a d
++    screen -r 
++    screen -ls
++
++    gcc -I newlib/libc/include -I newlib/libc/machine/arm -D__ARM_ARCH_6M__ -M -E newlib/libc/sys/arm/syscalls.c 
++    syscalls.o: newlib/libc/sys/arm/syscalls.c /usr/include/stdc-predef.h \
++     newlib/libc/include/_ansi.h newlib/libc/include/newlib.h \
++     newlib/libc/include/sys/config.h newlib/libc/include/machine/ieeefp.h \
++     newlib/libc/include/sys/features.h newlib/libc/include/_newlib_version.h \
++     newlib/libc/include/sys/types.h newlib/libc/include/sys/cdefs.h \
++     newlib/libc/include/machine/_default_types.h \
++     /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
++
++    cm@cm-X555LD:~/work/newlib-cygwin2$ gcc -I newlib/libc/include -I newlib/libc/machine/arm -dM -E -P newlib/libc/sys/arm/syscalls.c
++    #define __GNUCLIKE_BUILTIN_NEXT_ARG 1
++    #define __SSP_STRONG__ 3
++    #define S_ISCHR(m) (((m)&_IFMT) == _IFCHR)
++    #define __strftimelike(fmtarg,firstvararg) __attribute__((__format__ (__strftime__, fmtarg, firstvararg)))
++    #define __DBL_MIN_EXP__ (-1021)
++    #define _SC_XOPEN_UNIX 105
++    #define _NOINLINE_STATIC _NOINLINE static
++    #define F_UNLKSYS 4
++    #define EMULTIHOP 74
++    #define __IMPORT 
++    #define _QUAD_LOWWORD 0
++    #define O_NOCTTY _FNOCTTY
++    #define __unused __attribute__((__unused__))
++    #define FMARK _FMARK
++
++    -MM Like -M but do not mention header files that are found in system header directories
++    -gcc -M -MM a.c
++    a.o: a.c b.h
++
++
++
++    backup files
++    (worked!!) find . -name '*.mp3' -type f -exec cp --parent {} ../test/ \;
++
++    At the Linux command line, I'd like to copy a (very large) set of .txt files from one directory (and its subdirectories) to another.
++    I need the directory structure to stay intact, and I need to ignore files except those ending in .txt
++
++    cd /top/level/to/copy
++    find . -name '*.txt' | cpio -pdm /path/to/destdir
++    (-updm for overwrite destination content.)
++
++
++    附近的(加油站/醫院/警察局/XXX
++    提醒我（明天/後天/X月X日/下周X）（X點X分）在（地名）有（何事情）
++    計時XX秒/XX分鐘/XX小時
++    設定X點X分的鬧鐘  設定X小時/X分鐘後的鬧鐘
++    翻譯(英文單詞)
++    一萬日元
++    對著Google喊出算式，他就會幫你開始自動計算，還不如用Google Now喊「計算機」
++    打開（完整軟體名稱
++
++
++eclipse
++    install jre /usr/java/jre1.8.0_121
++
++teamviewer
++    sudo apt-get install libjpeg62
++    wget http://download.teamviewer.com/download/teamviewer_i386.deb
++    sudo dpkg -i --force-depends teamviewer_i386.deb
++    sudo apt-get install -f
++    teamviewer --daemon start
++    teamviewer
+ 
+ >>sublime
++    在Sublime中，安装插件之前我们需要添加Package Control,打开View——Show Console，输入以下命令：
++
++    import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)
++
+     markdown shortcut
+     - tab , shift tab
+     - This is [an example][id] reference-style link.
+@@ -21,6 +162,8 @@ dadsf
+     Command+Option+X: 导出HTML
+     Ctrl+Alt+C: HTML标记拷贝至剪贴板
+ 
++
++
+ >>ubuntu 16.04
+     1. package 'vim'has no installation candidate
+         sudo apt-get update
