@@ -17,7 +17,7 @@ MEMORY
 }
 
 /*INPUT(startup.o)*/
-INPUT(main.o SecureAttrib.o system_TC8234.o startup.o retarget.o)
+/*INPUT(main.o SecureAttrib.o system_TC8234.o startup.o retarget.o)*/
 /*GROUP(libgcc.a libc_nano.a libm.a libnosys.a)*/
 GROUP(libgcc.a libc.a librdimon_nano.a)
 /*PROVIDE (end = .);*/
