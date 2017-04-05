@@ -144,6 +144,8 @@ teamviewer
 
     import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)
 
+    [buffer indent/scroll](https://github.com/titoBouzout/BufferScroll/tree/st3)    
+
     markdown shortcut
     - tab , shift tab
     - This is [an example][id] reference-style link.
@@ -249,6 +251,12 @@ teamviewer
     停止載入網頁	Esc 鍵
 
 office	
+    netsh winhttp show proxy
+    netstat -ban
+
+    01937NB
+        Atheros AR5B97 Wireless
+
     windows system variable: 
     windows commmand line: set
         set /?   -- list help
@@ -257,6 +265,7 @@ office
         echo %x% -- display x
     1937 NB, acer travelmate 8481g. 
     close all command windows and reopen to enable the effects
+
 
     outlook archive
     C:\Users\CCMA\Documents\Outlook Files
@@ -272,12 +281,7 @@ office
     devmgmt.msc
     appwiz.cpl
 
-git:
-    git reflog push to remote 時, 是否會跟著走?
-    git diff
-    
-    git reflog (if HEAD is detached, you can find it back)
-
+    data rescue software -- final data
 
 
 
@@ -387,122 +391,140 @@ FW release note
     ㄎ可
     ㄔ吃
     ㄕ杓
-    ㄩ淤
-    ㄟㄟ阿
     ㄦ兒
      
      
->>Fri會議
-    >> 測試和文件相關工作, should be take care by engineer ?
-    >> (各 ip 出 pin 對 chip 的影響是 "內部" layout 不好 lay?) sGPIO 為何不要每一根都有 sGPIO 能力? 成本? (sGPIO 設計原意是什麼?)
-    ISPTool FW to BSP
-    why so many training by HR
-    TC8234 nugang board item ignore, nulink gang?      
-
-    If mp version chip is ready, need to support shuttle? (Terry check)
+#Fri會議
     
+
 
 #Thur會議       
-    weekly report 早一點給
-    priority - customer first, chip first.
-    every task needs schedule, not percentage.
-    task need how long? reasonable?
-    * make tz printf work, test functions , incorporate with Zale next week
-    rebuild 6600, m2351 into beta site stage
-    TC8237是4/26 T/O
+        
+    tool's support list
+    new chip nuc220, mini57 (one week after board ready)
+    outlook todo list
 
     ##ccli    
-    softpack
-    - see psio
-        checkpointer of excel will see in every excel file not only psio
-    - special part 
-        - NUC123SD4SN5 (hank)
-        - nuc121 special part number (ok)
-    * ycc m2351 which ib should be generate, CCLI M480??
-    kprom lock, hw bp of M480 will be disable??
-    TODO
-        TC8226 offline download SRAM, sram is 16KB, page size 4KB, current stack use 11.x KB, mbed 3.5KB, if to write serial number need one page buffer and not enough space
-        need uninstall while install different version ICPTool
-    
-    ##ycc
-    (cy0) XOM can'eet set breakpoint    
-    8051 UCID
-    m2351 shuttle will goto mbed    
-    burn code mode of m2351, solid?    
-    ** scrlock mkrom give ID , kprom status, boundary, no config0
-    * 6600a2 version -rebuild??
-        (fixed) 1. Sample code:LCD_NS_Secure進debug mode會超出Range --> v6600a2未看到此問題
-        (fixed) 2. Keil Tool產生出來的.bin檔，如何用ICP Tool去燒? --> (1). 存成Hex file (2). ICP Tool裡面有個NuMergeFile.exe,可以將兩個檔案合併成一個bin file
-        3. 當安全區域鎖定後，config的頁面是空白的--> 老蔣回: UI的一些連動, 防呆, 以及妳提到的拿掉Configuration Tab 之後再一併處理
-        4. KEIL開兩個Project, Secure and Non_Secure，勾選All Region Lock在Non_Secure發現config的值是沒寫進去的-->All Region Lock, 有被寫進去, 但沒有active, 重新上下電後, 就會active.這個老蔣會再跟designer確認
-            won't take effect, icpen 收掉 scrlock 有效, all region 不會, 需要 resets
-            connect 4次 load 4 algo, delay time longer
-        5. ICP Tool & KEIL都會出現安裝錯誤，未包入Nu_Link_USB_Driver 1.2.exe
-        6. ICP 用"選檔"的方式，File data的APROM and APROM_NS與上面路徑的檔案不match
-        7. ICP tool憑證導出時在Secure key路徑會有誤
-    iar 2nd develop    
-    (ycc) TC8234 driver for MP version 
-    (ycc) user manual m2351 
-    
-    ##ychsu
-    ** sd card m4 ice interface
-    * (yung) nuconsole document, put on SVN
-    iar migrate to vs2015
-    (yung) jtrace/ulink performance  
+        m480 spi/aprom programming toghether
+        CCU ULV project weekly update
+        *VBA 
+            for tychang0 visio pin diagram
 
+        *some special part 
+            ** m452 can show PDID? one more bit in UCID, decide show PDID number or not?
+            - NUC123SD4SN5 (hank)
+
+        TODO
+           PSIO tool on normal GPIO
+           *ycc m2351 separate burning & ib generate, CCLI M480??
+           need uninstall while install different version ICPTool
+          problem cause by APROM offset - start disconnect will crash, aprom offset.
+           [Nu-Link] firmware upgrade flow refine (TBD)
+               Verify APROM bit-wise while ICE fw update (todo)
+               Verify LDROM while ICE fw update (done)
+                    
+    ##ycc       
+        *mbed m480
+        * 5/E to finish MP version , IAR 2nd develop        
+        burn code mode of m2351        
+        TBD user manual m2351 
+
+    ##ychsu
+        *offline download speed of Nulink1.0 - 3x seconds do erase ? chip erase about 3 seconds
+        if KEIL NVIC (ycc studied) dialog function works when upgrade AGDI
+        *jtrace/ulink performance (after 6/E, output data from m480 to compare two of them)
+        *iar 8.10 migrate to vs2015 (重要性提升)
+        etm cable quality
+        ??nulink fw SRAM arrangement - why fixed and not adjustable?
+        solving FAQ
+          target chip type auto detect
+          more flexible chip renaming (open to .lua?)
+          USB protocol refine? (one write / one read will slow speed down)
+    
     ##cyyu
-    can refer to Coocox's eclipse implementation
-    * (cyyu) eclipse on v8m option with my 2 project, GDB test, eclipse burn bin file directly or elf fromelf to bin file and burn??
-    (cyyu) openOCD confidential commands shows to ME10    
-    (cyyu) pinconfig auto permutation, ask JC about the algorithm, location first? or don't care?
-    (cyyu) clock excel 
-    (cyyu) Zale 發現問題點是使用win10 內建的 unzip 軟體去解壓 7-zip 壓縮出來的 .zip file 會有問題, 換成 7-zip 軟體解壓就 ok.    
+        * (ccma)                
+                (check normal version first) read memory but FP_COMP value is incorrect?
+                sample code of M0/M4/M23, merge with eclipse's hello world style
+                a sample to run on RAM -- project - m23_test
+                CMSE_TT
+                * can't see verbose log -d 3, disable by zale?
+
+        beta
+            user manual - step assembly, memory view, register view.
+            * SFR
+            * page size of m0564 is 2kb
+            * burn hex/elf from start to the end, should skip unused part            
+            Workaround only. ccli donwload hardfault. reset init/halt core vector reset. reset run last halt.
+            * 多設一些斷點就死掉要重load code (ST also NG)
+            * tips disappear too soon
+            * can 只燒 code 不 run code?
+            * 2nd develop flash algo, communicate with MKROM
+            * use our flash algorithm 替換掉原始機械碼
+            * 不同版本的測試, eclipse, jdk, linux/windows
+            * support elf file?
+            * hal_vid_pid of numicroM23.cfg 0x0416 0x511b 0x511c 0x511d
+            * mutex of openocd with icptool
+            * EPL, how to release?
+            openOCD confidential commands shows to ME10    
+            * there are some STM keyword in template.
+                template system/src/diag/trace_impl.c 內容是V7M, system/src 的東西幾乎用不到, 能不放?
+        beta2
+            *test remote debug with GDB server
+            *flash breakpoint
+            *can't refresh memory window
+
+        pinconfig online get information from OpenOCD
+        pinconfig auto permutation, ask JC about the algorithm, location first? or don't care?
+        clock excel 
+        Zale 發現問題點是使用win10 內建的 unzip 軟體去解壓 7-zip 壓縮出來的 .zip file 會有問題, 換成 7-zip 軟體解壓就 ok.    
 
     ##cctu
-    * nuc505/nuc472 
-    * all in one
-    * 6sec problem
-    ispbridge of JCLiu
-    (cctu) code排版
-    (cctu) ICP tool 起始畫面 auto select
-    (cctu) upload nubridge by jcs2
-                     
-        
+        all in onestatus?
+        *nuc472 
+        *all in one (to integrate old bsp first)        
+        *XOM, secure boot tool is the most fitable for XOM programming, KPROM (how to check?)
+        *m480 secure boot APROM 6 pieces 
+        *m480/m2351 isp
+        *command line 
+        isplink
+        icptool archtecture
+        (cctu) code排版
+        (cctu) ICP tool 起始畫面 auto select
+        (cctu) upload nubridge by jcs2                             
     ** >> code review: 6603
 
-    (yung/zale/ccli) m480/sfr nutool/isp
     (cyyu) github pinconfig
     pri (ccli) UAC/NM18xx 包含多種 die, sw arch 如何改?
     pri (ccli) sync cctu's icptool.lua code
-    
-    (wait) win7 64bits to win10 64bits to reproduce bug on white NB
-
+       
     .inf problem
-    (ycc) NVIC, offline cert upload
+    (ycc) offline cert upload
     (ccli) special part flow 
     (yung) etm output verification automatic
         
-    weekly report track item backup
-      [Nu-Link] firmware upgrade flow refine (TBD)
-    	若廣灑也沒有什麼結果, 在v1.32還能夠加一些補強的點
-    	Verify all APROM while ICE fw update (todo)
-    	Verify LDROM while ICE fw update (done)
 
+    ##TBD
     	[Nu-Link][Mbed] Mbed CMSIS DAP debug interface (TBD)
     	CMSIS DAP interface implement
     	pyDAPLink benchmark.py for CMSIS-DAP compliance
     	Test DAPLink script
 
     
-##CCMa     
+##CCMa         
     pyOCD as isp/icp tool on linux
-    FPGA occupy location    
+    VHD
     C:\Users\CCMA\Documents\Outlook Files
-    >> 幼兒園, 學區, 防盜監控, dna preserve, 清冷氣, NAS, 防網路霸凌 reverse search engine, 效能促進公司, 買體重機
-    >> 二進制比對工具, 電腦工作環境整理, clean disk, 如何切出自己工作, 電腦報廢 
+    TD 幼兒園, 學區, 防盜監控, 清冷氣, NAS, internet bully reverse search engine
+    TD 二進制比對工具, 電腦工作環境整理, clean disk, 電腦報廢，dna preserve, 
+
+    burn code mode on 2nd development
+
+    ##kyoto
+        京都蒙特利酒店
+        大阪「瑞 士酒店」直接在地鐵「難波站」裡面, 同時最後一天還可在難波站裡搭南海電車到關西機場
 
     ##git 
-        [p4merge](https://git-scm.com/book/zh-tw/v1/Git-%E5%AE%A2%E8%A3%BD%E5%8C%96-Git-%E9%85%8D%E7%BD%AE#格式化與空格)
+        TD [p4merge](https://git-scm.com/book/zh-tw/v1/Git-%E5%AE%A2%E8%A3%BD%E5%8C%96-Git-%E9%85%8D%E7%BD%AE#格式化與空格)
         ssh - push remote with keyin username and password
             ssh-keygen
                 have to key in password for id_rsa key
@@ -513,62 +535,81 @@ FW release note
             ssh -T git@github.com            
             git remote add origin git@github.com:your_account/your_repository.git
             git clone git@github.com:Username/repository.git
-        practice 圖解git, remote push/pull
-        gerrit ppt
+        TD git reflog push to remote 時, 是否會跟著走?
+        
         note
+            git reflog (if HEAD is detached, you can find it back)
+
             git hash-object 'file name' 
                 list blob hash
             git cat-file -p master
                 list tree ids
             git cat-file -p 'tree id'
                 list tree file
-                
-    ##efficient        
-        note7 chrome 手機模式瀏覽
-        markdown insert http link but can't display on website default, need to delete all the indent 
-        sublime find跳轉後回到上一位置
+            git config -l
+            git config --global --unset https.proxy      
+            git config --global https.proxy https://10.1.8.42:80  
+            git config --global http.proxy http://user:passwd@10.1.8.42:80   <- this is tke key
+            
+            git config --global --add merge.tool kdiff3
+            git config --global --add mergetool.kdiff3.path "C:/Program Files/KDiff3/kdiff3.exe"
+            git config --global --add mergetool.kdiff3.trustExitCode false
+
+            git config --global --add diff.guitool kdiff3
+            git config --global --add difftool.kdiff3.path "C:/Program Files/KDiff3/kdiff3.exe"
+            git config --global --add difftool.kdiff3.trustExitCode false
+
+            git remote -v
+            origin  https://github.com/ppony/worknote.git (push)
+            git remote add origin1 git@github.com:ppony/worknote.git        
+    ##efficient 
+        git pull, unknown SSL protocol error, network
+        TD ghost rescue
+        TD worknote items , TD and finish, how to rearrange and move between them??
+        markdown insert http link but can't display on website default, need to leave no blank in line head 
         sublime 讀檔二進位轉換 edit config0 is possible?
-        sublime search but can jump to result directly, need to mouse click
-        command windows paste & copy, file browswer that can keep previous setting
-        019
-        37 office word lite
-        01937 can't new txt file by right key mouse 
-        01937 use AndroidAP, PC also use, PCANY WHERE , delete wormhole
-        如何快速reget windows 工作快取
-        linux ser
-        ver as NAS and github server
-        TruethCrypt like tool for photo, 檔案徹底格式化, image temp icon delete        
+        linux server as NAS and github server
+        TruethCrypt like tool for photo, image temp icon delete        
         simple chinese system of my PC
-        weekly report word file format of bullitin one key fixing
         which search engine can escape special character like '-' of "-Wa"
         how to index files, e.g. index to icptool by yung in pt30 extension
         crontab backup working notes
-        notepad++ text cloud index(no classify) 結合平日生活&learning
-        notepad++ define your own language??
-        notepad++ priority highlight with color and can be filtered out for clear view
-        notepad++ add hyperlink to note, sync with ubuntu PC, google keep manage/GitHub, can .HTA FILE do this??
-        notepad++ indent, when press enter on a title
-        windows wormhole with ubuntu ??
-   
+           
         x555l 
-            ubuntu display blink 
-            win10 64bit installation for multi os
-            ssh to x555l remote    
+            ssh to x555l remote                       
         
     ##unix        
+        win7 - set | grep PATH, need grep with color, awk to format print 
         set & share 環境變數 for multi terminal 
         system programming   
         制作路徑變數方便切路徑, cd $libnano
 
         solved
+            echo ABCDE | od -A n --width=1 -v -t x1
+    
+            diff -u <(seq -w 16) <(seq -w 16 | grep -Ev '^(02|03|14|15)$')
+            @@ -1,6 +1,4 @@
+            func1 as hunk header, use -p option
+            @@ -4,7 +4,6 @@ func1() {
+
+            tr [:lower:] [:upper]
+            tr abcd ABCD
+            tr a-z A-Z
+            tr '{}' '()' < input > output
+            echo "this is for test" | tr -s [:space:] '\t'
+            echo "the geek" | tr -d 't'
+            tr -d [:digit:]
+            tr -cd [:digit:]  -- only left numbers
+            tr -s '\n' '' < file
+            
+
             Use Ctrl + Left and Ctrl + Right to move between the various parts of line
 
             clip < c:/Users/CCMA/.ssh/id_rsa.pub
             cd – 	cd 減號；切換目錄到前一個目錄
             ls -F 	附加檔案類型，目錄附加/，執行檔附加`*
             locate 檔案 	搜尋符合的檔案或目錄；必須先用updatedb建立檔名索引。
-            locate -b ‘\name’列出名為name的檔案，沒加反斜線的話
-            也會列出部份符合的檔案
+            locate -b ‘\name’列出名為name的檔案，沒加反斜線的話也會列出部份符合的檔案
             which 執行檔名 	列出執行檔名所在路徑
             Ctrl+L 	清除螢幕，同clear命令
             Esc + . 	顯示上一命令的引數、修改後執行
@@ -582,9 +623,6 @@ FW release note
             Ctrl+Shift+V 	貼上剪貼簿文字到Terminal裡
             標示、滑鼠中鈕 	先用左鈕拖拉選取需要的文字後移動游標到新位置按中鈕
             （兩鈕滑鼠則是同時按左右鈕），標示文字會被複製到新位置
-            date 	顯示系統日期與時間
-            cal 	顯示本月月曆
-            uptime 	顯示開機時數
             w 	顯示上線用戶清單
             whoami 	顯示目前用戶名
             uname -a 	顯示系統核心資訊
@@ -627,7 +665,8 @@ FW release note
     ###gdb
         how to print stack pointer?            
 
-    >>vim  
+    ###vim  
+        tabnew
         how to auto set tags in vim, ctags -R can't recursive add sub directory also do 'ctags' in subdir, and set tags+=subdir
         ctags can't resolve local variable
         refresh vim content
@@ -661,12 +700,56 @@ FW release note
             set this in ~/.vimrc, tell vim to look for tags file, from current dir up to $HOME
             
         solved 
+            :set ic
+            :set ai
+            :set aw     <- auto save after writing
+            :opt
+            :mkv[imrc]  <- save into .vimrc
+
+            folding
+            zo	將游標所在處的折疊打開。open。
+            zc	將游標所在處已打開的內容再度折疊起來。close。
+            zr	將全文的所有折疊依層次通通打開。reduce。
+            zm	將全文已打開的折疊依層次通通再折疊起來。more。
+            zR	作用和 zr 同，但會打開含巢狀折疊（折疊中又還有折疊）的所有折疊。
+            zM	作用和 zm 同，但對於巢狀折疊亦有作用。
+            zi	這是個切換，是折疊與不折疊指令間的切換。
+            zn	打開全文的所有折疊。fold none。
+            zN	這是 zn 的相對指令，回復所有的折疊。
+            那這個 zn 和 zR 不是都一樣嗎？不是的，zR 的作用於 foldlevel 這個設定項，是控制折疊的層次，而 zn 則是作用於 foldenable 這個設定項，他是不管層次的，只有全關或全開
+            
+            :mkview
+            :loadview
+
+            pure vi problem 
+            set .vimrc 
+            set nocompatible
+            set backspace=2
+
+            vim -b binaryfile
+            %!xxd 
+            %!xxd -r
+
+            set dispaly=uhex
+            'ga'    - show hex value
+            set nowrap
+            'g C-g' - display word position
+            '100go' - go to character 100
+
             gf  open in the same window ("goto file")
     
             to delete all lines containing "profile"
             :g/profile/d
             :g!/profile/d  <- to delete all lines NOT containing "profile"
             
+            :%s/foo/bar/gc
+            :%3,10s/foo/bar/gc
+            :s/\<term\>/replace/gc
+            :'a,'bs/foo/bar/g
+            :.,+2s/foo/bar/g	
+            :.,$s/foo/bar/g
+            :g/^baz/s/foo/bar/g
+
             :set ic(ignorecase 的??) 忽略大小?
             :set noic(noignorecase 的??) 不忽略大小?
             /\CWord ?分大小?的查找
@@ -716,7 +799,7 @@ FW release note
             刪除從游標開始後的word - dw
             刪除從游標開始後至結尾 - d$
 
-    >>mbed
+    ###mbed
         mass mode
         If GPA.1 = 0
             if GPB.14 = 0       
@@ -727,16 +810,15 @@ FW release note
         else
             ICP Tool, KEIL比對ICE Firmware的版本.跑既有Firmware Update的流程.
             
-    >>m2351         
+    ###m2351         
         * interrupt vector table 
         gdb disassembly, set in assembler code?
         keil axf.c will get LOAD region of elf file to specify where KEIL load to?	
         
             
     ###newlib 
-        establish eclipse project, semihosting
-        * It seems current GCC can’t generate NSC segment on 0x2000fc00, so change to put in flash (say 0x3f800)
-        armv8m page 216, B{<c>}{<q>} <label>, gnu assembler of WK7, mvn  r3, #0xFF, asm("ldr r3, =JMPADDR");
+        volatile pointer?
+        how to keep project setting of keil
         what's this mean? M32(0x3001FFF0) = 0xe7fee7ff;
             branch to 0xE7FF and stay in 0xE7FE
             0x3001FFF0 E7FF     B 0x3001FFF2
@@ -744,6 +826,8 @@ FW release note
         有什麼工具可以 disassemble 一小段機械碼
             echo "0: e7ff" | xxd -r > disbin1
             arm-elf-objdump -D -b binary -marm disbin1
+            arm-none-eabi-objcopy -O ihex "m23_test.elf"  "m23_test.hex"
+            arm-none-eabi-objcopy -O binary -j .text "m23_test.elf"  "m23_test.hex"
         $ ./configure --target=arm-none-eabi --enable-newlib-nano-malloc --enable-newlib-reent-small --enable-newlib-nano-formatted-io --disable-newlib-multithread --disable-newlib-supplied-syscalls
         newlib build problem modification
             Error: lo register required
@@ -753,8 +837,7 @@ FW release note
         * core_armv8mbl.h et al include file can come from gcc built-in?        
         * keil local variable can't be watched, must move to global? char s[] (be optimized by compiler? volatile?)
         * build newlib code on windows platform, project sample retarget, and debug
-        * GCC share librar
-        y/ dynamic linking --static .so,  practice debug with --static
+        * GCC share library/ dynamic linking --static .so,  practice debug with --static
         why KEIL MicroLib no need HEAP for printf??
         #pragma message
         trace newlib code after preprocessor to strip DEFUN
@@ -772,6 +855,7 @@ FW release note
         一堆 ifdef endif 要怎麼看
         note        
 
+            arm-none-eabi-objcopy -O binary xxx.elf xxx.bin 
 
             check version
             arm-none-eabi-gcc -v
@@ -910,10 +994,7 @@ FW release note
     rootfs
     regular expression
     TYPE array[n] <- array is a pointer (where is it?) array point to a buffer length TYPE*n (where is it location? stack?)
-
-inadvertently
-    impeccable
-    callbac
+    call back
     Linux就該這麼學
     computer science from buttom up
     Linux System Programming
@@ -977,6 +1058,7 @@ inadvertently
     >> icptool 印出 寫入大小超過了數據Flash的限制 不斷重連 
     >> Nano112 SPROM in KEIL need to set .ini verify=0??
     >> (minor) nuCAD can't launch OrCAD at first time (if not reboot)
+    icptool refresh and display data, jump to certain offset
 
 Yung
     >> cdc at win10 don't need to install driver, nulink driver can pass?
@@ -1073,10 +1155,11 @@ eng
 
 
 wise    
-    11. 禪修，不必到廟裡，能夠心平氣和地oooo，就是最好的修行。
+    savant, 64x75, word, number has color and emotion Daniel Tammet
+    happiness should search inside not outside
+    禪修，不必到廟裡，能夠心平氣和地oooo，就是最好的修行。
     we believe that “empty vessels make the most sound”; this, however, could not be further from the truth
     規則就在那裡, 只是輸的人不干心罷了
-    目標明確, 就不會打忙
 
 <transfer>
     (cctu) how to exchange data between c++ and js
@@ -1126,10 +1209,37 @@ token.’’
         evaluating x, discarding its value, and then evaluating y
 
         !10 is zero
-        ˜10 is –11 (11...110101), at least on a 2’s complement
-         machine
+        ˜10 is –11 (11...110101), at least on a 2’s complement machine
 
         10||12 is also 1, because 10 is nonzero. Moreover, 12 is not even evaluated in the latter expression, nor is f() in 10||f()
+
+        It is valid to write:
+        if (p == (char *) 0) ...
+        but it is not valid to write:
+        if (strcmp (p, (char *) 0) == 0) ...
+        because strcmp always looks at the memory addressed by its arguments.        
+
+        if ((int) ((unsigned) a + (unsigned) b) < 0) complain();
+
+        while ((c = getchar()) != EOF)
+        
+        #define putc(x,p) (--(p)->_cnt>=0?(*(p)->_ptr++=(x)):_flsbuf(x,p))
+
+        portable problem
+          7.3. Are Characters Signed or Unsigned?
+          (unsigned char) c
+
+          h = n % HASHSIZE;
+          if (h < 0)
+          h += HASHSIZE;
+
+          free (p);
+          p = realloc (p, newsize);
+
+          n = -n;
+    
+
+
     //keil
     -c -mthumb -gdwarf-2 -MD -w -O -mapcs-frame -mthumb-interwork -I ../../../../Library/CMSIS/Include -I ../../../../Library/Device/Nuvoton/TC8234/Include 
     -I ../../../../Library/StdDriver/inc -I ../Secure -IC:/temp/v8m/TC8234_BSP/SampleCode/TrustZoneGCC/Template/Secure/RTE -IC:/keil/520s/ARM/PACK/ARM/CMSIS/5.0.0-Beta4/Device/ARM/ARMv8MBL/Include 
@@ -1142,20 +1252,14 @@ token.’’
     'Building file: ../src/stm32f4xx_hal_msp.c'
     'Invoking: Cross ARM C Compiler'
     arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 
-    inadver tently
-impeccable-DDEBUG -
-    xx -DUSE_HAL_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4-hal" 
+    -DDEBUG -DUSE_FULL_ASSERT -DTRACE -DOS_USE_TRACE_SEMIHOSTING_DEBUG -DSTM32F407xx -DUSE_HAL_DRIVER -DHSE_VALUE=8000000 -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32f4-hal" 
     -std=gnu11 -Wno-missing-prototypes -Wno-missing-declarations -MMD -MP -MF"src/stm32f4xx_hal_msp.d" -MT"src/stm32f4xx_hal_msp.d" -c -o "src/stm32f4xx_hal_msp.o" "../src/stm32f4xx_hal_msp.c"
     'Finished building: ../src/stm32f4xx_hal_msp.c'
     ' '
     'Building target: stm32ya.elf'
     'Invoking: Cross ARM C++ Linker'
     arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"stm32ya.map" --specs=nano.specs -o "stm32ya.elf"  ./system/src/stm32f4-hal/stm32f4xx_hal.o ./system/src/stm32f4-hal/stm32f4xx_hal_cortex.o ./system/src/stm32f4-hal/stm32f4xx_hal_flash.o ./system/src/stm32f4-hal/stm32f4xx_hal_gpio.o ./system/src/stm32f4-hal/stm32f4xx_hal_iwdg.o ./system/src/stm32f4-hal/stm32f4xx_hal_pwr.o ./system/src/stm32f4-hal/stm32f4xx_hal_rcc.o  ./system/src/newlib/_cxx.o ./system/src/newlib/_exit.o ./system/src/newlib/_sbrk.o ./system/src/newlib/_startup.o ./system/src/newlib/_syscalls.o ./system/src/newlib/assert.o  ./system/src/diag/Trace.o ./system/src/diag/trace_impl.o  ./system/src/cortexm/_initialize_hardware.o ./system/src/cortexm/_reset_hardware.o ./system/src/cortexm/exception_handlers.o  ./system/src/cmsis/system_stm32f4xx.o ./system/src/cmsis/vectors_stm32f407xx.o  ./src/BlinkLed.o ./src/Timer.o ./src/_initialize_hardware.o ./src/_write.o ./src/main.o ./src/stm32f4xx_hal_msp.o   
-
-inadvertently
-    impeccable
-
-    <n
+    <nulink>
         app_config 和 dialog 都 include lua.h 及 appconfig.h.  
         因為 CCTu 用不到lua.h
         把 lua.h 放到 appconfig.h include
@@ -1499,14 +1603,45 @@ inadvertently
     外部變數    extern     函式外面         persistence       Global(所有檔案)
     外部靜態    static     函式外面         persistence       Global(一個檔案) 
 
+    typedef 
+        // Wrong definition:
+        typedef char * pstr;
+        mystrcmp(const pstr, const pstr);
+ 
+        // Correct definition:
+        typedef const char * cpstr;
+        mystrcmp(cpstr, cpstr);
+        
+        qualifier
+        auto, static, extern, register can't in typedef
+        const, volatile can in typedef
+        
+        // 原始寫法:
+        int *(*a[5])(int, char*);
+        // 轉換1:
+        typedef int *(*pFun)(int, char*);
+        pFun a[5];
+        // 轉換2:
+        typedef int *Func(int, char*);
+        Func *a[5];
+        
+        // 原始寫法:
+        void (*b[10])(void (*)());
+        // 轉換為:
+        typedef void (*pFunParam)();       // 右半部, 函數的參數
+        typedef void (*pFunx)(pFunParam);  // 左半部的函數
+        pFunx b[10];
 
-    Git初探之Fork及Branch
-    剛接觸Git這套版本管理的solution。一開始對Fork和Branch的差別是什麼始終不太清楚，經過測試後，大致的心得如此。
-    1.Fork會另外複製一個版本，這個版本也是一個完整的套件。
-    2.官方說明文字裡指出，Fork主要是指要以其他人的套件為初始套件來開發時，或者要替他人的套件做出貢獻，也就是說通常是從其他Git帳號所擁有的套件複製而來的就是Fork。
-    3.如果是自己的套件，正確的作法應使用branch
-    4.Fork底下還可以有Branch，但沒有Branch底下還有Fork這種狀況。
-    5.無論是Fork還是Branch的版本都可以合併至主要版本。唯一差別是Fork是向原作者送出merge的要求，尚需要原作者允許才可以合併，而branch因為是從自己的帳號分支出來的套件，所以不須另外允許
+        void (*signal(int sig, void (*func)(int)))(int);
+        // 轉換成下面的樣子
+        typedef void (*sighandler_t)(int);
+        sighandler_t signal(int sig, sighandler_t func);
+
+        習慣上, C 語言 (如: standard C library, POSIX) 會在衍生性型別名的後面加上 _t, 像是 size_t.
+        定義或宣告變數時, 新設的型別不可以和 signed, unsigned 一起合用 (即便是 原始型別是 int, short, long... 之類的型別). 理由很簡單 signed int 和 unsigned int 是分別的基本資料型態, 意即 signed 和 unsigned 這二個 keyword 並不是 int 的 storage class 或者是 qualifier 之類的修飾 keyword.
+        
+
+    無論是Fork還是Branch的版本都可以合併至主要版本。唯一差別是Fork是向原作者送出merge的要求，尚需要原作者允許才可以合併，而branch因為是從自己的帳號分支出來的套件，所以不須另外允許
 
     __declspec, which specifies that an instance of a given type is to be stored with a Microsoft-specific storage-class attribute
     dllexport to export function for other application. dllimport is not necessary, if having it, compiler may improve performance
@@ -1526,9 +1661,7 @@ inadvertently
         STEP 3
             Look at the symbols to the left of the identifier. If it is not one of our symbols above (say, something like "int"), just say it. Otherwise, translate it into English using that table above. Keep going left until you run out of symbols *OR* hit a *left* parenthesis "("
 
-inadvertently
-    impeccable
-        Ill
+-   Illegal combinations include:
             []() - cannot have an array of functions
             ()() - cannot have a function that returns a function
             ()[] - cannot have a function that returns an array
