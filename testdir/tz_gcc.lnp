@@ -1,1 +1,0 @@
--T ./flash.ld -mthumb -Wl,-Map="./tz_gcc.map" -o "./tz_gcc.elf" -L ./lib "./main.o" "./retarget.o" "./secureattrib.o" "./system_tc8234.o" -nostartfiles -nodefaultlibs
