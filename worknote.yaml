@@ -1,14 +1,14 @@
 
 
-
-
-python mis 
-tax review and backup
-
+ms60 who need to backup what for quit?
+mbed os how to init()?
+nuconsole update for KEIL UM
+            
     
 ;ccma       01120180   09/11/2012    now 12.49 days off,  have been 2.51, 經智分 2018/9/07(五)	2018/12/04(二)        
-    ubuntu on windows
-    git remote    
+    (wait) m2351 pdid rule isp UID HK told me
+
+    sylvia secureISP english     
     2 samples merge with clockconfig and pinconfig gen code
     eclipse py-binascii.py C:\work\project\v8m\TC8234_BSP\SampleCode\FlashTool\FlashTool-eclipse-m2351-2nd\M2351_AP_NS (MKROM)_mp        
         keyword not "$t, $d" but "POP", and don't need pre_s0
@@ -18,6 +18,10 @@ tax review and backup
         auto test, unit test code generate. code coverage - can be done by stlink, and very detail.         
                 
     ;;efficient
+        paste in worknote, and tab indent all lines
+        paste module chunk, agile code python
+        install UOW in 2773
+        remove 換行符號, 合併多行
         二進制比對工具                    
         bookmark opensource/word2html
         python 蟻穴式 copy , change icon on the whole path, to backup 2nd flash algo source code 
@@ -61,18 +65,17 @@ tax review and backup
     walter
         打卡異常通知, 出缺勤紀錄寄給 manager (health check can record)    
         ISP 2201 gitweb tag        
+    jc what is module test?
         
 ;Thur           
-    ;;host                        
-        m2351 pdid rule 
-
-        excel review
-            NuConsole <- freeze and standalone, no update 
-            ICP DIY Writer <- twICP waveform is less related to chip series, mostly, only time tuning needed.
-            NuPLL
-            motor
-
+    ;;host              
+        keil/iar/icp 系列分法
         
+        upload all m2351B tool 6/E
+            release nulink
+            nuCMDtool for 2351            
+            isp, secureISP B version
+                        
         tool support table        
         file://///nuvoton.com/prjshare/MCU_FAE/Temp/01_Tool_NuLink/ MCU tools develop status.xlsx.lnk
         
@@ -127,11 +130,16 @@ tax review and backup
             Nano112 SPROM in KEIL need to set .ini verify=0??
             (pending) Checking tool developing        
                 
-    ;;ycc
-        ?? m2351 nuCMDTool support nulink2? no
+    ;;ycc    
+        hex look address, bin look first two word
         
-        icp writer use swd
-
+        ?? m2351 nuCMDTool support nulink2? should be ok.
+        can merge with original nuCMD?
+            config0 write 3, chip will die
+            xom address set overlap, need chip erase
+            
+        swd library for m2351 ns
+        
         auto firmware upgrade, because config1 dataflash didn't modify
         
                     
@@ -164,19 +172,17 @@ tax review and backup
             iar 8051 (select 1T waveform, tell us selected part)                               
             xom numbers information read from chip
 
-    ;;yung;;ychsu
-        ?? yhchuang 480 boards
-
+    ;;yung;;ychsu       
+        * nulink2 trace UM
+        
         IAR M252 系列  M23 SP display 問題 MSP_S, MSP_NS
                 
-        pinview for m4521/m031/nuc2201/m2351B /mL51
+        pinview for mL51
                 
         ** 1MB/s sram access, m4 mem read ack fail first (拖累數據?)
         
         cmsis dap
-        
-        ** ml51 pinview  7/E      
-                
+                        
         ** some sample has small size, EBI_SRAM ETM Branch, ETM P-header: 11E  1N each packet size the same??        
         * tp.ini in dll driver, event viewer, itm function display 排版, print to nuTrace terminal too slow, UI for DWT config, add traceclk_div option
         * swo UART
@@ -187,6 +193,7 @@ tax review and backup
         etm (code coverage)
         * use crypto hw in nulink2 ICE
         ETM data on-the-fly
+        ETM to IAR,eclipse
         
         minor
             nuconsole 和 nulink fw 脫勾                        
@@ -204,9 +211,6 @@ tax review and backup
         ** pinconfig m4521/m2351B/mL51 version pin assignment pinconfig, m031/nuc2201 (no code gen)
                 
         eclipse
-            ** template project (sync at m2351 6/E)            
-            ** preference.ini built in and user manual show in installer
-            * how to know use rate??
             * openocd burn code at linux, pinview
             * add XOM (but GCC not supported XOM now) - if there is XOM enable, must chip erase (4 pair)
                         XOMR0BASE (Address = 0x0020_0000) [23:0]
@@ -265,11 +269,11 @@ tax review and backup
             ip 設定想要的 clock speed, 分析是否可達需求. 剩下的 module init					
         
     ;cctu       server \\Oapcd01504\BSP\               
-        ?? wish list is inform wh?
-        ** don't send to Walter directly
+        otp ecc aes
+        ecc prv 256 pub 512
+        m031 how to recover UART transfer? drop if timeout and uart not receive 8bytes (so usci can't work)
         
-        ** 2201 hid fail 
-        ** m031 how to recover UART transfer?
+        * 2201 hid fail, nuc240 only
                 
         status
             nuc2201 board, USB ok UART未測
@@ -1229,7 +1233,7 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
         mini51                  4,8,16          2       conf        2               24 
         mini57 (gag014,kc)                                                                                                                      nm1120
         mini58                  32              2.5     conf        4               50
-        m031 (fa8269,ppkc)
+        m031 (fa8269,ppkc,m0_AHB4)
         m051                    8,16,32,64      4       4           4               50    
         m0518                   36,68           4       conf        8               50                                                          nuc131,nm1320
         m0519                   64,128          8       4,conf      16              72                                                          nm1500
@@ -1257,7 +1261,9 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
         n76e616                 18                                  0.5             16
         n76e885                 18                                  0.5             25
         n78/n79/w78/w79 (4T/6T/12T) 
-
+        
+        
+        
         NUC100 	DA8230	NUC100/120AN
                 DA8232	NUC100/120BN
                 DA8245	NUC130/140CN
@@ -1272,8 +1278,11 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
                 FB8239	NUC230/240AE
         NUC2201	FA8267	
                 
-        NUC029	FB8243	NUC029AN
-                FC8244	NUC029AE
+        NUC029	FB8243  NUC029AN
+                FC8244  NUC029AE
+                FA8273  NUC029LGE/NUC029SGE 
+                FA8267  NUC029LEE/NUC029SEE
+                FA8258  NUC029LDE/NUC029SDE
                 
         NUC131	FA8258	NUC131AE
         M0518	FA8258	M0518
@@ -1290,7 +1299,7 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
                 FA8243	M051BN
                 FB8243	M051DN
                 FC8243	M051DE
-                FA8252	M058SAN
+                FA8252	M058SAN                                
         M0564	FA8262	M0564
         NUC126		
                 
@@ -1309,7 +1318,7 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
         Nano103	FA8263	Nano103
                 
         NM1120	GAG014	NM1120
-                
+        NM1230  HAG025        
         NUC400	FA8249	NUC442/472AE
                 
         M451	FA8256	M451AE
@@ -1318,11 +1327,10 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
         M4521	FA8268	
                 
         M251	TC8237	
-     	M252_D (64/12KB)    HAG026
-        M252_G (256/32KB)
+     	M252_D (64/12KB)    HAG028
+        M252_G (256/32KB)   HAG026
         M252_E (128/16KB)
-        
-        M031	FA8269	
+        M252_C  HAG029
                 
         M2351	LAG021	
                 
@@ -1341,7 +1349,32 @@ TD 目前算法程式是強制在 NUC100 init 後面插 asm BKPT, 應該要從py
                 FA8261	N76E616
                 FA8265	N76E003
                 HAG023	ML51
-
+                HAG030  N76E013
+        
+        相似系列by ccli
+            M031
+            M051 / NM1330
+            M0518 / NUC131 / NM1320 / NUC030
+            M0519 / NM1500
+            M0564 / M05641 / NUC126 / NUC1261
+            M2351
+            M251/M252
+            M451/M4521
+            M480
+            Mini51 / NM1820
+            Mini55 / NM1200
+            Mini57 / NM1120 / NM1810 / NM1230
+            Mini58
+            NUC029
+            NUC100
+            NUC121/NUC125
+            NUC200AN
+            NUC240AE / NUC2201
+            NUC472
+            NUC505
+            Nano100
+            Nano112
+            Nano103
         
         
         schematic
@@ -2079,6 +2112,10 @@ TD  PDMA CRC
             displaying full path of a file in title bar
             Options -> Preference -> Display -> Trim Long Path Names With ellipses
         ;enviromental varialbe
+            HTTP_PROXY
+            http://ccma@Terry705@nthcwgcls:8080
+            HTTPS_PROXY
+        
             ;user
                 PATH
                     C:\Program Files\GNU Tools ARM Embedded\7 2017-q4-major\bin;
@@ -2198,6 +2235,7 @@ TD  PDMA CRC
             ;cmder alias
                 alias -> to list alias
                 gco=git checkout $*
+                win10 may not work, cmd.exe -> property -> use legacy console
                 
         ipconfig /all ==to list all network device 
         
@@ -2233,25 +2271,41 @@ TD  PDMA CRC
                 
         npp how to list all hotkey -- setting -> shortcut mapper  (remember to disble plugin shortcut, like COMPARE)
         fold to level one - first alt+0 to fold all, then shift+alt+1 to unfold to that level
-    
-        shortcut macro
-            delete blank line CAS+D (plug-in shortcut map)
-            bookmark CAS+V
-            explorer CAS+E
-            google search A+F2
-            open file A+F5 (F6 new instance)
-                file_path   CAS+P
-                replace_space  CAS+S
-            send editing file CAS+O
-            print   C+P
-            delete lines - C-L (clipboard), C-S-L
-            
-        delete blank lines        
+
+        shortcut mapper
+                bookmark CAS+V
+                explorer CAS+E
+            main menu
+                move to another view C+k  (delete origin comment C+k)
+                trim trail CS+k 
+                find match delimiter CS+b
+                join lines C+j
+                Move Up Current Line CS+up        
+                CA enter (insert blank line up), CSA enter
+                C pgup/down (next tab)
+            macro
+                delete blank line CAS+D (plug-in shortcut map)
+                google search A+F2
+                open file A+F5 (F6 new instance)
+                    file_path   CAS+P
+                    replace_space  CAS+S
+                send editing file CAS+O
+                print   C+P
+                delete lines - C-L (clipboard), C-S-L
+            scintilla
+                C del, CS del, C bs, CS bs, C l (cut line), CS l (del line) 
+                C t, change to copy line => original, CS t (copy line), C T(transpose with previous)
+                C Home (jump to start), CS Home (jump to start and selection), C end, CS end
+                C [, C ] paragraph down/up
+                
+        setting->preference->multi-editing
+        
+        delete blank lines         
             按ctrl+h，跳出搜索替换框，把查找模式定义为扩展（\n，\r…） 查找目标：\r\n\r\n  替换为：\r\n
-            Textfx插件 TextFX Edit -> Delete Blank Lines
-            ^ +$，替换为空    
-            
-        vertical block 區塊選取的功能
+            Textfx插件 TextFX Edit -> Delhiete Blank Lines
+            ^ +$，替换为空              
+                                   
+        vertical block 區塊選取的功能     
         1. 先按住ALT鍵後，然後用滑鼠左鍵來拖曳要選取的範圍
         2. 同時按住ALT跟SHIFT鍵後, 用方向鍵來拉出要選取的範圍
         
@@ -2415,8 +2469,26 @@ TD  PDMA CRC
     ;python
         ?? upgrade yotta - [lib>site_packages>serial pywinusb pip], miniterm, hex2bin, hex2dump, hexdiff, hexmerge
         
+        s.split == getattr(s, "split")
+        f.x = 10 也只是 setattr(f, "x", 10) 的语法糖
+        在python中，变量的查找遵循LEGB原则：Local，Enclosing，Global以及Builtin。
+        属性的查找首先它会找属性声明的那个对象，然后是创造出对象的类，然后是随着类的继承链往上找，直到object对象
+        f.say() 和 Foo.say(f) 没有本质上的区别
+        我们应该避免一种情况，那就是类属性和实例属性重名的问题
+            class Person(object):
+                population = 0
+                def __init__(self):
+                    self.population += 1
+        Python 中的顺序类型，都是可迭代的（list, tuple, string）。其余包括 dict, set, file 也是可迭代的。对于用户自己实现的类型，如果提供了 __iter__() 或者 __getitem__() 方法，那么该类的对象也是可迭代的
+        
         ;develop
-            ;emwin gif
+            ;gif
+                ??python dir() to know method, how to know variable?
+                ??tkinter - when to use frame
+
+                N: gif 89a/9x neeed support
+
+                pip install ipdb
                 pip install pillow
                 pip install matplotlib
                 http://libusb.info donwload dll and copy to c://windows/system32
@@ -2426,13 +2498,49 @@ TD  PDMA CRC
                 pyinstaller nu_isp_gif , not to import ipdb, io/struct(not sure)
                 dev.read(0x81,buf,10000) <- update APROM need timeout
                 
+                set canvas and geometry size dynamic according to PhotoImage width() and height(), and it works
+        
+        ;pil
+            把一整個目錄的 JPEG 檔轉換為 PNG 檔，那麼寫成一個程式檔會比較方便，例如：
+            #!/usr/bin/env python
+            from glob import glob
+            from os.path import splitext
+            import Image
+            jpglist = glob( "python_imaging_pix/*.[jJ][pP][gG]" )
+            for jpg in jpglist:
+                im = Image.open(jpg)
+                png = splitext(jpg)[0]+".png"
+                im.save(png)
+                print png        
+                
         ;pyinstaller
             pip install https://github.com/pyinstaller/pyinstaller/ archive/develop.zip
             pyinstaller --onefile             
             http://pythonhosted.org/PyInstaller/
             usage: pyinstaller -F ./xxx.py (-F == --oneline)
             -c <- not show console, if you have UI
+        ;yield (generator)                    
+            def func():
+                return 1
+            def gen():
+                yield 1
+            print(type(func))   # <class 'function'>
+            print(type(gen))    # <class 'function'>
+            print(type(func())) # <class 'int'>
+            print(type(gen()))  # <class 'generator'>
+
+            def square():
+                for x in range(4):
+                    yield x ** 2
+            square_gen = square()
+            for x in square_gen:
+                print(x)        #0,1,4,9
             
+            解讀yield function
+                在函数开始处，加入 result = list()；
+                将每个 yield 表达式 yield expr 替换为 result.append(expr)；
+                在函数末尾处，加入 return result。
+        
         ;exit
             exit is a helper for the interactive shell - sys.exit is intended for use in programs.
             os._exit, which exits without calling cleanup handlers, flushing stdio buffers, etc. (normally only be used in the child process after a fork()).
@@ -3532,42 +3640,41 @@ TD  alias, strategy, remove pdb, uart detect auto delay time 0.1s, fill up the r
 
             
         ;tkinter
+            Tkinter._test()
+            
             http://www.kaiching.org/2012/12/Python-Basic-Concept-of-GUI.html
 
             ImportError: No module named '_tkinter'
             sudo apt-get install python3-tk
 
-            from tkinter import *
-            root = Tk()
-            some = Label(root, text="TK's job", width="30", height="5")
-            some.pack()
+            import Tkinter as tk
+            win=tk.Tk()
+            root.title("My First Tk GUI")
+            root.resizable(0,0)
             root.mainloop()
 
+            def keydown(e):
+                print 'down', e.char            
+            root.bind("<KeyPress>", keydown)
+            root.bind('<Return>', self.parse)
+
             layout
+                pack, grid, place
+                
+                w.pack(fill=X)  橫向填滿
+                padx (水平外邊距) pady, ipadx (水平內邊距), ipady
+                
                 var = IntVar(root)
                 Label(root, text="dd").grid(row=0,column=0)
                 OptionMenu(root, var, 8, 9, 10).grid(row=0,column=1)            
             
             class
-                Button	按鈕
-                Canvas	畫布
-                Checkbutton	複選方塊
-                Entry	文字欄位
-                Frame	視窗
-                Label	文字標籤
-                LabelFrame	標籤視窗
-                ListBox	選取清單
-                Menu	選單
-                MenuButton	選單元件
-                Message	對話視窗
-                OptionMenu	下拉式選單
-                PanedWindow	面板
-                RadioButton	單選方塊
-                Scale	控制桿
-                Scrollbar	捲軸
-                SpinBox	旋鈕
-                Text	文字方塊
-                Toplevel	頂層視窗元件            
+                Button	按鈕 Canvas	畫布 Checkbutton	複選方塊 Entry	文字欄位 Frame	視窗 Label	文字標籤 LabelFrame	標籤視窗 ListBox	選取清單
+                Menu	選單 MenuButton	選單元件 Message	對話視窗 OptionMenu	下拉式選單 PanedWindow	面板 RadioButton	單選方塊 Scale	控制桿
+                Scrollbar	捲軸 SpinBox	旋鈕 Text	文字方塊 image, bitmap, Toplevel	頂層視窗元件            
+            ttk 推出的新元件 :
+                Combobox, Notebook, Progressbar, Separator, Sizegrip, Treeview
+            
             
         https://sourcemaking.com/design_patterns/strategy/python/1    
         
@@ -4017,6 +4124,29 @@ TD git server authentication
             git remote add origin https://github.com/ppony/python.git
             git push origin master                 (push -u if empty project on github)
             
+            $ git push origin serverfix
+            equal to 
+            $ git push origin refs/heads/serverfix:refs/heads/serverfix
+            $ git push origin serverfix:serverfix
+            
+            將 local serverfix 推到遠端 awesomebranch
+            $ git push origin serverfix:awesomebranch
+
+            $ git fetch origin
+                * [new branch]      serverfix    -> origin/serverfix
+                不會有新 serverfix 分支，是無法移動的 origin/serverfix 指標
+            遠端分支的內容合併到目前分支，可以執行 git merge origin/serverfix
+            想要一份自己的 serverfix 來開發
+            Branch serverfix set up to track remote branch serverfix from origin.
+            Switched to a new branch 'serverfix'            
+            $ git checkout -b serverfix origin/serverfix            
+            $ git checkout --track origin/serverfix   <- alternate method
+            $ git checkout -b sf origin/serverfix     <- 可取不同名
+            從遠端分支 checkout 出來的本地分支，稱為追蹤分支 (tracking branch)。git push，git pull 都是apply到遠端相對分支
+            
+            delete remote branch
+                git push [遠端名] :[分支名]
+
             1. git fetch             这将更新git remote 中所有的远程repo 所包含分支的最新commit-id, 将其记录到.git/FETCH_HEAD文件中
             2. git fetch remote_repo          这将更新名称为remote_repo 的远程repo上的所有branch的最新commit-id，将其记录。 
             3. git fetch remote_repo remote_branch_name         这将这将更新名称为remote_repo 的远程repo上的分支： remote_branch_name
@@ -4895,7 +5025,7 @@ TD not work in Cmder            echo "a b c d" | awk '{for (i=2; i <= NF; i++) {
             IP分享器  假IP網段通常是192.168.X.X，最常見的是192.168.0.X與192.168.1.X。這個IP網段是保留的網段，NAT這個功能負責記錄網卡MAC位址與假IP, 對外轉成WAN ip address            
             算是一個閹割版+功能限定的路由器, 路由器的主要功能是切割IP DOMAIN，可以切割成網內和網外，也可以兩邊都是網內，或者都是網外，而且他通常只負責轉送，並不會對要轉送的封包做手腳。 而IP分享器，只能轉送網內和網外，而且因為NAT的關係，轉送的封包一律會被修改過才轉送出去，用來解決一般民眾IP不足的問題。但是運作的根本原理，和路由器是相同的(一樣轉送兩個不同IP DOMAIN)
     
-    ;windows ;mfc
+    ;mfc
         The default stack reservation size used by the linker is 1 MB.
         ;mutex
         "file:///C:/work/microsoft/mfctest/mutex"
@@ -4914,6 +5044,8 @@ TD not work in Cmder            echo "a b c d" | awk '{for (i=2; i <= NF; i++) {
         win10停止強制數位簽章_ win10 停止強制數位簽章.html
         WIN10   http://win10stopsignc.blogspot.tw/2015/09/1.html
         WIN8    http://win81stopsign.blogspot.tw/2014/04/win81.html
+        
+        Zadig is a Windows application that installs generic USB drivers, such as WinUSB, libusb-win32/libusb0.sys or libusbK
         
     ;isp
         keil burn isp fw, remember to boot from LDROM, and burn to LDROM
@@ -5208,7 +5340,13 @@ TD not work in Cmder            echo "a b c d" | awk '{for (i=2; i <= NF; i++) {
                 最新的fw 是511c (含hid and bulk), 舊的 icp application 會去偵測 both 511c and 511b 的 hid (舊 app can't detect 511d)
                 舊的fw 是 511b hid only  
                 nulink2 vid pid  0x0416, 0x5200
-            
+                
+            Nulink1 packet size 64                Index 1byte, command size 1byte, data 62byte
+                                                    m_acBuffer[0] = 0x00;           <- 這個在windows application 有, for hid only, 實際不會傳出去
+                                                    m_acBuffer[1] = (CHAR)ucCmdIndex;
+                                                    m_acBuffer[2] = (CHAR)dwCmdLength;
+            Nulink2 Packet size 1024              Index 1byte, command size 2bytes, data 1021bytes
+
     ;dp ;design pattern 
         decorator "file:///C:/weekly-report/note/pic/UML2_Decorator_Pattern.png"
         
